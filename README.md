@@ -1,5 +1,7 @@
 # Recoridng Composition Tool Hisui
 
+**現在開発中です** 
+
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/shiguredo/hisui.svg)](https://github.com/shiguredo/hisui)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
