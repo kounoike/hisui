@@ -50,6 +50,13 @@ set(CMAKE_C_FLAGS_PROFILE "-pg -O3 -DNDEBUG -march=native -mtune=native")
 include(cmake/tools.cmake)
 
 CPMAddPackage(
+    NAME boost_config
+    GITHUB_REPOSITORY boostorg/config
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
     NAME boost_rational
     GITHUB_REPOSITORY boostorg/rational
     GIT_TAG boost-${BOOST_VERSION}
@@ -167,6 +174,7 @@ target_sources(hisui
 target_include_directories(hisui
     PRIVATE
     src
+    ${boost_config_SOURCE_DIR}/include
     ${boost_rational_SOURCE_DIR}/include
     ${cli11_SOURCE_DIR}/include
     ${fmt_SOURCE_DIR}/include
