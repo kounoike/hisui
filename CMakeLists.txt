@@ -238,9 +238,10 @@ target_include_directories(hisui
     ${opus_SOURCE_DIR}/include
     ${progresscpp_SOURCE_DIR}/include
     ${spdlog_SOURCE_DIR}/include
-    ${stb_SOURCE_DIR}/include
+    ${stb_SOURCE_DIR}
     third_party/libvpx/third_party/libyuv/include
     third_party/libvpx/third_party/libwebm
+    third_party/libvpx
     src/third_party/progress-cpp/include
     )
 

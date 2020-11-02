@@ -23,14 +23,16 @@ make
 
 cd ../..
 if [ "$type" = "native" ]; then
-    [ -d native ] || mkdir native
+    rm -rf native
+    mkdir native
     cd native || exit 1
     cmake -DWITHOUT_TEST=On -DCMAKE_BUILD_TYPE=Native ..
 else
-    [ -d release ] || mkdir release
+    rm -rf release
+    mkdir release
     cd release || exit 1
     cmake  -DWITHOUT_TEST=On -DCMAKE_BUILD_TYPE=Release ..
 fi
 cmake --build .
 
-tar cvf hisui-${HISUI_VERSION}-ubuntu-20.04.tar.gz hisui ../LICENSE ../NOTICE.md
+tar cvf hisui-${HISUI_VERSION}_ubuntu-20.04.tar.gz hisui ../LICENSE ../NOTICE.md
