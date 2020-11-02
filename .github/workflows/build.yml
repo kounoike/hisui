@@ -1,14 +1,14 @@
 name: build-workflow
 
 on:
-  push:
-    paths-ignore:
-    - 'doc/**'
-    - '**.md'
-    - 'THANKS'
-    - 'LICENSE'
-    - 'NOTICE'
   pull_request:
+#   push:
+#     paths-ignore:
+#     - 'doc/**'
+#     - '**.md'
+#     - 'THANKS'
+#     - 'LICENSE'
+#     - 'NOTICE'
 
 jobs:
   build-linux:
@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install packages
+        shell: bash
         run: |
           sudo apt update
           sudo apt install -yq nasm
@@ -29,6 +30,7 @@ jobs:
             DEBIAN_FRONTEND: noninteractive
       - uses: actions/checkout@v2
       - name: Get Versions
+        shell: bash
         run: |
           source VERSION
           echo "::set-output name=libvpx_version::${LIBVPX_VERSION}"
@@ -53,13 +55,28 @@ jobs:
           echo "CONTENT_TYPE=application/gzip" >> ${{ matrix.name }}.env
           echo "::set-output name=name::hisui-${HISUI_VERSION}_${{ matrix.name }}.tar.gz"
         id: package_name
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: shiguredo/hisui:2020.01-test
+          platforms: linux/amd64
+          file: docker/Dockerfile
       - name: Upload Artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.package_name.outputs.name }}
-          path: _package/${{ steps.package_name.outputs.name }}
+          path: release/${{ steps.package_name.outputs.name }}
       - name: Upload Environment
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.name }}.env
           path: ${{ matrix.name }}.env
@@ -99,10 +116,10 @@ jobs:
         name:
           - ubuntu-20.04_x86_64
     steps:
-      - uses: actions/download-artifact@v1
+      - uses: actions/download-artifact@v2
         with:
           name: ${{ matrix.name }}.env
-      - uses: actions/download-artifact@v1
+      - uses: actions/download-artifact@v2
         with:
           name: create-release.env
       - name: Env to output
@@ -114,7 +131,7 @@ jobs:
           echo "::set-output name=content_type::$CONTENT_TYPE"
           echo "::set-output name=upload_url::$UPLOAD_URL"
         id: env
-      - uses: actions/download-artifact@v1
+      - uses: actions/download-artifact@v2
         with:
           name: ${{ steps.env.outputs.package_name }}
       - name: Upload ${{ matrix.name }} Release Asset

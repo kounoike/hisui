@@ -35,4 +35,4 @@ else
 fi
 cmake --build .
 
-tar cvf hisui-${HISUI_VERSION}_ubuntu-20.04.tar.gz hisui ../LICENSE ../NOTICE.md
+tar cvf hisui-${HISUI_VERSION}_ubuntu-20.04_x86_64.tar.gz hisui -C .. LICENSE NOTICE.md
