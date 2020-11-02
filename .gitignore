@@ -1,0 +1,6 @@
+/third_party
+/test/integration/input/caminandes3.webm
+/test/integration/input/lilac_blossom_bloom_spring.jpg
+/test/integration/input/Big_Buck_Bunny_360_10s_1MB.webm
+/test/integration/output/*.webm
+/test/integration/output/*.webm.cluster

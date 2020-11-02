@@ -1,0 +1,34 @@
+{
+  "archives": [
+    {
+      "connection_id": "1",
+      "file_path": "../input/lilac_blossom_bloom_spring.jpg",
+      "start_time_offset": 0,
+      "stop_time_offset": 4
+    },
+    {
+      "connection_id": "2",
+      "file_path": "../input/caminandes3.webm",
+      "start_time_offset": 2,
+      "stop_time_offset": 4
+    },
+    {
+      "connection_id": "3",
+      "file_path": "../input/lilac_blossom_bloom_spring.jpg",
+      "start_time_offset": 0,
+      "stop_time_offset": 1
+    },
+    {
+      "connection_id": "4",
+      "file_path": "../input/lilac_blossom_bloom_spring.jpg",
+      "start_time_offset": 2,
+      "stop_time_offset": 3
+    },
+    {
+      "connection_id": "5",
+      "file_path": "../input/lilac_blossom_bloom_spring.jpg",
+      "start_time_offset": 3,
+      "stop_time_offset": 4
+    }
+  ]
+}

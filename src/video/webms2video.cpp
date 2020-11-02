@@ -1,0 +1,63 @@
+#include <bits/exception.h>
+
+#include <fstream>
+#include <iterator>
+#include <map>
+#include <string>
+
+#include "CLI/App.hpp"
+#include "CLI/Config.hpp"
+#include "CLI/Formatter.hpp"
+#include "boost/rational.hpp"
+#include "nlohmann/json.hpp"
+#include "spdlog/fmt/fmt.h"
+#include "spdlog/spdlog.h"
+
+#include "video/basic_processor.hpp"
+
+#include "config.hpp"
+#include "metadata.hpp"
+
+int main(int argc, char** argv) {
+  CLI::App app{"hisui video composer"};
+  hisui::Config config;
+
+  hisui::set_cli_options(&app, &config);
+
+  CLI11_PARSE(app, argc, argv);
+
+  spdlog::set_level(config.log_level);
+  spdlog::debug("log level={}", config.log_level);
+  spdlog::debug("out_video_frame_rate={}",
+                config.out_video_frame_rate.numerator());
+  spdlog::debug("out_video_frame_rate={}",
+                config.out_video_frame_rate.denominator());
+
+  std::ifstream i(config.in_metadata_filename);
+  if (!i.is_open()) {
+    spdlog::error("failed to open metadata json file: {}",
+                  config.in_metadata_filename);
+    return 1;
+  }
+  nlohmann::json j;
+  i >> j;
+
+  if (j["archives"] == nullptr) {
+    spdlog::error("not metadata json file: {}", config.in_metadata_filename);
+    return 1;
+  }
+
+  if (std::size(j["archives"]) == 0) {
+    spdlog::error("metadata json file does not include archives: {}",
+                  config.in_metadata_filename);
+    return 1;
+  }
+
+  const hisui::Metadata metadata =
+      hisui::parse_metadata(config.in_metadata_filename, j);
+
+  hisui::video::BasicProcessor processor(config, metadata);
+  processor.run();
+
+  return 0;
+}
