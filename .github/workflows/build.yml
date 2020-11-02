@@ -1,0 +1,128 @@
+name: build-workflow
+
+on:
+  push:
+    paths-ignore:
+    - 'doc/**'
+    - '**.md'
+    - 'THANKS'
+    - 'LICENSE'
+    - 'NOTICE'
+  pull_request:
+
+jobs:
+  build-linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        name:
+          - ubuntu-20.04_x86_64
+    name: Build hisui for ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install packages
+        run: |
+          sudo apt update
+          sudo apt install -yq nasm
+          sudo rm -rf /var/lib/apt/lists/*
+        env:
+            DEBIAN_FRONTEND: noninteractive
+      - uses: actions/checkout@v2
+      - name: Get Versions
+        run: |
+          source VERSION
+          echo "::set-output name=libvpx_version::${LIBVPX_VERSION}"
+        id: versions
+      - name: Cache libvpx ${{ steps.versions.outputs.libvpx_version }}
+        id: cache-libvpx
+        uses: actions/cache@v2
+        with:
+          path: third_party/libvpx
+          key: ${{ matrix.name }}-libvpx-${{ hashFiles(format('{0}{1}', github.workspace, '/third_party/libvpx/libvpx.a')) }}
+          restore-keys: ${{ matrix.name }}-libvpx-
+      - name: Clear libvpx
+        if: steps.cache-libvpx.outputs.cache-hit != 'true'
+        run: rm -rf third_party/libvpx
+      - run: ./build.bash
+        timeout-minutes: 120
+      - name: Output package name
+        shell: bash
+        run: |
+          source VERSION
+          echo "PACKAGE_NAME=hisui-${HISUI_VERSION}_${{ matrix.name }}.tar.gz" >> ${{ matrix.name }}.env
+          echo "CONTENT_TYPE=application/gzip" >> ${{ matrix.name }}.env
+          echo "::set-output name=name::hisui-${HISUI_VERSION}_${{ matrix.name }}.tar.gz"
+        id: package_name
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ steps.package_name.outputs.name }}
+          path: _package/${{ steps.package_name.outputs.name }}
+      - name: Upload Environment
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ matrix.name }}.env
+          path: ${{ matrix.name }}.env
+  create-release:
+    name: Create Release
+    if: contains(github.ref, 'tags/202')
+    needs:
+      - build-linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Output upload url
+        shell: bash
+        run: echo "UPLOAD_URL='${{ steps.create_release.outputs.upload_url }}'" > create-release.env
+      - name: Upload create-release Environment
+        uses: actions/upload-artifact@v1
+        with:
+          name: create-release.env
+          path: create-release.env
+  upload-assets:
+    name: Upload Assets to Release
+    needs:
+      - create-release
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        name:
+          - ubuntu-20.04_x86_64
+    steps:
+      - uses: actions/download-artifact@v1
+        with:
+          name: ${{ matrix.name }}.env
+      - uses: actions/download-artifact@v1
+        with:
+          name: create-release.env
+      - name: Env to output
+        shell: bash
+        run: |
+          source ${{ matrix.name }}.env/${{ matrix.name }}.env
+          source create-release.env/create-release.env
+          echo "::set-output name=package_name::$PACKAGE_NAME"
+          echo "::set-output name=content_type::$CONTENT_TYPE"
+          echo "::set-output name=upload_url::$UPLOAD_URL"
+        id: env
+      - uses: actions/download-artifact@v1
+        with:
+          name: ${{ steps.env.outputs.package_name }}
+      - name: Upload ${{ matrix.name }} Release Asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.env.outputs.upload_url }}
+          asset_path: ${{ steps.env.outputs.package_name }}/${{ steps.env.outputs.package_name }}
+          asset_name: ${{ steps.env.outputs.package_name }}
+          asset_content_type: ${{ steps.env.outputs.content_type }}
