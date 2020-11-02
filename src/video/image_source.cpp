@@ -10,7 +10,7 @@
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/spdlog.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb/stb_image.h"
+#include "stb_image.h"
 
 #include "video/yuv.hpp"
 
