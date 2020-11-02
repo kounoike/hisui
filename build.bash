@@ -14,23 +14,23 @@ cd third_party || exit 1
 [ -d libvpx ] || git clone https://chromium.googlesource.com/webm/libvpx
 cd libvpx || exit 1
 git checkout v"${LIBVPX_VERSION}"
-if [ "$type" = "docker" ]; then
-    CXX=clang++ CC=clang ./configure --disable-examples --disable-tools --disable-docs --disable-unit-tests # Docker 向けには --cpu を付けない
-else
+if [ "$type" = "native" ]; then
     CXX=clang++ CC=clang ./configure --cpu=native --disable-examples --disable-tools --disable-docs --disable-unit-tests
+else
+    CXX=clang++ CC=clang ./configure --disable-examples --disable-tools --disable-docs --disable-unit-tests
 fi
 make
 
 cd ../..
-if [ "$type" = "docker" ]; then
-    [ -d release ] || mkdir release
-    cd release || exit 1
-    cmake -DCMAKE_BUILD_TYPE=Release ..
-else
+if [ "$type" = "native" ]; then
     [ -d native ] || mkdir native
     cd native || exit 1
-    cmake -DCMAKE_BUILD_TYPE=Native ..
+    cmake -DWITHOUT_TEST=On -DCMAKE_BUILD_TYPE=Native ..
+else
+    [ -d release ] || mkdir release
+    cd release || exit 1
+    cmake  -DWITHOUT_TEST=On -DCMAKE_BUILD_TYPE=Release ..
 fi
 cmake --build .
 
-# TODO: docker build
+tar cvf hisui-${HISUI_VERSION}-ubuntu-20.04.tar.gz hisui ../LICENSE ../NOTICE.md
