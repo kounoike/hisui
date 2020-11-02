@@ -50,8 +50,64 @@ set(CMAKE_C_FLAGS_PROFILE "-pg -O3 -DNDEBUG -march=native -mtune=native")
 include(cmake/tools.cmake)
 
 CPMAddPackage(
+    NAME boost_assert
+    GITHUB_REPOSITORY boostorg/assert
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_config
+    GITHUB_REPOSITORY boostorg/config
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_core
+    GITHUB_REPOSITORY boostorg/core
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_integer
+    GITHUB_REPOSITORY boostorg/integer
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
     NAME boost_rational
     GITHUB_REPOSITORY boostorg/rational
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_static_assert
+    GITHUB_REPOSITORY boostorg/static_assert
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_type_traits
+    GITHUB_REPOSITORY boostorg/type_traits
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_throw_exception
+    GITHUB_REPOSITORY boostorg/throw_exception
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_utility
+    GITHUB_REPOSITORY boostorg/utility
     GIT_TAG boost-${BOOST_VERSION}
     DOWNLOAD_ONLY YES
     )
@@ -167,16 +223,25 @@ target_sources(hisui
 target_include_directories(hisui
     PRIVATE
     src
+    ${boost_assert_SOURCE_DIR}/include
+    ${boost_config_SOURCE_DIR}/include
+    ${boost_core_SOURCE_DIR}/include
+    ${boost_integer_SOURCE_DIR}/include
     ${boost_rational_SOURCE_DIR}/include
+    ${boost_static_assert_SOURCE_DIR}/include
+    ${boost_throw_exception_SOURCE_DIR}/include
+    ${boost_type_traits_SOURCE_DIR}/include
+    ${boost_utility_SOURCE_DIR}/include
     ${cli11_SOURCE_DIR}/include
     ${fmt_SOURCE_DIR}/include
     ${nlohmann_json_SOURCE_DIR}/include
     ${opus_SOURCE_DIR}/include
     ${progresscpp_SOURCE_DIR}/include
     ${spdlog_SOURCE_DIR}/include
-    ${stb_SOURCE_DIR}/include
+    ${stb_SOURCE_DIR}
     third_party/libvpx/third_party/libyuv/include
     third_party/libvpx/third_party/libwebm
+    third_party/libvpx
     src/third_party/progress-cpp/include
     )
 
