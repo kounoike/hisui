@@ -33,7 +33,8 @@ class Sequencer {
   std::size_t getSize() const;
 
  protected:
-  std::map<std::string, std::unique_ptr<std::vector<SourceAndInterval>>>
+  std::vector<
+      std::pair<std::string, std::shared_ptr<std::vector<SourceAndInterval>>>>
       m_sequence;
   std::uint32_t m_max_width;
   std::uint32_t m_max_height;

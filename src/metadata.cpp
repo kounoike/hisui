@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <map>
 #include <stdexcept>
+#include <tuple>
 
 #include <nlohmann/json.hpp>
 
@@ -45,8 +46,33 @@ Metadata::Metadata(const std::string& file_path,
   }
   const auto current_path = std::filesystem::current_path();
   std::filesystem::current_path(m_path.parent_path());
+  std::vector<std::tuple<std::string, std::string, double, double>> archives;
   for (const auto& a : m_raw_json["archives"]) {
-    std::filesystem::path path(a["file_path"].get<std::string>());
+    archives.emplace_back(a["file_path"], a["connection_id"],
+                          a["start_time_offset"], a["stop_time_offset"]);
+  }
+  std::sort(archives.begin(), archives.end(),
+            [](const std::tuple<std::string, std::string, double, double>& a,
+               const std::tuple<std::string, std::string, double, double>& b) {
+              if (get<2>(a) != get<2>(b)) {
+                // 開始時間が先のものを優先する
+                return get<2>(a) < get<2>(b);
+              }
+              if (get<3>(a) != get<3>(b)) {
+                // 終了時間が後のものを優先する
+                return get<3>(a) > get<3>(b);
+              }
+              if (get<1>(a) != get<1>(b)) {
+                return get<1>(a) < get<1>(b);
+              }
+              if (get<0>(a) != get<0>(b)) {
+                return get<0>(a) < get<0>(b);
+              }
+              return false;
+            });
+
+  for (const auto& a : archives) {
+    std::filesystem::path path(get<0>(a));
     if (path.is_relative()) {
       path = std::filesystem::absolute(path);
     }
@@ -57,17 +83,16 @@ Metadata::Metadata(const std::string& file_path,
       if (!std::filesystem::exists(path)) {
         spdlog::debug("file is not found(2): {}", path.string());
         throw std::runtime_error(
-            fmt::format("file is not found: {}", a["file_path"]));
+            fmt::format("file is not found: {}", get<0>(a)));
       }
     }
-    Archive archive(path, a["connection_id"], a["start_time_offset"],
-                    a["stop_time_offset"]);
+    Archive archive(path, get<1>(a), get<2>(a), get<3>(a));
     m_archives.push_back(archive);
-    if (a["start_time_offset"] < m_min_start_time_offset) {
-      m_min_start_time_offset = a["start_time_offset"];
+    if (get<2>(a) < m_min_start_time_offset) {
+      m_min_start_time_offset = get<2>(a);
     }
-    if (a["stop_time_offset"] > m_max_stop_time_offset) {
-      m_max_stop_time_offset = a["stop_time_offset"];
+    if (get<3>(a) > m_max_stop_time_offset) {
+      m_max_stop_time_offset = get<3>(a);
     }
   }
   std::filesystem::current_path(current_path);
