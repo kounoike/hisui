@@ -74,7 +74,7 @@ jobs:
         with:
           path: ~/.ccache
           key: ${{ matrix.os }}-ccache-
-      - run: ./build.bash ${{ matrix.os }} --package --use-ccache
+      - run: ./build.bash ${{ matrix.os }} --package --use-ccache --without-test
         timeout-minutes: 120
       - name: Output package name
         shell: bash

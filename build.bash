@@ -7,7 +7,7 @@ _PACKAGES=" \
 "
 
 function show_help() {
-  echo "$PROGRAM [--clean] [--use-ccache] [--build-type-native] [--package] <package>"
+  echo "$PROGRAM [--clean] [--use-ccache] [--without-test] [--build-type-native] [--package] <package>"
   echo "<package>:"
   for package in $_PACKAGES; do
     echo "  - $package"
@@ -17,7 +17,7 @@ function show_help() {
 PACKAGE=""
 FLAG_CLEAN=0
 FLAG_PACKAGE=0
-CMAKE_FLAGS=('-DWITHOUT_TEST=On')
+CMAKE_FLAGS=()
 BUILD_TYPE='Release'
 CXX='clang++'
 CC='clang'
@@ -29,6 +29,9 @@ while [ $# -ne 0 ]; do
         ;;
     "--package" )
         FLAG_PACKAGE=1
+        ;;
+    "--without-test" )
+        CMAKE_FLAGS+=('-DWITHOUT_TEST=On')
         ;;
     "--use-ccache" )
         CMAKE_FLAGS+=('-DUSE_CCACHE=On')
