@@ -25,16 +25,33 @@ add_executable(util_test
 
 set_target_properties(util_test PROPERTIES CXX_STANDARD 20 C_STANDARD 99)
 
-target_compile_options(util_test
-    PRIVATE
-    -DBOOST_OVERRIDE=
-    -DBOOST_NOEXCEPT_OR_NOTHROW=
-    )
-
 target_include_directories(util_test
     PRIVATE
     ../../src
+    ${boost_algorithm_SOURCE_DIR}/include
+    ${boost_assert_SOURCE_DIR}/include
+    ${boost_bind_SOURCE_DIR}/include
+    ${boost_config_SOURCE_DIR}/include
+    ${boost_container_hash_SOURCE_DIR}/include
+    ${boost_core_SOURCE_DIR}/include
+    ${boost_detail_SOURCE_DIR}/include
+    ${boost_exception_SOURCE_DIR}/include
+    ${boost_function_SOURCE_DIR}/include
+    ${boost_integer_SOURCE_DIR}/include
+    ${boost_io_SOURCE_DIR}/include
+    ${boost_iterator_SOURCE_DIR}/include
+    ${boost_move_SOURCE_DIR}/include
+    ${boost_mpl_SOURCE_DIR}/include
+    ${boost_numeric_conversion_SOURCE_DIR}/include
+    ${boost_preprocessor_SOURCE_DIR}/include
+    ${boost_range_SOURCE_DIR}/include
+    ${boost_smart_ptr_SOURCE_DIR}/include
+    ${boost_static_assert_SOURCE_DIR}/include
     ${boost_test_SOURCE_DIR}/include
+    ${boost_throw_exception_SOURCE_DIR}/include
+    ${boost_type_traits_SOURCE_DIR}/include
+    ${boost_type_index_SOURCE_DIR}/include
+    ${boost_utility_SOURCE_DIR}/include
     )
 
 add_test(NAME util COMMAND util_test)
