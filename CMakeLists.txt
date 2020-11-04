@@ -50,8 +50,64 @@ set(CMAKE_C_FLAGS_PROFILE "-pg -O3 -DNDEBUG -march=native -mtune=native")
 include(cmake/tools.cmake)
 
 CPMAddPackage(
+    NAME boost_assert
+    GITHUB_REPOSITORY boostorg/assert
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_config
+    GITHUB_REPOSITORY boostorg/config
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_core
+    GITHUB_REPOSITORY boostorg/core
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_integer
+    GITHUB_REPOSITORY boostorg/integer
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
     NAME boost_rational
     GITHUB_REPOSITORY boostorg/rational
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_static_assert
+    GITHUB_REPOSITORY boostorg/static_assert
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_type_traits
+    GITHUB_REPOSITORY boostorg/type_traits
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_throw_exception
+    GITHUB_REPOSITORY boostorg/throw_exception
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_utility
+    GITHUB_REPOSITORY boostorg/utility
     GIT_TAG boost-${BOOST_VERSION}
     DOWNLOAD_ONLY YES
     )
@@ -167,16 +223,25 @@ target_sources(hisui
 target_include_directories(hisui
     PRIVATE
     src
+    ${boost_assert_SOURCE_DIR}/include
+    ${boost_config_SOURCE_DIR}/include
+    ${boost_core_SOURCE_DIR}/include
+    ${boost_integer_SOURCE_DIR}/include
     ${boost_rational_SOURCE_DIR}/include
+    ${boost_static_assert_SOURCE_DIR}/include
+    ${boost_throw_exception_SOURCE_DIR}/include
+    ${boost_type_traits_SOURCE_DIR}/include
+    ${boost_utility_SOURCE_DIR}/include
     ${cli11_SOURCE_DIR}/include
     ${fmt_SOURCE_DIR}/include
     ${nlohmann_json_SOURCE_DIR}/include
     ${opus_SOURCE_DIR}/include
     ${progresscpp_SOURCE_DIR}/include
     ${spdlog_SOURCE_DIR}/include
-    ${stb_SOURCE_DIR}/include
+    ${stb_SOURCE_DIR}
     third_party/libvpx/third_party/libyuv/include
     third_party/libvpx/third_party/libwebm
+    third_party/libvpx
     src/third_party/progress-cpp/include
     )
 
@@ -184,20 +249,127 @@ set_target_properties(hisui PROPERTIES CXX_STANDARD 20 C_STANDARD 99)
 
 target_link_libraries(hisui
     PRIVATE
+    fmt
     opus
     pthread
-    ${CMAKE_SOURCE_DIR}/third_party/libvpx/libvpx.a
-    fmt
     spdlog
+    ${CMAKE_SOURCE_DIR}/third_party/libvpx/libvpx.a
     )
 
 if(NOT WITHOUT_TEST)
     enable_testing()
+
+    CPMAddPackage(
+        NAME boost_algorithm
+        GITHUB_REPOSITORY boostorg/algorithm
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_bind
+        GITHUB_REPOSITORY boostorg/bind
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_container_hash
+        GITHUB_REPOSITORY boostorg/container_hash
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_detail
+        GITHUB_REPOSITORY boostorg/detail
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_exception
+        GITHUB_REPOSITORY boostorg/exception
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_function
+        GITHUB_REPOSITORY boostorg/function
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_io
+        GITHUB_REPOSITORY boostorg/io
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_iterator
+        GITHUB_REPOSITORY boostorg/iterator
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_move
+        GITHUB_REPOSITORY boostorg/move
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_mpl
+        GITHUB_REPOSITORY boostorg/mpl
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_numeric_conversion
+        GITHUB_REPOSITORY boostorg/numeric_conversion
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_preprocessor
+        GITHUB_REPOSITORY boostorg/preprocessor
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_range
+        GITHUB_REPOSITORY boostorg/range
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_smart_ptr
+        GITHUB_REPOSITORY boostorg/smart_ptr
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
     CPMAddPackage(
         NAME boost_test
         GITHUB_REPOSITORY boostorg/test
         GIT_TAG boost-${BOOST_VERSION}
         DOWNLOAD_ONLY YES
         )
+
+    CPMAddPackage(
+        NAME boost_type_index
+        GITHUB_REPOSITORY boostorg/type_index
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
     add_subdirectory(test)
 endif()
