@@ -32,7 +32,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /var/cache/apt
-          key: ${{ matrix.os }}-var-cache-apt-
+          key: ${{ matrix.os }}-var-cache-apt-${{ hashFiles( '/var/cache/apt/pkgcache.bin' )}}
+          restore-keys: ${{ matrix.os }}-var-cache-apt-
       - name: Install packages
         shell: bash
         run: |
