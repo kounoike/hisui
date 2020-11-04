@@ -58,6 +58,7 @@ target_include_directories(video_test
     ${spdlog_SOURCE_DIR}/include
     ../../src
     ../../src/third_party/openh264/codec/api/svc
+    ../../third_party/libvpx
     ../../third_party/libvpx/third_party/libwebm
     ../../third_party/libvpx/third_party/libyuv/include
     )
