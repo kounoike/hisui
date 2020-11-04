@@ -32,8 +32,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /var/cache/apt
-          key: ${{ matrix.os }}-var-cache-apt-${{ hashFiles( '/var/cache/apt/pkgcache.bin' )}}
-          restore-keys: ${{ matrix.os }}-var-cache-apt-
+          key: ${{ matrix.os }}-var-cache-apt-dir-${{ hashFiles( '/var/cache/apt/pkgcache.bin' )}}
+          restore-keys: ${{ matrix.os }}-var-cache-apt-dir-
       - name: Install packages
         shell: bash
         run: |
@@ -83,7 +83,6 @@ jobs:
           key: ${{ matrix.os }}-ccache-dir-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
           restore-keys: ${{ matrix.os }}-ccache-dir-
       - name: ccache stat
-        if: steps.cache-ccache.outputs.cache-hit == 'true'
         run: ccache -s
       - run: ./build.bash ${{ matrix.os }} --package --use-ccache --without-test
         timeout-minutes: 120
