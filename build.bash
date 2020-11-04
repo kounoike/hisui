@@ -88,7 +88,7 @@ cd third_party || exit 1
 cd libvpx || exit 1
 git checkout v"${LIBVPX_VERSION}"
 
-libvpx_configure_options='--disable-examples --disable-tools --disable-docs --disable-unit-tests'
+libvpx_configure_options='--disable-examples --disable-docs --disable-unit-tests'
 if [ "$BUILD_TYPE" = "Native" ]; then
 libvpx_configure_options="$libvpx_configure_options --cpu=native"
 fi
