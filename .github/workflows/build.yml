@@ -69,14 +69,21 @@ jobs:
       - name: Clear release directory
         if: steps.cache-release.outputs.cache-hit != 'true'
         run: rm -rf release
+      - name: Prepare ccache timestamp
+        id: ccache_cache_timestamp
+        shell: cmake -P {0}
+        run: |
+          string(TIMESTAMP current_date "%Y-%m-%d-%H:%M:%S" UTC)
+          message("::set-output name=timestamp::${current_date}")
       - name: Cache ccache
         id: cache-ccache
         uses: actions/cache@v2
         with:
           path: ~/.ccache
-          key: ${{ matrix.os }}-ccache-
+          key: ${{ matrix.os }}-ccache-dir-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+          restore-keys: ${{ matrix.os }}-ccache-dir-
       - name: ccache stat
-        if: steps.cache-ccache.outputs.cache-hit = 'true'
+        if: steps.cache-ccache.outputs.cache-hit == 'true'
         run: ccache -s
       - run: ./build.bash ${{ matrix.os }} --package --use-ccache --without-test
         timeout-minutes: 120
