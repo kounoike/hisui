@@ -15,8 +15,12 @@ function show_help() {
 }
 
 PACKAGE=""
+
 FLAG_CLEAN=0
 FLAG_PACKAGE=0
+FLAG_WITHOUT_TEST=0
+FLAG_USE_CCACHE=0
+
 CMAKE_FLAGS=()
 BUILD_TYPE='Release'
 CXX='clang++'
@@ -31,12 +35,10 @@ while [ $# -ne 0 ]; do
         FLAG_PACKAGE=1
         ;;
     "--without-test" )
-        CMAKE_FLAGS+=('-DWITHOUT_TEST=YES')
+        FLAG_WITHOUT_TEST=1
         ;;
     "--use-ccache" )
-        CMAKE_FLAGS+=('-DUSE_CCACHE=YES')
-        CXX='ccache clang++'
-        CC='ccache clang'
+        FLAG_USE_CCACHE=1
         ;;
     "--build-type-native" )
         BUILD_TYPE="Native"
@@ -67,6 +69,20 @@ done
 if [ $_FOUND -eq 0 ]; then
   show_help
   exit 1
+fi
+
+if [ $FLAG_WITHOUT_TEST -eq 1 ]; then
+    CMAKE_FLAGS+=('-DWITHOUT_TEST=YES')
+else
+    CMAKE_FLAGS+=('-DWITHOUT_TEST=NO')
+fi
+
+if [ $FLAG_USE_CCACHE -eq 1 ]; then
+    CMAKE_FLAGS+=('-DUSE_CCACHE=YES')
+    CXX='ccache clang++'
+    CC='ccache clang'
+else
+    CMAKE_FLAGS+=('-DUSE_CCACHE=NO')
 fi
 
 echo "--clean: ${FLAG_CLEAN}"
