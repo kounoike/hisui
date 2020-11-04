@@ -127,10 +127,10 @@ jobs:
           path: release/hisui
       - name: Get Versions
         shell: bash
+        id: versions
         run: |
           source VERSION
           echo "::set-output name=hisui_version::${HISUI_VERSION}"
-          id: versions
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
