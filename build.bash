@@ -105,13 +105,11 @@ make
 
 cd ../..
 if [ "$BUILD_TYPE" = "native" ]; then
-    rm -rf native
-    mkdir native
+    [ -d native ] || mkdir native
     cd native || exit 1
     CMAKE_FLAGS+=("-DCMAKE_BUILD_TYPE=${BUILD_TYPE}")
 else
-    rm -rf release
-    mkdir release
+    [ -d release ] || mkdir release
     cd release || exit 1
 fi
 cmake  .. "${CMAKE_FLAGS[@]}"
