@@ -19,8 +19,15 @@ FLAG_CLEAN=0
 FLAG_PACKAGE=0
 CMAKE_FLAGS=()
 BUILD_TYPE='Release'
-CXX='clang++'
-CC='clang'
+CXX='/usr/bin/clang++'
+CC='/usr/bin/clang'
+
+GIT='/usr/bin/git'
+CMAKE='/usr/bin/cmake'
+MAKE='/usr/bin/make'
+MKDIR='/bin/mkdir'
+RM='/bin/rm'
+TAR='/bin/tar'
 
 while [ $# -ne 0 ]; do
   case "$1" in
@@ -35,8 +42,8 @@ while [ $# -ne 0 ]; do
         ;;
     "--use-ccache" )
         CMAKE_FLAGS+=('-DUSE_CCACHE=On')
-        CXX='ccache clang++'
-        CC='ccache clang'
+        CXX='/usr/bin/ccache /usr/bin/clang++'
+        CC='/usr/bin/ccache /usr/bin/clang'
         ;;
     "--build-type-native" )
         BUILD_TYPE="Native"
@@ -88,12 +95,12 @@ if [ $FLAG_CLEAN -eq 1 ]; then
 fi
 
 
-[ -d third_party ] || mkdir third_party
+[ -d third_party ] || ${MKDIR} third_party
 cd third_party || exit 1
 
-[ -d libvpx ] || git clone https://chromium.googlesource.com/webm/libvpx
+[ -d libvpx ] || ${GIT} clone https://chromium.googlesource.com/webm/libvpx
 cd libvpx || exit 1
-git checkout v"${LIBVPX_VERSION}"
+${GIT} checkout v"${LIBVPX_VERSION}"
 
 libvpx_configure_options=('--disable-examples' '--disable-tools' '--disable-docs' '--disable-unit-tests' )
 if [ "$BUILD_TYPE" = "Native" ]; then
@@ -101,22 +108,22 @@ if [ "$BUILD_TYPE" = "Native" ]; then
 fi
 
 CXX="$CXX" CC="$CC" ./configure "${libvpx_configure_options[@]}"
-make
+${MAKE}
 
 cd ../..
 if [ "$BUILD_TYPE" = "native" ]; then
-    rm -rf native
-    mkdir native
+    ${RM} -rf native
+    ${MKDIR} native
     cd native || exit 1
     CMAKE_FLAGS+=("-DCMAKE_BUILD_TYPE=${BUILD_TYPE}")
 else
-    rm -rf release
-    mkdir release
+    ${RM} -rf release
+    ${MKDIR} release
     cd release || exit 1
 fi
-cmake  .. "${CMAKE_FLAGS[@]}"
-cmake --build .
+${CMAKE} .. "${CMAKE_FLAGS[@]}"
+${CMAKE} --build .
 
 if [ $FLAG_PACKAGE -eq 1 ]; then 
-    tar cvf hisui-${HISUI_VERSION}_ubuntu-20.04_x86_64.tar.gz hisui -C .. LICENSE NOTICE.md
+    ${TAR} cvf hisui-${HISUI_VERSION}_ubuntu-20.04_x86_64.tar.gz hisui -C .. LICENSE NOTICE.md
 fi
