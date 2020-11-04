@@ -40,8 +40,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: third_party/libvpx
-          key: ${{ matrix.os }}-libvpx-${{ hashFiles(format('{0}{1}', github.workspace, '/third_party/libvpx/libvpx.a')) }}
-          restore-keys: ${{ matrix.os }}-libvpx-
+          key: ${{ matrix.os }}-third_party-libvpx-${{ hashFiles(format('{0}{1}', github.workspace, '/third_party/libvpx/libvpx.a')) }}
+          restore-keys: ${{ matrix.os }}-third_party-libvpx-
       - name: Clear libvpx
         if: steps.cache-libvpx.outputs.cache-hit != 'true'
         run: rm -rf third_party/libvpx
