@@ -38,10 +38,10 @@ jobs:
       - uses: actions/checkout@v2
       - name: Get Versions
         shell: bash
+        id: versions
         run: |
           source VERSION
           echo "::set-output name=libvpx_version::${LIBVPX_VERSION}"
-        id: versions
       - name: Cache libvpx ${{ steps.versions.outputs.libvpx_version }}
         id: cache-libvpx
         uses: actions/cache@v2
