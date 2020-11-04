@@ -1,0 +1,39 @@
+name: build-workflow
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+    paths-ignore:
+    - 'doc/**'
+    - '**.md'
+    - 'THANKS'
+    - 'LICENSE'
+    - 'NOTICE'
+
+jobs:
+  lint:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-20.04_x86_64
+    name: Lint hisui for ${{ matrix.os }}
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install packages
+        shell: bash
+        run: |
+          sudo apt update
+          sudo apt install -yq cpplint cppcheck
+          sudo rm -rf /var/lib/apt/lists/*
+          go get -u github.com/client9/misspell/cmd/misspell
+        env:
+            DEBIAN_FRONTEND: noninteractive
+      - uses: actions/checkout@v2
+      - name: Lint hisui
+        run: ./lint.bash
+        timeout-minutes: 120
