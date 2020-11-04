@@ -27,13 +27,6 @@ jobs:
     name: Build hisui for ${{ matrix.os }}
     runs-on: ubuntu-20.04
     steps:
-      - name: Cache /var/cache/apt
-        id: cache-var-cache-apt
-        uses: actions/cache@v2
-        with:
-          path: /var/cache/apt
-          key: ${{ matrix.os }}-var-cache-apt-dir-${{ hashFiles( '/var/cache/apt/pkgcache.bin' )}}
-          restore-keys: ${{ matrix.os }}-var-cache-apt-dir-
       - name: Install packages
         shell: bash
         run: |
