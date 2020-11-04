@@ -35,16 +35,16 @@ jobs:
           source VERSION
           echo "::set-output name=libvpx_version::${LIBVPX_VERSION}"
         id: versions
-#       - name: Cache libvpx ${{ steps.versions.outputs.libvpx_version }}
-#         id: cache-libvpx
-#         uses: actions/cache@v2
-#         with:
-#           path: third_party/libvpx
-#           key: ${{ matrix.os }}-libvpx-${{ hashFiles(format('{0}{1}', github.workspace, '/third_party/libvpx/libvpx.a')) }}
-#           restore-keys: ${{ matrix.os }}-libvpx-
-#       - name: Clear libvpx
-#         if: steps.cache-libvpx.outputs.cache-hit != 'true'
-#         run: rm -rf third_party/libvpx
+      - name: Cache libvpx ${{ steps.versions.outputs.libvpx_version }}
+        id: cache-libvpx
+        uses: actions/cache@v2
+        with:
+          path: third_party/libvpx
+          key: ${{ matrix.os }}-libvpx-${{ hashFiles(format('{0}{1}', github.workspace, '/third_party/libvpx/libvpx.a')) }}
+          restore-keys: ${{ matrix.os }}-libvpx-
+      - name: Clear libvpx
+        if: steps.cache-libvpx.outputs.cache-hit != 'true'
+        run: rm -rf third_party/libvpx
       - name: Cache ccache
         id: cache-ccache
         uses: actions/cache@v2
