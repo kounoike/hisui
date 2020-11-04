@@ -36,7 +36,7 @@ jobs:
         env:
             DEBIAN_FRONTEND: noninteractive
       - uses: actions/checkout@v2
-      - name: Get Versions
+      - name: Get versions
         shell: bash
         id: versions
         run: |
@@ -60,7 +60,6 @@ jobs:
           key: ${{ matrix.os }}-release-dir-${{ hashFiles(format('{0}{1}', github.workspace, '/release/CMakeCache.txt')) }}
           restore-keys: ${{ matrix.os }}-release-dir-
       - name: Clear release directory
-        if: steps.cache-release.outputs.cache-hit != 'true'
         run: rm -rf release
       - name: Prepare ccache timestamp
         id: ccache_cache_timestamp
@@ -68,17 +67,20 @@ jobs:
         run: |
           string(TIMESTAMP current_date "%Y-%m-%d-%H:%M:%S" UTC)
           message("::set-output name=timestamp::${current_date}")
-      - name: Cache ccache
+      - name: Cache ~/.ccache directory
         id: cache-ccache
         uses: actions/cache@v2
         with:
           path: ~/.ccache
           key: ${{ matrix.os }}-ccache-dir-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
           restore-keys: ${{ matrix.os }}-ccache-dir-
-      - name: ccache stat
+      - name: Ccache stat
         run: ccache -s
-      - run: ./build.bash ${{ matrix.os }} --package --use-ccache --without-test
+      - name: Build hisui
+        run: ./build.bash ${{ matrix.os }} --package --use-ccache
         timeout-minutes: 120
+      - name: Test hisui
+        run: cmake --build release --target test -- ARGS='-V'
       - name: Output package name
         shell: bash
         run: |
@@ -87,7 +89,7 @@ jobs:
           echo "CONTENT_TYPE=application/gzip" >> ${{ matrix.os }}.env
           echo "::set-output name=name::hisui-${HISUI_VERSION}_${{ matrix.os }}.tar.gz"
         id: package_name
-      - name: Upload binary
+      - name: Upload hisui binary
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.os }}-hisui-binary
@@ -99,7 +101,7 @@ jobs:
           name: ${{ steps.package_name.outputs.name }}
           path: release/${{ steps.package_name.outputs.name }}
           if-no-files-found: error
-      - name: Upload Environment
+      - name: Upload environment
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.os }}.env
@@ -107,7 +109,7 @@ jobs:
           if-no-files-found: error
 
   push-to-dockerhub:
-    name: Push to Docker Hub
+    name: Push to DockerHub
     if: contains(github.ref, 'tags/202')
     strategy:
       fail-fast: false
@@ -127,7 +129,7 @@ jobs:
         with:
           name: ${{ matrix.os }}-hisui-binary
           path: release
-      - name: chmod 755 hisui
+      - name: Chmod 755 hisui
         shell: bash
         run: |
           chmod 755 release/hisui
@@ -144,12 +146,12 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-      - name: Push to Docker Hub
+      - name: Push to DockerHub
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: shiguredo/hisui:${{ steps.versions.outputs.hisui_version }}-test
+          tags: shiguredo/hisui:${{ steps.versions.outputs.hisui_version }}
           platforms: linux/amd64
           file: docker/Dockerfile
 
@@ -160,7 +162,7 @@ jobs:
       - build-linux
     runs-on: ubuntu-20.04
     steps:
-      - name: Create Release
+      - name: Create release
         id: create_release
         uses: actions/create-release@v1.0.0
         env:
@@ -173,7 +175,7 @@ jobs:
       - name: Output upload url
         shell: bash
         run: echo "UPLOAD_URL='${{ steps.create_release.outputs.upload_url }}'" > create-release.env
-      - name: Upload create-release Environment
+      - name: Upload create-release environment
         uses: actions/upload-artifact@v2
         with:
           name: create-release.env
@@ -181,7 +183,7 @@ jobs:
           if-no-files-found: error
 
   upload-assets:
-    name: Upload Assets to Release
+    name: Upload assets to release
     needs:
       - create-release
     runs-on: ubuntu-20.04
@@ -212,7 +214,7 @@ jobs:
         with:
           name: ${{ steps.env.outputs.package_name }}
           path: ${{ steps.env.outputs.package_name }}
-      - name: Upload ${{ matrix.os }} Release Asset
+      - name: Upload ${{ matrix.os }} release asset
         uses: actions/upload-release-asset@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
