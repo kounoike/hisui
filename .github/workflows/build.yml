@@ -56,10 +56,11 @@ jobs:
         id: cache-release
         uses: actions/cache@v2
         with:
-          path: release
-          key: ${{ matrix.os }}-release-dir-${{ hashFiles(format('{0}{1}', github.workspace, '/release/CMakeCache.txt')) }}
-          restore-keys: ${{ matrix.os }}-release-dir-
+          path: release/_deps
+          key: ${{ matrix.os }}-release-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/release/Makefile')) }}
+          restore-keys: ${{ matrix.os }}-release-deps-
       - name: Clear release directory
+        if: steps.cache-release.outputs.cache-hit != 'true'
         run: rm -rf release
       - name: Prepare ccache timestamp
         id: ccache_cache_timestamp
