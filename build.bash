@@ -95,6 +95,7 @@ set -ex
 
 cd "$(dirname "$0")" || exit 1
 
+# shellcheck disable=SC1091
 source ./VERSION
 
 if [ $FLAG_CLEAN -eq 1 ]; then
@@ -132,5 +133,5 @@ cmake  .. "${CMAKE_FLAGS[@]}"
 cmake --build .
 
 if [ $FLAG_PACKAGE -eq 1 ]; then 
-    tar cvf hisui-${HISUI_VERSION}_ubuntu-20.04_x86_64.tar.gz hisui -C .. LICENSE NOTICE.md
+    tar cvf hisui-"${HISUI_VERSION}"_ubuntu-20.04_x86_64.tar.gz hisui -C .. LICENSE NOTICE.md
 fi
