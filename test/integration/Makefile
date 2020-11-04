@@ -11,7 +11,7 @@ get_input_files:
 	sha224sum -c input/check
 
 test: get_input_files
-	rm output/*.webm*
+	rm -f output/*.webm*
 	for m in metadata/*.json; do \
 		base=$$(basename $${m} .json); \
 		echo $${base}; \
