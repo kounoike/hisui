@@ -112,7 +112,7 @@ cd libvpx || exit 1
 git checkout v"${LIBVPX_VERSION}"
 
 libvpx_configure_options=('--disable-examples' '--disable-tools' '--disable-docs' '--disable-unit-tests' )
-if [ "$BUILD_TYPE" = "Native" ]; then
+if [ "${BUILD_TYPE}" = "Native" ]; then
     libvpx_configure_options+=('--cpu=native')
 fi
 
@@ -120,7 +120,7 @@ CXX="$CXX" CC="$CC" ./configure "${libvpx_configure_options[@]}"
 make
 
 cd ../..
-if [ "$BUILD_TYPE" = "native" ]; then
+if [ "${BUILD_TYPE}" = "Native" ]; then
     [ -d native ] || mkdir native
     cd native || exit 1
     CMAKE_FLAGS+=("-DCMAKE_BUILD_TYPE=${BUILD_TYPE}")
