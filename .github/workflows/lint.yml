@@ -27,13 +27,14 @@ jobs:
       - name: Install packages
         shell: bash
         run: |
-          sudo apt update
-          sudo apt install -yq cpplint cppcheck
-          sudo rm -rf /var/lib/apt/lists/*
           go get -u github.com/client9/misspell/cmd/misspell
+          sudo apt update
+          sudo apt install -yq cppcheck
+          sudo rm -rf /var/lib/apt/lists/*
+          pip3 install --user cpplint
         env:
             DEBIAN_FRONTEND: noninteractive
       - uses: actions/checkout@v2
       - name: Lint hisui
-        run: ./lint.bash
+        run: PATH=$PATH:~/.local/bin:~/go/bin ./lint.bash
         timeout-minutes: 120
