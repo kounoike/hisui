@@ -158,7 +158,7 @@ jobs:
 
   push-to-github-container-registory:
     name: Push to GitHut Container Registry
-    # if: contains(github.ref, 'tags/202')
+    if: contains(github.ref, 'tags/202')
     strategy:
       fail-fast: false
       matrix:
