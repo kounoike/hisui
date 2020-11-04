@@ -17,7 +17,7 @@ function show_help() {
 PACKAGE=""
 FLAG_CLEAN=0
 FLAG_PACKAGE=0
-BUILD_FLAGS=(-DWITHOUT_TEST=On)
+CMAKE_FLAGS=('-DWITHOUT_TEST=On')
 BUILD_TYPE='Release'
 CXX='clang++'
 CC='clang'
@@ -31,7 +31,7 @@ while [ $# -ne 0 ]; do
         FLAG_PACKAGE=1
         ;;
     "--use-ccache" )
-        BUILD_FLAGS+=(-DUSE_CCACHE=On)
+        CMAKE_FLAGS+=('-DUSE_CCACHE=On')
         CXX='ccache clang++'
         CC='ccache clang'
         ;;
@@ -50,7 +50,7 @@ while [ $# -ne 0 ]; do
         PACKAGE="$1"
         ;;
 esac
-shift 1
+    shift 1
 done
 
 _FOUND=0
@@ -66,11 +66,11 @@ if [ $_FOUND -eq 0 ]; then
   exit 1
 fi
 
-echo "--clean: " $FLAG_CLEAN
-echo "--package: " $FLAG_PACKAGE
-echo "BUILD_FLAGS" "${BUILD_FLAGS[$@]}"
-echo "BUILD_TYPE" "$BUILD_TYPE"
-echo "<package>: " "$PACKAGE"
+echo "--clean: ${FLAG_CLEAN}"
+echo "--package: ${FLAG_PACKAGE}"
+echo "CMAKE_FLAGS:" "${CMAKE_FLAGS[@]}"
+echo "BUILD_TYPE: ${BUILD_TYPE}"
+echo "<package>: ${PACKAGE}"
 
 set -ex
 
@@ -92,9 +92,9 @@ cd third_party || exit 1
 cd libvpx || exit 1
 git checkout v"${LIBVPX_VERSION}"
 
-libvpx_configure_options=(--disable-examples --disable-tools --disable-docs --disable-unit-tests )
+libvpx_configure_options=('--disable-examples' '--disable-tools' '--disable-docs' '--disable-unit-tests' )
 if [ "$BUILD_TYPE" = "Native" ]; then
-    libvpx_configure_options+=(--cpu=native)
+    libvpx_configure_options+=('--cpu=native')
 fi
 
 CXX="$CXX" CC="$CC" ./configure "${libvpx_configure_options[@]}"
@@ -105,12 +105,13 @@ if [ "$BUILD_TYPE" = "native" ]; then
     rm -rf native
     mkdir native
     cd native || exit 1
+    CMAKE_FLAGS+=("-DCMAKE_BUILD_TYPE=${BUILD_TYPE}")
 else
     rm -rf release
     mkdir release
     cd release || exit 1
 fi
-cmake  .. "${BUILD_FLAGS[$@]}" "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}"
+cmake  .. "${CMAKE_FLAGS[@]}"
 cmake --build .
 
 if [ $FLAG_PACKAGE -eq 1 ]; then 
