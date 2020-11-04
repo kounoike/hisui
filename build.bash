@@ -31,10 +31,10 @@ while [ $# -ne 0 ]; do
         FLAG_PACKAGE=1
         ;;
     "--without-test" )
-        CMAKE_FLAGS+=('-DWITHOUT_TEST=On')
+        CMAKE_FLAGS+=('-DWITHOUT_TEST=YES')
         ;;
     "--use-ccache" )
-        CMAKE_FLAGS+=('-DUSE_CCACHE=On')
+        CMAKE_FLAGS+=('-DUSE_CCACHE=YES')
         CXX='ccache clang++'
         CC='ccache clang'
         ;;
