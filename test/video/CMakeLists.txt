@@ -65,8 +65,9 @@ target_include_directories(video_test
 
 target_link_libraries(video_test
     PRIVATE
-    vpx
     fmt
+    pthread
+    ${CMAKE_SOURCE_DIR}/third_party/libvpx/libvpx.a
     )
 
 add_test(NAME video COMMAND video_test)
