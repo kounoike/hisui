@@ -125,7 +125,11 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: ${{ matrix.os }}-hisui-binary
-          path: release/hisui
+          path: release
+      - name: chmod 755 hisui
+        shell: bash
+        run: |
+          chmod 755 release/hisui
       - name: Get Versions
         shell: bash
         id: versions
@@ -169,10 +173,11 @@ jobs:
         shell: bash
         run: echo "UPLOAD_URL='${{ steps.create_release.outputs.upload_url }}'" > create-release.env
       - name: Upload create-release Environment
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: create-release.env
           path: create-release.env
+          if-no-files-found: error
 
   upload-assets:
     name: Upload Assets to Release
@@ -188,14 +193,16 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: ${{ matrix.os }}.env
+          path: ${{ matrix.os }}.env
       - uses: actions/download-artifact@v2
         with:
           name: create-release.env
+          path: create-release.env
       - name: Env to output
         shell: bash
         run: |
-          source ${{ matrix.os }}.env
-          source create-release.env
+          source ${{ matrix.os }}.env/${{ matrix.os }}.env
+          source create-release.env/create-release.env
           echo "::set-output name=package_name::$PACKAGE_NAME"
           echo "::set-output name=content_type::$CONTENT_TYPE"
           echo "::set-output name=upload_url::$UPLOAD_URL"
@@ -210,6 +217,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.env.outputs.upload_url }}
-          asset_path: ${{ steps.env.outputs.package_name }}
+          asset_path: ${{ steps.env.outputs.package_name }}/${{ steps.env.outputs.package_name }}
           asset_name: ${{ steps.env.outputs.package_name }}
           asset_content_type: ${{ steps.env.outputs.content_type }}
