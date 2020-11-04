@@ -52,18 +52,26 @@ BasicSequencer::BasicSequencer(const std::vector<hisui::Archive>& archives) {
       m_max_height = height;
     }
     const auto connection_id = archive.getConnectionID();
-    if (!m_sequence.contains(connection_id)) {
-      auto v = std::make_unique<std::vector<SourceAndInterval>>();
-      m_sequence[connection_id] = std::move(v);
+    auto it = std::find_if(
+        m_sequence.begin(), m_sequence.end(),
+        [connection_id](
+            const std::pair<std::string,
+                            std::shared_ptr<std::vector<SourceAndInterval>>>&
+                elem) { return elem.first == connection_id; });
+    std::shared_ptr<std::vector<SourceAndInterval>> v;
+    if (it == m_sequence.end()) {
+      v = std::make_shared<std::vector<SourceAndInterval>>();
+      m_sequence.emplace_back(connection_id, v);
+    } else {
+      v = (*it).second;
     }
-    m_sequence[connection_id]->push_back(
-        {std::unique_ptr<Source>(source),
-         hisui::util::Interval(
-             static_cast<std::uint64_t>(std::floor(
-                 archive.getStartTimeOffset() * hisui::Constants::NANO_SECOND)),
-             static_cast<std::uint64_t>(
-                 std::ceil(archive.getStopTimeOffset() *
-                           hisui::Constants::NANO_SECOND)))});
+    v->push_back({std::unique_ptr<Source>(source),
+                  hisui::util::Interval(static_cast<std::uint64_t>(std::floor(
+                                            archive.getStartTimeOffset() *
+                                            hisui::Constants::NANO_SECOND)),
+                                        static_cast<std::uint64_t>(std::ceil(
+                                            archive.getStopTimeOffset() *
+                                            hisui::Constants::NANO_SECOND)))});
   }
 
   m_size = std::size(m_sequence);
