@@ -249,20 +249,127 @@ set_target_properties(hisui PROPERTIES CXX_STANDARD 20 C_STANDARD 99)
 
 target_link_libraries(hisui
     PRIVATE
+    fmt
     opus
     pthread
-    ${CMAKE_SOURCE_DIR}/third_party/libvpx/libvpx.a
-    fmt
     spdlog
+    ${CMAKE_SOURCE_DIR}/third_party/libvpx/libvpx.a
     )
 
 if(NOT WITHOUT_TEST)
     enable_testing()
+
+    CPMAddPackage(
+        NAME boost_algorithm
+        GITHUB_REPOSITORY boostorg/algorithm
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_bind
+        GITHUB_REPOSITORY boostorg/bind
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_container_hash
+        GITHUB_REPOSITORY boostorg/container_hash
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_detail
+        GITHUB_REPOSITORY boostorg/detail
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_exception
+        GITHUB_REPOSITORY boostorg/exception
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_function
+        GITHUB_REPOSITORY boostorg/function
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_io
+        GITHUB_REPOSITORY boostorg/io
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_iterator
+        GITHUB_REPOSITORY boostorg/iterator
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_move
+        GITHUB_REPOSITORY boostorg/move
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_mpl
+        GITHUB_REPOSITORY boostorg/mpl
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_numeric_conversion
+        GITHUB_REPOSITORY boostorg/numeric_conversion
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_preprocessor
+        GITHUB_REPOSITORY boostorg/preprocessor
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_range
+        GITHUB_REPOSITORY boostorg/range
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
+    CPMAddPackage(
+        NAME boost_smart_ptr
+        GITHUB_REPOSITORY boostorg/smart_ptr
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
     CPMAddPackage(
         NAME boost_test
         GITHUB_REPOSITORY boostorg/test
         GIT_TAG boost-${BOOST_VERSION}
         DOWNLOAD_ONLY YES
         )
+
+    CPMAddPackage(
+        NAME boost_type_index
+        GITHUB_REPOSITORY boostorg/type_index
+        GIT_TAG boost-${BOOST_VERSION}
+        DOWNLOAD_ONLY YES
+        )
+
     add_subdirectory(test)
 endif()

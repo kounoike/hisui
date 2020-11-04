@@ -1,76 +1,169 @@
 name: build-workflow
 
 on:
-  push:
-    paths-ignore:
-    - 'doc/**'
-    - '**.md'
-    - 'THANKS'
-    - 'LICENSE'
-    - 'NOTICE'
   pull_request:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+    tags:
+      - 202*
+#   push:
+#     paths-ignore:
+#     - 'doc/**'
+#     - '**.md'
+#     - 'THANKS'
+#     - 'LICENSE'
+#     - 'NOTICE'
 
 jobs:
   build-linux:
     strategy:
       fail-fast: false
       matrix:
-        name:
+        os:
           - ubuntu-20.04_x86_64
-    name: Build hisui for ${{ matrix.name }}
-    runs-on: ubuntu-latest
+    name: Build hisui for ${{ matrix.os }}
+    runs-on: ubuntu-20.04
     steps:
       - name: Install packages
+        shell: bash
         run: |
           sudo apt update
-          sudo apt install -yq nasm
+          sudo apt install -yq nasm ccache
           sudo rm -rf /var/lib/apt/lists/*
         env:
             DEBIAN_FRONTEND: noninteractive
       - uses: actions/checkout@v2
-      - name: Get Versions
+      - name: Get versions
+        shell: bash
+        id: versions
         run: |
           source VERSION
           echo "::set-output name=libvpx_version::${LIBVPX_VERSION}"
-        id: versions
       - name: Cache libvpx ${{ steps.versions.outputs.libvpx_version }}
         id: cache-libvpx
         uses: actions/cache@v2
         with:
           path: third_party/libvpx
-          key: ${{ matrix.name }}-libvpx-${{ hashFiles(format('{0}{1}', github.workspace, '/third_party/libvpx/libvpx.a')) }}
-          restore-keys: ${{ matrix.name }}-libvpx-
+          key: ${{ matrix.os }}-third_party-libvpx-${{ hashFiles(format('{0}{1}', github.workspace, '/third_party/libvpx/libvpx.a')) }}
+          restore-keys: ${{ matrix.os }}-third_party-libvpx-
       - name: Clear libvpx
         if: steps.cache-libvpx.outputs.cache-hit != 'true'
         run: rm -rf third_party/libvpx
-      - run: ./build.bash
+      - name: Cache release directory
+        id: cache-release
+        uses: actions/cache@v2
+        with:
+          path: release/_deps
+          key: ${{ matrix.os }}-release-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/release/Makefile')) }}
+          restore-keys: ${{ matrix.os }}-release-deps-
+      - name: Clear release directory
+        if: steps.cache-release.outputs.cache-hit != 'true'
+        run: rm -rf release
+      - name: Prepare ccache timestamp
+        id: ccache_cache_timestamp
+        shell: cmake -P {0}
+        run: |
+          string(TIMESTAMP current_date "%Y-%m-%d-%H:%M:%S" UTC)
+          message("::set-output name=timestamp::${current_date}")
+      - name: Cache ~/.ccache directory
+        id: cache-ccache
+        uses: actions/cache@v2
+        with:
+          path: ~/.ccache
+          key: ${{ matrix.os }}-ccache-dir-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+          restore-keys: ${{ matrix.os }}-ccache-dir-
+      - name: Ccache stat
+        run: ccache -s
+      - name: Build hisui
+        run: ./build.bash ${{ matrix.os }} --package --use-ccache
         timeout-minutes: 120
+      - name: Test hisui
+        run: cmake --build release --target test -- ARGS='-V'
       - name: Output package name
         shell: bash
         run: |
           source VERSION
-          echo "PACKAGE_NAME=hisui-${HISUI_VERSION}_${{ matrix.name }}.tar.gz" >> ${{ matrix.name }}.env
-          echo "CONTENT_TYPE=application/gzip" >> ${{ matrix.name }}.env
-          echo "::set-output name=name::hisui-${HISUI_VERSION}_${{ matrix.name }}.tar.gz"
+          echo "PACKAGE_NAME=hisui-${HISUI_VERSION}_${{ matrix.os }}.tar.gz" >> ${{ matrix.os }}.env
+          echo "CONTENT_TYPE=application/gzip" >> ${{ matrix.os }}.env
+          echo "::set-output name=name::hisui-${HISUI_VERSION}_${{ matrix.os }}.tar.gz"
         id: package_name
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v1
+      - name: Upload hisui binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.os }}-hisui-binary
+          path: release/hisui
+          if-no-files-found: error
+      - name: Upload tarball
+        uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.package_name.outputs.name }}
-          path: _package/${{ steps.package_name.outputs.name }}
-      - name: Upload Environment
-        uses: actions/upload-artifact@v1
+          path: release/${{ steps.package_name.outputs.name }}
+          if-no-files-found: error
+      - name: Upload environment
+        uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.name }}.env
-          path: ${{ matrix.name }}.env
+          name: ${{ matrix.os }}.env
+          path: ${{ matrix.os }}.env
+          if-no-files-found: error
+
+  push-to-dockerhub:
+    name: Push to DockerHub
+    if: contains(github.ref, 'tags/202')
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-20.04_x86_64
+    needs:
+      - build-linux
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Mkdir release
+        shell: bash
+        run: |
+          mkdir release
+      - uses: actions/download-artifact@v2
+        with:
+          name: ${{ matrix.os }}-hisui-binary
+          path: release
+      - name: Chmod 755 hisui
+        shell: bash
+        run: |
+          chmod 755 release/hisui
+      - name: Get Versions
+        shell: bash
+        id: versions
+        run: |
+          source VERSION
+          echo "::set-output name=hisui_version::${HISUI_VERSION}"
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Push to DockerHub
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: shiguredo/hisui:${{ steps.versions.outputs.hisui_version }}
+          platforms: linux/amd64
+          file: docker/Dockerfile
+
   create-release:
     name: Create Release
     if: contains(github.ref, 'tags/202')
     needs:
       - build-linux
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
-      - name: Create Release
+      - name: Create release
         id: create_release
         uses: actions/create-release@v1.0.0
         env:
@@ -83,41 +176,46 @@ jobs:
       - name: Output upload url
         shell: bash
         run: echo "UPLOAD_URL='${{ steps.create_release.outputs.upload_url }}'" > create-release.env
-      - name: Upload create-release Environment
-        uses: actions/upload-artifact@v1
+      - name: Upload create-release environment
+        uses: actions/upload-artifact@v2
         with:
           name: create-release.env
           path: create-release.env
+          if-no-files-found: error
+
   upload-assets:
-    name: Upload Assets to Release
+    name: Upload assets to release
     needs:
       - create-release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: true
       matrix:
-        name:
+        os:
           - ubuntu-20.04_x86_64
     steps:
-      - uses: actions/download-artifact@v1
+      - uses: actions/download-artifact@v2
         with:
-          name: ${{ matrix.name }}.env
-      - uses: actions/download-artifact@v1
+          name: ${{ matrix.os }}.env
+          path: ${{ matrix.os }}.env
+      - uses: actions/download-artifact@v2
         with:
           name: create-release.env
+          path: create-release.env
       - name: Env to output
         shell: bash
         run: |
-          source ${{ matrix.name }}.env/${{ matrix.name }}.env
+          source ${{ matrix.os }}.env/${{ matrix.os }}.env
           source create-release.env/create-release.env
           echo "::set-output name=package_name::$PACKAGE_NAME"
           echo "::set-output name=content_type::$CONTENT_TYPE"
           echo "::set-output name=upload_url::$UPLOAD_URL"
         id: env
-      - uses: actions/download-artifact@v1
+      - uses: actions/download-artifact@v2
         with:
           name: ${{ steps.env.outputs.package_name }}
-      - name: Upload ${{ matrix.name }} Release Asset
+          path: ${{ steps.env.outputs.package_name }}
+      - name: Upload ${{ matrix.os }} release asset
         uses: actions/upload-release-asset@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
