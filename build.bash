@@ -17,8 +17,10 @@ function show_help() {
 PACKAGE=""
 FLAG_CLEAN=0
 FLAG_PACKAGE=0
-BUILD_FLAGS="-DWITHOUT_TEST=On"
-BUILD_TYPE="Release"
+BUILD_FLAGS='-DWITHOUT_TEST=On'
+BUILD_TYPE='Release'
+CXX='clang++'
+CC='clang'
 
 while [ $# -ne 0 ]; do
   case "$1" in
@@ -30,6 +32,8 @@ while [ $# -ne 0 ]; do
         ;;
     "--use-ccache" )
         BUILD_FLAGS="$BUILD_FLAGS -DUSE_CCACHE=On"
+        CXX='ccache clang++'
+        CC='ccache clang'
         ;;
     "--build-type-native" )
         BUILD_TYPE="Native"
@@ -93,7 +97,7 @@ if [ "$BUILD_TYPE" = "Native" ]; then
 libvpx_configure_options="$libvpx_configure_options --cpu=native"
 fi
 
-CXX=clang++ CC=clang ./configure "$libvpx_configure_options"
+CXX="$CXX" CC="$CC" ./configure "$libvpx_configure_options"
 make
 
 cd ../..
