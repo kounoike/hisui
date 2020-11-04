@@ -9,13 +9,12 @@ on:
       - develop
     tags:
       - 202*
-#   push:
-#     paths-ignore:
-#     - 'doc/**'
-#     - '**.md'
-#     - 'THANKS'
-#     - 'LICENSE'
-#     - 'NOTICE'
+    paths-ignore:
+    - 'doc/**'
+    - '**.md'
+    - 'THANKS'
+    - 'LICENSE'
+    - 'NOTICE'
 
 jobs:
   build-linux:
