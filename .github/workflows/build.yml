@@ -108,6 +108,7 @@ jobs:
 
   push-to-dockerhub:
     name: Push to Docker Hub
+    if: contains(github.ref, 'tags/202')
     strategy:
       fail-fast: false
       matrix:
@@ -154,7 +155,7 @@ jobs:
 
   create-release:
     name: Create Release
-    # if: contains(github.ref, 'tags/202')
+    if: contains(github.ref, 'tags/202')
     needs:
       - build-linux
     runs-on: ubuntu-20.04
