@@ -25,7 +25,7 @@ ParallelGridComposer::ParallelGridComposer(
       m_size(t_size),
       m_column(t_colomn) {
   m_column = std::min(m_column, m_size);
-  m_row = m_column == 1 ? m_size : ((m_size + 1) / m_column);
+  m_row = m_column == 1 ? m_size : ((m_size + m_column - 1) / m_column);
   m_width = static_cast<uint32_t>(m_single_width * m_column);
   m_height = static_cast<uint32_t>(m_single_height * m_row);
   for (std::size_t i = 0; i < m_size; ++i) {
