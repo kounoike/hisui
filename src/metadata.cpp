@@ -4,6 +4,7 @@
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 
+#include <algorithm>
 #include <filesystem>
 #include <map>
 #include <stdexcept>
