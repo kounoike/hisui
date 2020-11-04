@@ -188,11 +188,9 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: ${{ matrix.os }}.env
-          path: ${{ matrix.os }}.env
       - uses: actions/download-artifact@v2
         with:
           name: create-release.env
-          path: create-release.env
       - name: Env to output
         shell: bash
         run: |
