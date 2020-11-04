@@ -1,13 +1,12 @@
 #include "video/webm_source.hpp"
 
 #include <bits/exception.h>
+#include <fmt/core.h>
+#include <spdlog/fmt/fmt.h>
+#include <spdlog/spdlog.h>
 
 #include <cstdio>
 #include <stdexcept>
-
-#include "fmt/core.h"
-#include "spdlog/fmt/fmt.h"
-#include "spdlog/spdlog.h"
 
 #include "constants.hpp"
 #include "video/decoder.hpp"

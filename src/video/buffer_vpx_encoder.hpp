@@ -7,7 +7,7 @@
 #include <queue>
 #include <vector>
 
-#include "boost/rational.hpp"
+#include <boost/rational.hpp>
 
 #include "video/encoder.hpp"
 #include "webm/output/context.hpp"

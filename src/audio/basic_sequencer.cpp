@@ -1,13 +1,12 @@
 #include "audio/basic_sequencer.hpp"
 
 #include <bits/exception.h>
+#include <spdlog/fmt/fmt.h>
+#include <spdlog/spdlog.h>
 
 #include <cmath>
 #include <filesystem>
 #include <string>
-
-#include "spdlog/fmt/fmt.h"
-#include "spdlog/spdlog.h"
 
 #include "audio/webm_source.hpp"
 #include "constants.hpp"

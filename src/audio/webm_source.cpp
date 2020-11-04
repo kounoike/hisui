@@ -1,13 +1,12 @@
 #include "audio/webm_source.hpp"
 
 #include <bits/exception.h>
+#include <spdlog/fmt/fmt.h>
+#include <spdlog/spdlog.h>
 
 #include <cstdio>
 #include <iterator>
 #include <stdexcept>
-
-#include "spdlog/fmt/fmt.h"
-#include "spdlog/spdlog.h"
 
 #include "audio/decoder.hpp"
 #include "audio/opus_decoder.hpp"

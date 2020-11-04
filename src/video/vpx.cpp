@@ -1,6 +1,9 @@
 #include "video/vpx.hpp"
 
 #include <bits/exception.h>
+#include <fmt/core.h>
+#include <spdlog/fmt/fmt.h>
+#include <spdlog/spdlog.h>
 #include <vpx/vp8cx.h>
 #include <vpx/vp8dx.h>
 #include <vpx/vpx_decoder.h>
@@ -12,10 +15,7 @@
 #include <stdexcept>
 #include <vector>
 
-#include "boost/rational.hpp"
-#include "fmt/core.h"
-#include "spdlog/fmt/fmt.h"
-#include "spdlog/spdlog.h"
+#include <boost/rational.hpp>
 
 #include "config.hpp"
 #include "constants.hpp"

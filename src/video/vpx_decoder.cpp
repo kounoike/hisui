@@ -1,14 +1,13 @@
 #include "video/vpx_decoder.hpp"
 
 #include <bits/exception.h>
+#include <fmt/core.h>
+#include <spdlog/fmt/fmt.h>
+#include <spdlog/spdlog.h>
 #include <vpx/vpx_decoder.h>
 
 #include <limits>
 #include <stdexcept>
-
-#include "fmt/core.h"
-#include "spdlog/fmt/fmt.h"
-#include "spdlog/spdlog.h"
 
 #include "video/vpx.hpp"
 #include "video/yuv.hpp"

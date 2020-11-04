@@ -1,16 +1,15 @@
 #include "audio/buffer_opus_encoder.hpp"
 
 #include <bits/exception.h>
+#include <fmt/core.h>
 #include <opus_defines.h>
+#include <spdlog/fmt/fmt.h>
+#include <spdlog/spdlog.h>
 
 #include <algorithm>
 #include <cstddef>
 #include <iterator>
 #include <stdexcept>
-
-#include "fmt/core.h"
-#include "spdlog/fmt/fmt.h"
-#include "spdlog/spdlog.h"
 
 #include "audio/opus.hpp"
 

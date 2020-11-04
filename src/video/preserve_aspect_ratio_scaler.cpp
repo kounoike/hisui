@@ -1,13 +1,13 @@
 #include "video/preserve_aspect_ratio_scaler.hpp"
 
 #include <bits/exception.h>
+#include <spdlog/spdlog.h>
 
 #include <algorithm>
 #include <array>
 #include <stdexcept>
 
-#include "boost/rational.hpp"
-#include "spdlog/spdlog.h"
+#include <boost/rational.hpp>
 
 #include "video/yuv.hpp"
 

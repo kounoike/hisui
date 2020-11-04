@@ -1,6 +1,7 @@
 #include "muxer/async_webm_muxer.hpp"
 
 #include <cxxabi.h>
+#include <spdlog/spdlog.h>
 
 #include <chrono>
 #include <filesystem>
@@ -13,8 +14,6 @@
 #include <thread>
 #include <tuple>
 #include <vector>
-
-#include "spdlog/spdlog.h"
 
 #include "constants.hpp"
 #include "muxer/audio_producer.hpp"

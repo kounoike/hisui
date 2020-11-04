@@ -1,6 +1,8 @@
 #include "video/basic_sequencer.hpp"
 
 #include <bits/exception.h>
+#include <spdlog/fmt/fmt.h>
+#include <spdlog/spdlog.h>
 
 #include <cmath>
 #include <cstddef>
@@ -11,9 +13,6 @@
 #include <set>
 #include <string>
 #include <utility>
-
-#include "spdlog/fmt/fmt.h"
-#include "spdlog/spdlog.h"
 
 #include "constants.hpp"
 #include "metadata.hpp"

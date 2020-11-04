@@ -1,10 +1,9 @@
 #include "audio/opus.hpp"
 
+#include <fmt/core.h>
 #include <opus_defines.h>
 
 #include <stdexcept>
-
-#include "fmt/core.h"
 
 namespace hisui::audio {
 

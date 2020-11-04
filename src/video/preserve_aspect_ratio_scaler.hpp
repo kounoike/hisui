@@ -1,8 +1,8 @@
 #pragma once
 
-#include <cstdint>
+#include <libyuv/scale.h>
 
-#include "libyuv/scale.h"
+#include <cstdint>
 
 #include "video/scaler.hpp"
 

@@ -1,9 +1,9 @@
 #include "video/simple_scaler.hpp"
 
+#include <fmt/core.h>
+
 #include <array>
 #include <stdexcept>
-
-#include "fmt/core.h"
 
 #include "video/yuv.hpp"
 

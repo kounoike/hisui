@@ -6,8 +6,8 @@
 #include <optional>
 #include <vector>
 
-#include "boost/rational.hpp"
-#include "progresscpp/ProgressBar.hpp"
+#include <boost/rational.hpp>
+#include <progresscpp/ProgressBar.hpp>
 
 #include "constants.hpp"
 #include "util/interval.hpp"

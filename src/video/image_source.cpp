@@ -1,16 +1,15 @@
 #include "video/image_source.hpp"
 
 #include <bits/exception.h>
+#include <fmt/core.h>
+#include <libyuv/convert.h>
+#include <spdlog/fmt/fmt.h>
+#include <spdlog/spdlog.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 #include <array>
 #include <stdexcept>
-
-#include "fmt/core.h"
-#include "libyuv/convert.h"
-#include "spdlog/fmt/fmt.h"
-#include "spdlog/spdlog.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
 #include "video/yuv.hpp"
 
