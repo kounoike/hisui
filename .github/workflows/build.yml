@@ -2,6 +2,13 @@ name: build-workflow
 
 on:
   pull_request:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+    tags:
+      - 202*
 #   push:
 #     paths-ignore:
 #     - 'doc/**'
