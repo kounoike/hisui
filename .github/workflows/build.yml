@@ -45,6 +45,16 @@ jobs:
       - name: Clear libvpx
         if: steps.cache-libvpx.outputs.cache-hit != 'true'
         run: rm -rf third_party/libvpx
+      - name: Cache release directory
+        id: cache-release
+        uses: actions/cache@v2
+        with:
+          path: release
+          key: ${{ matrix.os }}-release-dir-${{ hashFiles(format('{0}{1}', github.workspace, '/release/CMakeCache.txt')) }}
+          restore-keys: ${{ matrix.os }}-release-dir-
+      - name: Clear release directory
+        if: steps.cache-release.outputs.cache-hit != 'true'
+        run: rm -rf release
       - name: Cache ccache
         id: cache-ccache
         uses: actions/cache@v2
