@@ -105,6 +105,7 @@ jobs:
           name: ${{ matrix.os }}.env
           path: ${{ matrix.os }}.env
           if-no-files-found: error
+
   push-to-dockerhub:
     name: Push to Docker Hub
     strategy:
@@ -146,6 +147,7 @@ jobs:
           tags: shiguredo/hisui:${{ steps.versions.outputs.hisui_version }}-test
           platforms: linux/amd64
           file: docker/Dockerfile
+
   create-release:
     name: Create Release
     if: contains(github.ref, 'tags/202')
@@ -171,6 +173,7 @@ jobs:
         with:
           name: create-release.env
           path: create-release.env
+
   upload-assets:
     name: Upload Assets to Release
     needs:
@@ -185,14 +188,16 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: ${{ matrix.os }}.env
+          path: ${{ matrix.os }}.env
       - uses: actions/download-artifact@v2
         with:
           name: create-release.env
+          path: create-release.env
       - name: Env to output
         shell: bash
         run: |
-          source ${{ matrix.os }}.env/${{ matrix.os }}.env
-          source create-release.env/create-release.env
+          source ${{ matrix.os }}.env
+          source create-release.env
           echo "::set-output name=package_name::$PACKAGE_NAME"
           echo "::set-output name=content_type::$CONTENT_TYPE"
           echo "::set-output name=upload_url::$UPLOAD_URL"
@@ -200,12 +205,13 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: ${{ steps.env.outputs.package_name }}
+          path: ${{ steps.env.outputs.package_name }}
       - name: Upload ${{ matrix.os }} Release Asset
         uses: actions/upload-release-asset@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.env.outputs.upload_url }}
-          asset_path: ${{ steps.env.outputs.package_name }}/${{ steps.env.outputs.package_name }}
+          asset_path: ${{ steps.env.outputs.package_name }}
           asset_name: ${{ steps.env.outputs.package_name }}
           asset_content_type: ${{ steps.env.outputs.content_type }}
