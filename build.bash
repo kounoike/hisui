@@ -2,14 +2,12 @@
 
 PROGRAM="$0"
 
-_PACKAGES=" \
-  ubuntu-20.04_x86_64 \
-"
+_PACKAGES=("ubuntu-20.04_x86_64")
 
 function show_help() {
-  echo "$PROGRAM [--clean] [--use-ccache] [--without-test] [--build-type-native] [--package] <package>"
+  echo "$PROGRAM [--clean] [--use-ccache] [--with-test] [--build-type-native] [--package] <package>"
   echo "<package>:"
-  for package in $_PACKAGES; do
+  for package in "${_PACKAGES[@]}"; do
     echo "  - $package"
   done
 }
@@ -18,7 +16,7 @@ PACKAGE=""
 
 FLAG_CLEAN=0
 FLAG_PACKAGE=0
-FLAG_WITHOUT_TEST=0
+FLAG_WITH_TEST=0
 FLAG_USE_CCACHE=0
 
 CMAKE_FLAGS=()
@@ -34,8 +32,8 @@ while [ $# -ne 0 ]; do
     "--package" )
         FLAG_PACKAGE=1
         ;;
-    "--without-test" )
-        FLAG_WITHOUT_TEST=1
+    "--with-test" )
+        FLAG_WITH_TEST=1
         ;;
     "--use-ccache" )
         FLAG_USE_CCACHE=1
@@ -59,7 +57,7 @@ esac
 done
 
 _FOUND=0
-for package in $_PACKAGES; do
+for package in "${_PACKAGES[@]}"; do
   if [ "$PACKAGE" = "$package" ]; then
     _FOUND=1
     break
@@ -71,10 +69,10 @@ if [ $_FOUND -eq 0 ]; then
   exit 1
 fi
 
-if [ $FLAG_WITHOUT_TEST -eq 1 ]; then
-    CMAKE_FLAGS+=('-DWITHOUT_TEST=YES')
+if [ $FLAG_WITH_TEST -eq 1 ]; then
+    CMAKE_FLAGS+=('-DWITH_TEST=YES')
 else
-    CMAKE_FLAGS+=('-DWITHOUT_TEST=NO')
+    CMAKE_FLAGS+=('-DWITH_TEST=NO')
 fi
 
 if [ $FLAG_USE_CCACHE -eq 1 ]; then
