@@ -1,12 +1,12 @@
 #pragma once
 
+#include <libyuv/scale.h>
+
 #include <array>
 #include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <vector>
-
-#include "libyuv/scale.h"
 
 #include "config.hpp"
 #include "video/composer.hpp"

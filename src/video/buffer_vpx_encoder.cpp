@@ -1,15 +1,15 @@
 #include "video/buffer_vpx_encoder.hpp"
 
 #include <bits/exception.h>
+#include <fmt/core.h>
+#include <spdlog/fmt/fmt.h>
+#include <spdlog/spdlog.h>
 #include <vpx/vpx_encoder.h>
 
 #include <algorithm>
 #include <stdexcept>
 
-#include "boost/rational.hpp"
-#include "fmt/core.h"
-#include "spdlog/fmt/fmt.h"
-#include "spdlog/spdlog.h"
+#include <boost/rational.hpp>
 
 #include "constants.hpp"
 #include "video/vpx.hpp"

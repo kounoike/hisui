@@ -9,13 +9,12 @@ on:
       - develop
     tags:
       - 202*
-#   push:
-#     paths-ignore:
-#     - 'doc/**'
-#     - '**.md'
-#     - 'THANKS'
-#     - 'LICENSE'
-#     - 'NOTICE'
+    paths-ignore:
+    - 'doc/**'
+    - '**.md'
+    - 'THANKS'
+    - 'LICENSE'
+    - 'NOTICE'
 
 jobs:
   build-linux:
@@ -31,7 +30,7 @@ jobs:
         shell: bash
         run: |
           sudo apt update
-          sudo apt install -yq nasm ccache
+          sudo apt install -yq yasm ccache
           sudo rm -rf /var/lib/apt/lists/*
         env:
             DEBIAN_FRONTEND: noninteractive

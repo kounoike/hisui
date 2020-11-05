@@ -1,12 +1,13 @@
 #pragma once
 
+#include <libyuv/scale.h>
+#include <spdlog/common.h>
+
 #include <cstddef>
 #include <cstdint>
 #include <string>
 
-#include "boost/rational.hpp"
-#include "libyuv/scale.h"
-#include "spdlog/common.h"
+#include <boost/rational.hpp>
 
 #include "constants.hpp"
 

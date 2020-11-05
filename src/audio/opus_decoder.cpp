@@ -1,11 +1,10 @@
 #include "audio/opus_decoder.hpp"
 
+#include <fmt/core.h>
 #include <opus_defines.h>
 #include <opus_types.h>
 
 #include <stdexcept>
-
-#include "fmt/core.h"
 
 #include "audio/opus.hpp"
 #include "constants.hpp"

@@ -1,14 +1,14 @@
 #include <bits/exception.h>
+#include <spdlog/fmt/fmt.h>
+#include <spdlog/spdlog.h>
 
 #include <fstream>
 #include <iterator>
 
-#include "CLI/App.hpp"
-#include "CLI/Config.hpp"
-#include "CLI/Formatter.hpp"
-#include "nlohmann/json.hpp"
-#include "spdlog/fmt/fmt.h"
-#include "spdlog/spdlog.h"
+#include <CLI/App.hpp>
+#include <CLI/Config.hpp>
+#include <CLI/Formatter.hpp>
+#include <nlohmann/json.hpp>
 
 #include "config.hpp"
 #include "metadata.hpp"

@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "boost/rational.hpp"
+#include <boost/rational.hpp>
 
 namespace hisui {
 

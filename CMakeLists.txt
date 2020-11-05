@@ -249,10 +249,8 @@ set_target_properties(hisui PROPERTIES CXX_STANDARD 20 C_STANDARD 99)
 
 target_link_libraries(hisui
     PRIVATE
-    fmt
     opus
     pthread
-    spdlog
     ${CMAKE_SOURCE_DIR}/third_party/libvpx/libvpx.a
     )
 
