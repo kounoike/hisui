@@ -17,7 +17,6 @@ set_cache_string_from_env(CLI11_VERSION 1.9.1 "CLI11 のバージョン")
 set_cache_string_from_env(FMT_VERSION 7.0.3 "fmt のバージョン")
 set_cache_string_from_env(NLOHMANN_JSON_VERSION 3.9.1 "nlohmann::json のバージョン")
 set_cache_string_from_env(OPUS_VERSION 1.3.1 "Opus のバージョン")
-set_cache_string_from_env(PROGRESSCPP_VERSION 0ce574a713a71b4adbf992bbbb1ad927ceb106a7 "progress-cpp のバージョン")
 set_cache_string_from_env(SPDLOG_VERSION 1.8.1 "spdlog のバージョン")
 set_cache_string_from_env(STB_VERSION b42009b3b9d4ca35bc703f5310eedc74f584be58 "stb のバージョン")
 
@@ -137,13 +136,6 @@ CPMAddPackage(
     )
 
 CPMAddPackage(
-    NAME progresscpp
-    GITHUB_REPOSITORY haruyama/progress-cpp
-    GIT_TAG ${PROGRESSCPP_VERSION}
-    DOWNLOAD_ONLY YES
-    )
-
-CPMAddPackage(
     NAME spdlog
     GITHUB_REPOSITORY gabime/spdlog
     VERSION ${SPDLOG_VERSION}
@@ -236,13 +228,12 @@ target_include_directories(hisui
     ${fmt_SOURCE_DIR}/include
     ${nlohmann_json_SOURCE_DIR}/include
     ${opus_SOURCE_DIR}/include
-    ${progresscpp_SOURCE_DIR}/include
     ${spdlog_SOURCE_DIR}/include
     ${stb_SOURCE_DIR}
+    third_party/progress-cpp/include
     third_party/libvpx/third_party/libyuv/include
     third_party/libvpx/third_party/libwebm
     third_party/libvpx
-    src/third_party/progress-cpp/include
     )
 
 set_target_properties(hisui PROPERTIES CXX_STANDARD 20 C_STANDARD 99)
