@@ -16,6 +16,9 @@ In other languages, we won't be able to deal with them. Thank you for your under
 
 Recoridng Composition Tool Hisui は WebRTC SFU Sora 向けの録画合成ツールです。
 
+## 動作環境
+
+- Ubuntu 20.04 x86_64
 
 ## 使ってみる
 
@@ -45,4 +48,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
-
