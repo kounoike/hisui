@@ -16,6 +16,15 @@ In other languages, we won't be able to deal with them. Thank you for your under
 
 Recoridng Composition Tool Hisui は WebRTC SFU Sora 向けの録画合成ツールです。
 
+
+## 使ってみる
+
+Hisui を使ってみたい人は [USE.md](doc/USE.md) をお読みください。
+
+## ビルドする
+
+- Linux 版 Hisui のビルドしたい人は [BUILD_LINUX.md](doc/BUILD_LINUX.md) をお読みください
+
 ## ライセンス
 
 Apache License 2.0
