@@ -82,8 +82,13 @@ void VPXDecoder::updateVPXImageByTimestamp(const std::uint64_t timestamp) {
           &m_codec, m_webm->getBuffer(),
           static_cast<unsigned int>(m_webm->getBufferSize()), nullptr, 0);
       if (ret != VPX_CODEC_OK) {
+        spdlog::warn("vpx_codec_decode() failed: error_code={}", ret);
+        const char* detail = ::vpx_codec_error_detail(&m_codec);
+        if (detail != nullptr) {
+          spdlog::warn("vpx_codec_decode() error detail: {}", detail);
+        }
         throw std::runtime_error(
-            fmt::format("vpx_codec_decode failed: error_code={}", ret));
+            fmt::format("vpx_codec_decode() failed: error_code={}", ret));
       }
       m_next_vpx_image = ::vpx_codec_get_frame(&m_codec, &codec_iter);
       if (!m_next_vpx_image) {
