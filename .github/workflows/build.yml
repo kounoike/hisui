@@ -107,6 +107,14 @@ jobs:
           name: ${{ matrix.os }}.env
           path: ${{ matrix.os }}.env
           if-no-files-found: error
+      - name: Slack Notification
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2.1.0
+        env:
+          SLACK_CHANNEL: hisui
+          SLACK_COLOR: danger
+          SLACK_TITLE: Failure build-linux: ${{ matrix.os }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
   push-to-dockerhub:
     name: Push to DockerHub
@@ -154,6 +162,14 @@ jobs:
           tags: shiguredo/hisui:${{ steps.versions.outputs.hisui_version }}
           platforms: linux/amd64
           file: docker/Dockerfile
+      - name: Slack Notification
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2.1.0
+        env:
+          SLACK_CHANNEL: hisui
+          SLACK_COLOR: danger
+          SLACK_TITLE: Failure push-to-dockerhub: ${{ matrix.os }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
   push-to-github-container-registory:
     name: Push to GitHut Container Registry
@@ -202,6 +218,14 @@ jobs:
           tags: ghcr.io/shiguredo/hisui:${{ steps.versions.outputs.hisui_version }}
           platforms: linux/amd64
           file: docker/Dockerfile
+      - name: Slack Notification
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2.1.0
+        env:
+          SLACK_CHANNEL: hisui
+          SLACK_COLOR: danger
+          SLACK_TITLE: Failure push-to-github-container-registory: ${{ matrix.os }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
   create-release:
     name: Create Release
@@ -229,6 +253,14 @@ jobs:
           name: create-release.env
           path: create-release.env
           if-no-files-found: error
+      - name: Slack Notification
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2.1.0
+        env:
+          SLACK_CHANNEL: hisui
+          SLACK_COLOR: danger
+          SLACK_TITLE: Failure create-release
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
   upload-assets:
     name: Upload assets to release
@@ -271,3 +303,11 @@ jobs:
           asset_path: ${{ steps.env.outputs.package_name }}/${{ steps.env.outputs.package_name }}
           asset_name: ${{ steps.env.outputs.package_name }}
           asset_content_type: ${{ steps.env.outputs.content_type }}
+      - name: Slack Notification
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2.1.0
+        env:
+          SLACK_CHANNEL: hisui
+          SLACK_COLOR: danger
+          SLACK_TITLE: Failure upload-assets
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
