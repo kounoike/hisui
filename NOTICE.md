@@ -164,7 +164,6 @@ https://datatracker.ietf.org/ipr/1526/
 (The MIT License)
 
 Copyright (c) 2016 Prakhar Srivastav <prakhar@prakhar.me>
-Copyright (c) 2020 HARUYAMA Seigo <haruyama@unixuser.org>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
