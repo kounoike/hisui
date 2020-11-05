@@ -254,7 +254,7 @@ target_link_libraries(hisui
     ${CMAKE_SOURCE_DIR}/third_party/libvpx/libvpx.a
     )
 
-if(NOT WITHOUT_TEST)
+if(WITH_TEST)
     enable_testing()
 
     CPMAddPackage(
