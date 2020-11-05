@@ -44,5 +44,5 @@ jobs:
         env:
           SLACK_CHANNEL: hisui
           SLACK_COLOR: danger
-          SLACK_TITLE: Failure test
+          SLACK_TITLE: Failure lint
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
