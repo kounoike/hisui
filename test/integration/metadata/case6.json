@@ -1,0 +1,28 @@
+{
+  "archives": [
+    {
+      "connection_id": "1",
+      "file_path": "../input/Big_Buck_Bunny_360_10s_1MB.webm",
+      "start_time_offset": 0,
+      "stop_time_offset": 4
+    },
+    {
+      "connection_id": "2",
+      "file_path": "../input/caminandes3.webm",
+      "start_time_offset": 3,
+      "stop_time_offset": 4
+    },
+    {
+      "connection_id": "3",
+      "file_path": "../input/Big_Buck_Bunny_360_10s_1MB.webm",
+      "start_time_offset": 1,
+      "stop_time_offset": 2
+    },
+    {
+      "connection_id": "3",
+      "file_path": "../input/caminandes3.webm",
+      "start_time_offset": 1,
+      "stop_time_offset": 3
+    }
+  ]
+}

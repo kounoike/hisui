@@ -1,0 +1,61 @@
+diff -u original/progress-cpp/include/progresscpp/ProgressBar.hpp hisui/progress-cpp/include/progresscpp/ProgressBar.hpp
+--- original/progress-cpp/include/progresscpp/ProgressBar.hpp	2020-10-15 17:03:07.642820908 +0900
++++ hisui/progress-cpp/include/progresscpp/ProgressBar.hpp	2020-11-05 17:02:22.325131420 +0900
+@@ -1,43 +1,46 @@
+ #pragma once
+ 
+ #include <chrono>
++#include <cstdint>
+ #include <iostream>
+ 
+ namespace progresscpp {
+ class ProgressBar {
+ private:
+-    unsigned int ticks = 0;
++    std::uint64_t ticks = 0;
+ 
+-    const unsigned int total_ticks;
+-    const unsigned int bar_width;
++    const std::uint64_t total_ticks;
++    const std::uint64_t bar_width;
+     const char complete_char = '=';
+     const char incomplete_char = ' ';
+     const std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+ 
+ public:
+-    ProgressBar(unsigned int total, unsigned int width, char complete, char incomplete) :
++    ProgressBar(std::uint64_t total, std::uint64_t width, char complete, char incomplete) :
+             total_ticks{total}, bar_width{width}, complete_char{complete}, incomplete_char{incomplete} {}
+ 
+-    ProgressBar(unsigned int total, unsigned int width) : total_ticks{total}, bar_width{width} {}
++    ProgressBar(std::uint64_t total, std::uint64_t width) : total_ticks{total}, bar_width{width} {}
+ 
+-    unsigned int operator++() { return ++ticks; }
++    std::uint64_t operator++() { return ++ticks; }
++
++    void setTicks(const std::uint64_t new_ticks) { ticks = new_ticks; }
+ 
+     void display() const {
+-        float progress = (float) ticks / total_ticks;
+-        int pos = (int) (bar_width * progress);
++        float progress = static_cast<float>(ticks) / static_cast<float>(total_ticks);
++        std::uint64_t pos = static_cast<std::uint64_t>(static_cast<float>(bar_width) * progress);
+ 
+         std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+         auto time_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start_time).count();
+ 
+         std::cout << "[";
+ 
+-        for (int i = 0; i < bar_width; ++i) {
++        for (std::uint64_t i = 0; i < bar_width; ++i) {
+             if (i < pos) std::cout << complete_char;
+             else if (i == pos) std::cout << ">";
+             else std::cout << incomplete_char;
+         }
+-        std::cout << "] " << int(progress * 100.0) << "% "
+-                  << float(time_elapsed) / 1000.0 << "s\r";
++        std::cout << "] " << int(progress * 100.0f) << "% "
++                  << float(time_elapsed) / 1000.0f << "s\r";
+         std::cout.flush();
+     }
+ 
