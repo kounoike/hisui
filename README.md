@@ -26,7 +26,7 @@ Hisui を使ってみたい人は [USE.md](doc/USE.md) をお読みください�
 
 ## ビルドする
 
-- Linux 版 Hisui のビルドしたい人は [BUILD_LINUX.md](doc/BUILD_LINUX.md) をお読みください
+Linux 版 Hisui のビルドしたい人は [BUILD_LINUX.md](doc/BUILD_LINUX.md) をお読みください
 
 ## ライセンス
 
