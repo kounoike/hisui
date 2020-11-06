@@ -12,9 +12,9 @@ In other languages, we won't be able to deal with them. Thank you for your under
 
 利用前に https://github.com/shiguredo/oss をお読みください。
 
-## Recoridng Composition Tool Hisui について
+## Recording Composition Tool Hisui について
 
-Recoridng Composition Tool Hisui は WebRTC SFU Sora 向けの録画合成ツールです。
+Recording Composition Tool Hisui は WebRTC SFU Sora 向けの録画合成ツールです。
 
 ## 動作環境
 
