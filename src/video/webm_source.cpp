@@ -73,8 +73,8 @@ WebMSource::WebMSource(const std::string& file_path) {
 WebMSource::~WebMSource() {
   if (m_webm) {
     delete m_webm;
+    std::fclose(m_file);
   }
-  std::fclose(m_file);
   if (m_decoder) {
     delete m_decoder;
   }
