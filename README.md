@@ -1,4 +1,4 @@
-# Recoridng Composition Tool Hisui
+# Recording Composition Tool Hisui
 
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/shiguredo/hisui.svg)](https://github.com/shiguredo/hisui)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -12,9 +12,9 @@ In other languages, we won't be able to deal with them. Thank you for your under
 
 利用前に https://github.com/shiguredo/oss をお読みください。
 
-## Recoridng Composition Tool Hisui について
+## Recording Composition Tool Hisui について
 
-Recoridng Composition Tool Hisui は WebRTC SFU Sora 向けの録画合成ツールです。
+Recording Composition Tool Hisui は WebRTC SFU Sora 向けの録画合成ツールです。
 
 ## 動作環境
 
