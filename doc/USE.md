@@ -8,7 +8,7 @@ Hisui は docker image を用意しています。これを使うことで x86_6
 - https://github.com/orgs/shiguredo/packages/container/package/hisui
 
 ```
-docker run -v /home/shiguredo/sora-2020.3/archive:/hisui ghcr.io/shiguredo/hisui:2020.1 -f /hisui/CSX77QY9F57V5BT72S62C28VS4.json
+docker run -v /home/shiguredo/sora-2020.3/archive:/hisui ghcr.io/shiguredo/hisui:2020.1.1 -f /hisui/CSX77QY9F57V5BT72S62C28VS4.json
 ```
 
 - -v で Sora の録画データがある archive フォルダを指定して下さい
@@ -19,7 +19,7 @@ docker run -v /home/shiguredo/sora-2020.3/archive:/hisui ghcr.io/shiguredo/hisui
 ## docker 経由で help を見る
 
 ```
-$ docker run ghcr.io/shiguredo/hisui:2020.1 hisui --help
+$ docker run ghcr.io/shiguredo/hisui:2020.1.1 hisui --help
 hisui
 Usage: /usr/local/bin/hisui [OPTIONS]
 
