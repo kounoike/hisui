@@ -31,6 +31,12 @@ int main(int argc, char** argv) {
 
   CLI11_PARSE(app, argc, argv);
 
+  if (config.out_container == hisui::config::OutContainer::WebM &&
+      config.out_audio_codec == hisui::config::OutAudioCodec::FDK_AAC) {
+    spdlog::error("hisui does not support AAC output in WebM");
+    return 1;
+  }
+
   if (config.verbose) {
     spdlog::set_level(spdlog::level::debug);
   } else {
@@ -64,7 +70,7 @@ int main(int argc, char** argv) {
     }
   }
 
-  hisui::muxer::Muxer* muxer;
+  hisui::muxer::Muxer* muxer = nullptr;
   if (config.out_container == hisui::config::OutContainer::WebM) {
     muxer = new hisui::muxer::AsyncWebMMuxer(config, metadata);
   } else if (config.out_container == hisui::config::OutContainer::MP4) {
@@ -78,7 +84,14 @@ int main(int argc, char** argv) {
   } else {
     throw std::runtime_error("config.out_container is invalid");
   }
-  muxer->run();
+  try {
+    muxer->setUp();
+    muxer->run();
+  } catch (const std::exception& e) {
+    spdlog::error("muxing failed: {}", e.what());
+    muxer->cleanUp();
+    return 1;
+  }
   delete muxer;
 
   return 0;

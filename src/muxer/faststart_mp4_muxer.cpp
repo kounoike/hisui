@@ -32,20 +32,23 @@ class Track;
 
 namespace hisui::muxer {
 
-FaststartMP4Muxer::FaststartMP4Muxer(const hisui::Config& config,
-                                     const hisui::Metadata& metadata) {
+FaststartMP4Muxer::FaststartMP4Muxer(const hisui::Config& t_config,
+                                     const hisui::Metadata& t_metadata)
+    : m_config(t_config), m_metadata(t_metadata) {}
+
+void FaststartMP4Muxer::setUp() {
   std::filesystem::path directory_for_faststart_intermediate_file;
-  if (config.directory_for_faststart_intermediate_file != "") {
+  if (m_config.directory_for_faststart_intermediate_file != "") {
     directory_for_faststart_intermediate_file =
-        config.directory_for_faststart_intermediate_file;
+        m_config.directory_for_faststart_intermediate_file;
     if (!std::filesystem::is_directory(
             directory_for_faststart_intermediate_file)) {
       throw std::invalid_argument(
           fmt::format("{} is not directory",
-                      config.directory_for_faststart_intermediate_file));
+                      m_config.directory_for_faststart_intermediate_file));
     }
   } else {
-    std::filesystem::path metadata_path(config.in_metadata_filename);
+    std::filesystem::path metadata_path(m_config.in_metadata_filename);
     if (metadata_path.is_relative()) {
       metadata_path = std::filesystem::absolute(metadata_path);
     }
@@ -54,15 +57,14 @@ FaststartMP4Muxer::FaststartMP4Muxer(const hisui::Config& config,
   spdlog::debug("directory_for_faststart_intermediate_file: {}",
                 directory_for_faststart_intermediate_file.string());
 
-  float duration = static_cast<float>(metadata.getMaxStopTimeOffset());
+  float duration = static_cast<float>(m_metadata.getMaxStopTimeOffset());
   m_faststart_writer = new shiguredo::mp4::writer::FaststartWriter(
       m_ofs, {.mvhd_timescale = 1000,
               .duration = duration,
               .mdat_path_templete =
                   directory_for_faststart_intermediate_file.string() +
                   std::filesystem::path::preferred_separator + "mdatXXXXXX"});
-  initialize(config, metadata, m_faststart_writer, duration);
-  m_faststart_writer->writeFtypBox();
+  initialize(m_config, m_metadata, m_faststart_writer, duration);
 }
 
 FaststartMP4Muxer::~FaststartMP4Muxer() {
@@ -80,6 +82,7 @@ void FaststartMP4Muxer::run() {
 
   bool video_finished = false;
 
+  m_faststart_writer->writeFtypBox();
   while (!m_audio_producer->isFinished()) {
     auto audio_front = m_audio_producer->bufferFront();
     if (!audio_front.has_value()) {
@@ -145,6 +148,12 @@ void FaststartMP4Muxer::run() {
   m_faststart_writer->writeMdatHeader();
   m_faststart_writer->copyMdatData();
   spdlog::debug("end");
+}
+
+void FaststartMP4Muxer::cleanUp() {
+  if (std::filesystem::exists(m_faststart_writer->getIntermediateFilePath())) {
+    m_faststart_writer->deleteIntermediateFile();
+  }
 }
 
 }  // namespace hisui::muxer

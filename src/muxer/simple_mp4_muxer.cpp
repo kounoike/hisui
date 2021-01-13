@@ -26,13 +26,15 @@ class Track;
 
 namespace hisui::muxer {
 
-SimpleMP4Muxer::SimpleMP4Muxer(const hisui::Config& config,
-                               const hisui::Metadata& metadata) {
-  float duration = static_cast<float>(metadata.getMaxStopTimeOffset());
+SimpleMP4Muxer::SimpleMP4Muxer(const hisui::Config& t_config,
+                               const hisui::Metadata& t_metadata)
+    : m_config(t_config), m_metadata(t_metadata) {}
+
+void SimpleMP4Muxer::setUp() {
+  float duration = static_cast<float>(m_metadata.getMaxStopTimeOffset());
   m_simple_writer = new shiguredo::mp4::writer::SimpleWriter(
       m_ofs, {.mvhd_timescale = 1000, .duration = duration});
-  initialize(config, metadata, m_simple_writer, duration);
-  m_simple_writer->writeFtypBox();
+  initialize(m_config, m_metadata, m_simple_writer, duration);
 }
 
 SimpleMP4Muxer::~SimpleMP4Muxer() {
@@ -50,6 +52,7 @@ void SimpleMP4Muxer::run() {
 
   bool video_finished = false;
 
+  m_simple_writer->writeFtypBox();
   while (!m_audio_producer->isFinished()) {
     auto audio_front = m_audio_producer->bufferFront();
     if (!audio_front.has_value()) {
@@ -116,5 +119,7 @@ void SimpleMP4Muxer::run() {
   m_simple_writer->writeMoovBox();
   spdlog::debug("end");
 }
+
+void SimpleMP4Muxer::cleanUp() {}
 
 }  // namespace hisui::muxer

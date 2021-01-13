@@ -1,13 +1,8 @@
 #pragma once
 
+#include "config.hpp"
+#include "metadata.hpp"
 #include "muxer/mp4_muxer.hpp"
-
-namespace hisui {
-
-class Config;
-class Metadata;
-
-}  // namespace hisui
 
 namespace shiguredo::mp4::writer {
 
@@ -21,10 +16,16 @@ class SimpleMP4Muxer : public MP4Muxer {
  public:
   SimpleMP4Muxer(const hisui::Config&, const hisui::Metadata&);
   ~SimpleMP4Muxer();
-  void run();
+
+  void setUp() override;
+  void run() override;
+  void cleanUp() override;
 
  private:
   shiguredo::mp4::writer::SimpleWriter* m_simple_writer;
+
+  hisui::Config m_config;
+  hisui::Metadata m_metadata;
 };
 
 }  // namespace hisui::muxer
