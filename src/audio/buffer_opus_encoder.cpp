@@ -2,7 +2,9 @@
 
 #include <bits/exception.h>
 #include <fmt/core.h>
+#include <opus.h>
 #include <opus_defines.h>
+#include <opus_types.h>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 
@@ -12,14 +14,18 @@
 #include <stdexcept>
 
 #include "audio/opus.hpp"
+#include "frame.hpp"
 
 namespace hisui::audio {
 
-BufferOpusEncoder::BufferOpusEncoder(
-    std::queue<hisui::webm::output::FrameTuple>* t_buffer)
-    : m_buffer(t_buffer) {
-  m_encoder = create_opus_encoder(hisui::Constants::PCM_SAMPLE_RATE, 2,
-                                  hisui::Constants::OPUS_BITRATE);
+BufferOpusEncoder::BufferOpusEncoder(std::queue<hisui::Frame>* t_buffer,
+                                     const BufferOpusEncoderParameters& params)
+    : m_buffer(t_buffer),
+      m_timescale(params.timescale),
+      m_timestamp_step(
+          static_cast<std::uint64_t>(hisui::Constants::OPUS_ENCODE_FRAME_SIZE) *
+          m_timescale / hisui::Constants::PCM_SAMPLE_RATE) {
+  m_encoder = create_opus_encoder({.bit_rate = params.bit_rate});
 
   const int ret = ::opus_encoder_ctl(m_encoder, OPUS_GET_LOOKAHEAD(&m_skip));
   if (ret < 0) {
@@ -73,7 +79,11 @@ void BufferOpusEncoder::encodeAndWrite() {
   std::uint8_t* data =
       new std::uint8_t[static_cast<std::size_t>(number_of_bytes)];
   std::copy(m_opus_buffer, m_opus_buffer + number_of_bytes, data);
-  m_buffer->emplace(m_timestamp, data, number_of_bytes, true);
+  m_buffer->push(
+      hisui::Frame{.timestamp = m_timestamp,
+                   .data = data,
+                   .data_size = static_cast<std::size_t>(number_of_bytes),
+                   .is_key = true});
 
   m_pcm_buffer.clear();
 }
