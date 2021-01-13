@@ -2,16 +2,18 @@
 
 #include <bits/exception.h>
 #include <fmt/core.h>
-#include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 #include <vpx/vp8cx.h>
 #include <vpx/vp8dx.h>
+#include <vpx/vpx_codec.h>
 #include <vpx/vpx_decoder.h>
 #include <vpx/vpx_encoder.h>
+#include <vpx/vpx_image.h>
 
 #include <algorithm>
 #include <array>
 #include <cstddef>
+#include <iterator>
 #include <stdexcept>
 #include <vector>
 
@@ -128,7 +130,7 @@ void update_vpx_image_by_yuv_data(::vpx_image_t* img,
     const std::uint32_t h = get_vpx_image_plane_height(img, plane);
 
     for (std::uint32_t y = 0; y < h; ++y) {
-      std::copy(v.begin() + base + y * w, v.begin() + base + y * w + w,
+      std::copy(std::begin(v) + base + y * w, std::begin(v) + base + y * w + w,
                 buf + y * stride);
     }
     base += h * w;

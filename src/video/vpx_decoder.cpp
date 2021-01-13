@@ -4,7 +4,9 @@
 #include <fmt/core.h>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
+#include <vpx/vpx_codec.h>
 #include <vpx/vpx_decoder.h>
+#include <vpx/vpx_image.h>
 
 #include <limits>
 #include <stdexcept>

@@ -172,7 +172,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
   push-to-github-container-registory:
-    name: Push to GitHut Container Registry
+    name: Push to GitHub Container Registry
     if: contains(github.ref, 'tags/202')
     strategy:
       fail-fast: false

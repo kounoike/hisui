@@ -5,8 +5,10 @@
 
 #include <algorithm>
 #include <array>
+#include <cstdint>
 #include <stdexcept>
 
+#include <boost/cstdint.hpp>
 #include <boost/rational.hpp>
 
 #include "video/yuv.hpp"
