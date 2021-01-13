@@ -42,13 +42,27 @@ bool VideoContext::init(std::FILE* file) {
     return false;
   }
 
-  if (!std::strncmp(video_track->GetCodecId(), "V_VP8", 5)) {
+  auto codec_id = video_track->GetCodecId();
+
+  if (!std::strncmp(codec_id, "V_VP8", 5)) {
     m_fourcc = hisui::Constants::VP8_FOURCC;
-  } else if (!std::strncmp(video_track->GetCodecId(), "V_VP9", 5)) {
+  } else if (!std::strncmp(codec_id, "V_VP9", 5)) {
     m_fourcc = hisui::Constants::VP9_FOURCC;
-  } else if (!std::strncmp(video_track->GetCodecId(), "V_MPEG4/ISO/AVC", 15) &&
-             !std::strncmp(video_track->GetCodecNameAsUTF8(), "H.264", 5)) {
-    m_fourcc = hisui::Constants::H264_FOURCC;
+  } else if (!std::strncmp(codec_id, "V_MPEG4/ISO/AVC", 15)) {
+    auto codec_name_as_utf8 = video_track->GetCodecNameAsUTF8();
+    if (codec_name_as_utf8 == nullptr) {
+      spdlog::info("V_MPEG4/ISO/AVC: codec_name_as_utf8 is null");
+      reset();
+      return false;
+    }
+    if (!std::strncmp(codec_name_as_utf8, "H.264", 5)) {
+      m_fourcc = hisui::Constants::H264_FOURCC;
+    } else {
+      spdlog::info("V_MPEG4/ISO/AVC: unknown codec_name_as_utf8: {}",
+                   codec_name_as_utf8);
+      reset();
+      return false;
+    }
   } else {
     if (video_track->GetCodecNameAsUTF8() == nullptr) {
       spdlog::info("unsuppoted codec: codec_id={}", video_track->GetCodecId());

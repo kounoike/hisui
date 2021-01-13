@@ -3,7 +3,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
-#include <tuple>
 
 namespace mkvmuxer {
 
@@ -13,8 +12,6 @@ class Segment;
 }  // namespace mkvmuxer
 
 namespace hisui::webm::output {
-
-using FrameTuple = std::tuple<std::uint64_t, std::uint8_t*, std::size_t, bool>;
 
 class Context {
  public:
