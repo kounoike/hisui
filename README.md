@@ -16,9 +16,32 @@ In other languages, we won't be able to deal with them. Thank you for your under
 
 Recording Composition Tool Hisui は WebRTC SFU Sora 向けの録画合成ツールです。
 
+Sora が出力した録画ファイルを合成し WebM や MP4 で出力するツールです。
+
+## 特徴
+
+## ファイル形式
+
+- Sora が生成した WebM ファイルに対応しています
+- 出力ファイル形式は WebM と MP4 に対応しています
+- 生成された VP9/AAC の MP4 ファイルは Safari 最新版で再生が可能です
+
+## デコーダー/エンコーダー
+
+- VP8 / VP9 / H.264 デコードに対応しています
+    - H.264 をデコードする場合は OpenH264 を用意する必要があります
+- Opus デコードに対応しています
+- VP8 / VP9 エンコードに対応しています
+- Opus / AAC エンコードに対応しています
+    - AAC を利用する場合は自前でのビルドが必要です
+
 ## 動作環境
 
 - Ubuntu 20.04 x86_64
+
+## 対応 Sora
+
+- WebRTC SFU Sora 2020.3 以降
 
 ## 使ってみる
 
