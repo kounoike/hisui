@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <string>
 
+#include <boost/cstdint.hpp>
 #include <boost/rational.hpp>
 
 #include "constants.hpp"
@@ -41,12 +42,28 @@ enum struct VideoScaler {
   PreserveAspectRatio,
 };
 
+enum struct OutContainer {
+  WebM,
+  MP4,
+};
+
+enum struct MP4Muxer {
+  Simple,
+  Faststart,
+};
+
+enum struct OutAudioCodec {
+  Opus,
+  FDK_AAC,
+};
+
 }  // namespace config
 
 class Config {
  public:
   std::string in_metadata_filename;
   config::OutVideoCodec out_video_codec = config::OutVideoCodec::VP9;
+  config::OutContainer out_container = config::OutContainer::WebM;
   std::uint32_t out_video_bit_rate = 0;
 
   boost::rational<std::uint64_t> out_video_frame_rate =
@@ -54,13 +71,17 @@ class Config {
   std::uint32_t libvpx_cq_level = 10;
   std::uint32_t libvpx_min_q = 3;
   std::uint32_t libvpx_max_q = 40;
+  std::uint32_t out_opus_bit_rate = Constants::OPUS_DEFAULT_BIT_RATE;
+  std::uint32_t out_aac_bit_rate = Constants::FDK_AAC_DEFAULT_BIT_RATE;
 
-  std::string out_webm_filename = "";
+  std::string out_filename = "";
+  std::string directory_for_faststart_intermediate_file = "";
 
   std::size_t max_columns = 3;
 
   bool verbose = false;
 
+  // 以降は SPEC.rst にないオプション
   bool show_progress_bar = true;
 
 #ifdef NDEBUG
@@ -79,8 +100,12 @@ class Config {
 
   config::VideoComposer video_composer = config::VideoComposer::Grid;
   config::VideoScaler video_scaler = config::VideoScaler::PreserveAspectRatio;
+  std::string openh264 = "";
 
   config::AudioMixer audio_mixer = config::AudioMixer::Simple;
+
+  config::MP4Muxer mp4_muxer = config::MP4Muxer::Faststart;
+  config::OutAudioCodec out_audio_codec = config::OutAudioCodec::Opus;
 };
 
 void set_cli_options(CLI::App* app, Config* config);

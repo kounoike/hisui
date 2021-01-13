@@ -8,12 +8,24 @@ _hisui() {
             _filedir
             return
             ;;
-        --out-webm-file)
+        --openh264)
             _filedir
+            return
+            ;;
+        --out-file)
+            _filedir
+            return
+            ;;
+        --out-container)
+            mapfile -t COMPREPLY < <(compgen -W 'WebM MP4' -- "$cur")
             return
             ;;
         --out-video-codec)
             mapfile -t COMPREPLY < <(compgen -W 'VP8 VP9' -- "$cur")
+            return
+            ;;
+        --out-audio-codec)
+            mapfile -t COMPREPLY < <(compgen -W 'Opus AAC' -- "$cur")
             return
             ;;
         --max-columns)
@@ -28,12 +40,16 @@ _hisui() {
             mapfile -t COMPREPLY< <(compgen -W "{1..$(( $(_ncpus)+1 ))}" -- "$cur")
             return
             ;;
-        -h|--help|--verbose|--show-progress-bar|--out-video-frame-rate|--out-video-bit-rate)
+        --mp4-muxer)
+            mapfile -t COMPREPLY < <(compgen -W 'Faststart Simple' -- "$cur")
+            return
+            ;;
+        -h|--help|--verbose|--show-progress-bar|--out-video-frame-rate|--out-video-bit-rate|--out-opus-bit-rate|--out-aac-bit-rate)
             return
             ;;
     esac
 
-    mapfile -t COMPREPLY< <(compgen -W '-h --help -f --in-metadata-file --out-video-codec --out-video-frame-rate --out-webm-file --max-columns --libvpx-cq-level --libvpx-min-q --libvpx-max-q --verbose --show-progress-bar --out-video-bit-rate --libvpx-threads' -- "$cur")
+    mapfile -t COMPREPLY< <(compgen -W '-h --help -f --in-metadata-file --openh264 --out-container --out-video-codec --out-audio-codec --out-video-frame-rate --out-file --out-file --max-columns --libvpx-cq-level --libvpx-min-q --libvpx-max-q --mp4-muxer --verbose --show-progress-bar --out-video-bit-rate --out-opus-bit-rate --out-aac-bit-rate --libvpx-threads' -- "$cur")
 }
 
 complete -F _hisui hisui

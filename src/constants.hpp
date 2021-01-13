@@ -15,8 +15,10 @@ class Constants {
   static const std::uint32_t VIDEO_H264_OUTPUT_BITRATE = 512000;
   static const std::uint32_t VIDEO_VPX_BIT_RATE_PER_FILE = 200;
   static const std::uint64_t NANO_SECOND = 1000000000;
+  static const std::uint32_t FDK_AAC_DEFAULT_BIT_RATE = 64000;
+  static const std::uint64_t FDK_AAC_ENCODE_BUFFER_SIZE = 20480;
   static const std::uint64_t LAME_MP3_BUFFER_SIZE = 8192;
-  static const std::uint64_t OPUS_BITRATE = 64 * 1024;
+  static const std::uint32_t OPUS_DEFAULT_BIT_RATE = 64 * 1024;
   static const std::uint64_t OPUS_ENCODE_FRAME_SIZE = 960;
   static const std::uint64_t OPUS_DECODE_MAX_FRAME_SIZE = 5760;
   static const std::uint64_t OPUS_MAX_PACKET_SIZE = 1276;

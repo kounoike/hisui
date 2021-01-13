@@ -6,7 +6,7 @@
 
 #include "config.hpp"
 #include "metadata.hpp"
-#include "muxer/webm_muxer.hpp"
+#include "muxer/muxer.hpp"
 
 namespace hisui::webm::output {
 
@@ -19,7 +19,7 @@ namespace hisui::muxer {
 class AudioProducer;
 class VideoProducer;
 
-class AsyncWebMMuxer : public WebMMuxer {
+class AsyncWebMMuxer : public Muxer {
  public:
   AsyncWebMMuxer(const hisui::Config&, const hisui::Metadata&);
   ~AsyncWebMMuxer();

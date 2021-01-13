@@ -3,17 +3,25 @@
 #include <spdlog/spdlog.h>
 
 #include <fstream>
+#include <initializer_list>
 #include <iterator>
+#include <map>
+#include <stdexcept>
+#include <string>
+#include <vector>
 
 #include <CLI/App.hpp>
 #include <CLI/Config.hpp>
 #include <CLI/Formatter.hpp>
-#include <nlohmann/json.hpp>
+#include <boost/json.hpp>
 
 #include "config.hpp"
 #include "metadata.hpp"
 #include "muxer/async_webm_muxer.hpp"
-#include "muxer/webm_muxer.hpp"
+#include "muxer/faststart_mp4_muxer.hpp"
+#include "muxer/muxer.hpp"
+#include "muxer/simple_mp4_muxer.hpp"
+#include "video/openh264_handler.hpp"
 
 int main(int argc, char** argv) {
   CLI::App app{"hisui"};
@@ -36,25 +44,40 @@ int main(int argc, char** argv) {
                   config.in_metadata_filename);
     return 1;
   }
-  nlohmann::json j;
-  i >> j;
-
-  if (j["archives"] == nullptr) {
-    spdlog::error("not metadata json file: {}", config.in_metadata_filename);
-    return 1;
-  }
-
-  if (std::size(j["archives"]) == 0) {
-    spdlog::error("metadata json file does not include archives: {}",
-                  config.in_metadata_filename);
+  std::string string_json((std::istreambuf_iterator<char>(i)),
+                          std::istreambuf_iterator<char>());
+  boost::json::error_code ec;
+  boost::json::value jv = boost::json::parse(string_json, ec);
+  if (ec) {
+    spdlog::error("failed to parse metadata json file: message", ec.message());
     return 1;
   }
 
   const hisui::Metadata metadata =
-      hisui::parse_metadata(config.in_metadata_filename, j);
+      hisui::parse_metadata(config.in_metadata_filename, jv);
 
-  hisui::muxer::WebMMuxer* muxer =
-      new hisui::muxer::AsyncWebMMuxer(config, metadata);
+  if (!config.openh264.empty()) {
+    try {
+      hisui::video::OpenH264Handler::open(config.openh264);
+    } catch (const std::exception& e) {
+      spdlog::warn("failed to open openh264 library: {}", e.what());
+    }
+  }
+
+  hisui::muxer::Muxer* muxer;
+  if (config.out_container == hisui::config::OutContainer::WebM) {
+    muxer = new hisui::muxer::AsyncWebMMuxer(config, metadata);
+  } else if (config.out_container == hisui::config::OutContainer::MP4) {
+    if (config.mp4_muxer == hisui::config::MP4Muxer::Simple) {
+      muxer = new hisui::muxer::SimpleMP4Muxer(config, metadata);
+    } else if (config.mp4_muxer == hisui::config::MP4Muxer::Faststart) {
+      muxer = new hisui::muxer::FaststartMP4Muxer(config, metadata);
+    } else {
+      throw std::runtime_error("config.mp4_muxer is invalid");
+    }
+  } else {
+    throw std::runtime_error("config.out_container is invalid");
+  }
   muxer->run();
   delete muxer;
 

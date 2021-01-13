@@ -4,11 +4,11 @@
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 
+#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <filesystem>
 #include <iterator>
-#include <map>
 #include <memory>
 #include <set>
 #include <string>
@@ -52,13 +52,13 @@ BasicSequencer::BasicSequencer(const std::vector<hisui::Archive>& archives) {
     }
     const auto connection_id = archive.getConnectionID();
     auto it = std::find_if(
-        m_sequence.begin(), m_sequence.end(),
+        std::begin(m_sequence), std::end(m_sequence),
         [connection_id](
             const std::pair<std::string,
                             std::shared_ptr<std::vector<SourceAndInterval>>>&
                 elem) { return elem.first == connection_id; });
     std::shared_ptr<std::vector<SourceAndInterval>> v;
-    if (it == m_sequence.end()) {
+    if (it == std::end(m_sequence)) {
       v = std::make_shared<std::vector<SourceAndInterval>>();
       m_sequence.emplace_back(connection_id, v);
     } else {
@@ -93,16 +93,13 @@ void BasicSequencer::getYUVs(std::vector<const YUVImage*>* yuvs,
                              const std::uint64_t timestamp) {
   size_t i = 0;
   for (const auto& p : m_sequence) {
-    bool found = false;
-    for (const auto& s : *p.second) {
-      if (s.second.isIn(timestamp)) {
-        (*yuvs)[i] = s.first->getYUV(s.second.getSubstructLower(timestamp));
-        found = true;
-        break;
-      }
-    }
-    if (!found) {
+    auto it = std::find_if(
+        std::begin(*p.second), std::end(*p.second),
+        [timestamp](const auto& s) { return s.second.isIn(timestamp); });
+    if (it == std::end(*p.second)) {
       (*yuvs)[i] = m_black_yuv_image;
+    } else {
+      (*yuvs)[i] = it->first->getYUV(it->second.getSubstructLower(timestamp));
     }
     ++i;
   }

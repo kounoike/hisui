@@ -5,19 +5,14 @@ cmake_policy(SET CMP0054 NEW)
 # MSVC runtime library flags are selected by an abstraction.
 cmake_policy(SET CMP0091 NEW)
 
-# if(DEFINED ENV{BOOST_VERSION})
-#     set(BOOST_VERSION $ENV{BOOST_VERSION} CACHE STRING "Boost のバージョン")
-# else()
-#     set(BOOST_VERSION 1.74.0 CACHE STRING "Boost のバージョン")
-# endif()
 include(cmake/env.cmake)
 
-set_cache_string_from_env(BOOST_VERSION 1.74.0 "Boost のバージョン")
+set_cache_string_from_env(BOOST_VERSION 1.75.0 "Boost のバージョン")
 set_cache_string_from_env(CLI11_VERSION 1.9.1 "CLI11 のバージョン")
-set_cache_string_from_env(FMT_VERSION 7.0.3 "fmt のバージョン")
-set_cache_string_from_env(NLOHMANN_JSON_VERSION 3.9.1 "nlohmann::json のバージョン")
+set_cache_string_from_env(CPP_MP4_VERSION 2021.1 "CLI11 のバージョン")
+set_cache_string_from_env(FMT_VERSION 7.1.3 "fmt のバージョン")
 set_cache_string_from_env(OPUS_VERSION 1.3.1 "Opus のバージョン")
-set_cache_string_from_env(SPDLOG_VERSION 1.8.1 "spdlog のバージョン")
+set_cache_string_from_env(SPDLOG_VERSION 1.8.2 "spdlog のバージョン")
 set_cache_string_from_env(STB_VERSION b42009b3b9d4ca35bc703f5310eedc74f584be58 "stb のバージョン")
 
 set(CMAKE_C_COMPILER clang)
@@ -77,6 +72,13 @@ CPMAddPackage(
     )
 
 CPMAddPackage(
+    NAME boost_json
+    GITHUB_REPOSITORY boostorg/json
+    GIT_TAG boost-${BOOST_VERSION}
+    OPTIONS "BOOST_JSON_STANDALONE On"
+    )
+
+CPMAddPackage(
     NAME boost_rational
     GITHUB_REPOSITORY boostorg/rational
     GIT_TAG boost-${BOOST_VERSION}
@@ -118,15 +120,16 @@ CPMAddPackage(
     )
 
 CPMAddPackage(
-    NAME fmt
-    GITHUB_REPOSITORY fmtlib/fmt
-    GIT_TAG ${FMT_VERSION}
+    NAME cpp-mp4
+    GITHUB_REPOSITORY shiguredo/cpp-mp4
+    GIT_TAG ${CPP_MP4_VERSION}
+    OPTIONS "WITH_CLI Off" "WITH_EXAMPLE Off" "WITH_TEST Off"
     )
 
 CPMAddPackage(
-    NAME nlohmann_json
-    VERSION ${NLOHMANN_JSON_VERSION}
-    URL https://github.com/nlohmann/json/releases/download/v${NLOHMANN_JSON_VERSION}/include.zip
+    NAME fmt
+    GITHUB_REPOSITORY fmtlib/fmt
+    GIT_TAG ${FMT_VERSION}
     )
 
 CPMAddPackage(
@@ -153,6 +156,28 @@ project(hisui C CXX)
 
 add_executable(hisui)
 
+option(USE_FDK_AAC "Use fdk-aac" OFF)
+
+if(USE_FDK_AAC)
+    target_compile_definitions(hisui
+        PRIVATE
+        USE_FDK_AAC
+        )
+
+    target_link_libraries(hisui
+        PRIVATE
+        fdk-aac
+        m
+        )
+
+    target_sources(hisui
+        PRIVATE
+        src/audio/buffer_fdk_aac_encoder.cpp
+        src/audio/fdk_aac.cpp
+        src/muxer/fdk_aac_audio_producer.cpp
+        )
+endif()
+
 target_sources(hisui
     PRIVATE
     src/config.cpp
@@ -166,12 +191,20 @@ target_sources(hisui
     src/audio/webm_source.cpp
     src/muxer/async_webm_muxer.cpp
     src/muxer/audio_producer.cpp
+    src/muxer/mp4_muxer.cpp
+    src/muxer/opus_audio_producer.cpp
+    src/muxer/simple_mp4_muxer.cpp
+    src/muxer/faststart_mp4_muxer.cpp
     src/muxer/video_producer.cpp
+    src/muxer/vpx_video_producer.cpp
     src/util/interval.cpp
     src/video/buffer_vpx_encoder.cpp
     src/video/composer.cpp
     src/video/decoder.cpp
     src/video/grid_composer.cpp
+    src/video/openh264.cpp
+    src/video/openh264_decoder.cpp
+    src/video/openh264_handler.cpp
     src/video/parallel_grid_composer.cpp
     src/video/preserve_aspect_ratio_scaler.cpp
     src/video/scaler.cpp
@@ -219,29 +252,36 @@ target_include_directories(hisui
     ${boost_config_SOURCE_DIR}/include
     ${boost_core_SOURCE_DIR}/include
     ${boost_integer_SOURCE_DIR}/include
+    ${boost_json_SOURCE_DIR}/include
     ${boost_rational_SOURCE_DIR}/include
     ${boost_static_assert_SOURCE_DIR}/include
     ${boost_throw_exception_SOURCE_DIR}/include
     ${boost_type_traits_SOURCE_DIR}/include
     ${boost_utility_SOURCE_DIR}/include
     ${cli11_SOURCE_DIR}/include
+    ${cpp-mp4_SOURCE_DIR}/include
     ${fmt_SOURCE_DIR}/include
-    ${nlohmann_json_SOURCE_DIR}/include
     ${opus_SOURCE_DIR}/include
     ${spdlog_SOURCE_DIR}/include
     ${stb_SOURCE_DIR}
+    third_party/openh264
     third_party/progress-cpp/include
     third_party/libvpx/third_party/libyuv/include
     third_party/libvpx/third_party/libwebm
     third_party/libvpx
     )
 
-set_target_properties(hisui PROPERTIES CXX_STANDARD 20 C_STANDARD 99)
+set_target_properties(hisui PROPERTIES CXX_STANDARD 20 C_STANDARD 11)
 
 target_link_libraries(hisui
     PRIVATE
+    Boost::json
+    dl
     opus
     pthread
+    fmt
+    shiguredo-mp4
+    spdlog
     ${CMAKE_SOURCE_DIR}/third_party/libvpx/libvpx.a
     )
 

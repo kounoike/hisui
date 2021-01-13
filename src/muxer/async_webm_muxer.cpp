@@ -3,6 +3,7 @@
 #include <cxxabi.h>
 #include <spdlog/spdlog.h>
 
+#include <array>
 #include <chrono>
 #include <filesystem>
 #include <future>
@@ -12,12 +13,14 @@
 #include <string>
 #include <system_error>
 #include <thread>
-#include <tuple>
-#include <vector>
 
+#include "audio/opus.hpp"
 #include "constants.hpp"
+#include "frame.hpp"
 #include "muxer/audio_producer.hpp"
+#include "muxer/opus_audio_producer.hpp"
 #include "muxer/video_producer.hpp"
+#include "muxer/vpx_video_producer.hpp"
 #include "webm/output/context.hpp"
 
 namespace hisui::muxer {
@@ -25,15 +28,15 @@ namespace hisui::muxer {
 AsyncWebMMuxer::AsyncWebMMuxer(const hisui::Config& t_config,
                                const hisui::Metadata& t_metadata)
     : m_config(t_config), m_metadata(t_metadata) {
-  if (m_config.out_webm_filename == "") {
+  if (m_config.out_filename == "") {
     std::filesystem::path metadata_path(m_config.in_metadata_filename);
     auto webm_path = metadata_path.replace_extension(".webm");
-    m_config.out_webm_filename = webm_path;
+    m_config.out_filename = webm_path;
   }
 
-  m_file = std::fopen(m_config.out_webm_filename.c_str(), "wb");
+  m_file = std::fopen(m_config.out_filename.c_str(), "wb");
   if (!m_file) {
-    throw std::runtime_error("Unable to open: " + m_config.out_webm_filename);
+    throw std::runtime_error("Unable to open: " + m_config.out_filename);
   }
   m_context = new hisui::webm::output::Context(m_file);
 
@@ -43,8 +46,21 @@ AsyncWebMMuxer::AsyncWebMMuxer(const hisui::Config& t_config,
         hisui::Constants::VIDEO_VPX_BIT_RATE_PER_FILE;
   }
 
-  m_video_producer = new VideoProducer(m_config, m_metadata, m_context);
-  m_audio_producer = new AudioProducer(m_config, m_metadata, m_context);
+  m_video_producer = new VPXVideoProducer(m_config, m_metadata);
+  m_context->setVideoTrack(m_video_producer->getWidth(),
+                           m_video_producer->getHeight(),
+                           m_video_producer->getFourcc());
+  OpusAudioProducer* audio_producer =
+      new OpusAudioProducer(m_config, m_metadata);
+  auto skip = audio_producer->getSkip();
+  m_audio_producer = audio_producer;
+
+  auto private_data = hisui::audio::create_opus_private_data({.skip = skip});
+
+  m_context->setAudioTrack(static_cast<std::uint64_t>(skip) *
+                               hisui::Constants::NANO_SECOND /
+                               hisui::Constants::PCM_SAMPLE_RATE,
+                           private_data.data(), std::size(private_data));
 }
 
 AsyncWebMMuxer::~AsyncWebMMuxer() {
@@ -73,11 +89,11 @@ void AsyncWebMMuxer::addAndConsumeVideo(std::uint8_t* data,
 }
 
 void AsyncWebMMuxer::run() {
-  auto video_future =
-      std::async(std::launch::async, &VideoProducer::produce, m_video_producer);
+  auto video_future = std::async(std::launch::async, &VPXVideoProducer::produce,
+                                 m_video_producer);
 
-  auto audio_future =
-      std::async(std::launch::async, &AudioProducer::produce, m_audio_producer);
+  auto audio_future = std::async(std::launch::async,
+                                 &OpusAudioProducer::produce, m_audio_producer);
 
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
@@ -90,18 +106,18 @@ void AsyncWebMMuxer::run() {
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
       continue;
     }
-    auto audio_timestamp = get<0>(audio_front.value());
+    auto audio_timestamp = audio_front.value().timestamp;
 
     if (video_finished) {
-      addAndConsumeAudio(get<1>(audio_front.value()),
-                         get<2>(audio_front.value()), audio_timestamp);
+      addAndConsumeAudio(audio_front.value().data,
+                         audio_front.value().data_size, audio_timestamp);
       continue;
     }
 
     if (m_video_producer->isFinished()) {
       video_finished = true;
-      addAndConsumeAudio(get<1>(audio_front.value()),
-                         get<2>(audio_front.value()), audio_timestamp);
+      addAndConsumeAudio(audio_front.value().data,
+                         audio_front.value().data_size, audio_timestamp);
       continue;
     }
 
@@ -111,15 +127,15 @@ void AsyncWebMMuxer::run() {
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));
       continue;
     }
-    auto video_timestamp = get<0>(video_front.value());
+    auto video_timestamp = video_front.value().timestamp;
 
     if (video_timestamp <= audio_timestamp) {
-      addAndConsumeVideo(get<1>(video_front.value()),
-                         get<2>(video_front.value()), video_timestamp,
-                         get<3>(video_front.value()));
+      addAndConsumeVideo(video_front.value().data,
+                         video_front.value().data_size, video_timestamp,
+                         video_front.value().is_key);
       continue;
     }
-    addAndConsumeAudio(get<1>(audio_front.value()), get<2>(audio_front.value()),
+    addAndConsumeAudio(audio_front.value().data, audio_front.value().data_size,
                        audio_timestamp);
   }
 
@@ -139,9 +155,9 @@ void AsyncWebMMuxer::run() {
       continue;
     }
 
-    addAndConsumeVideo(get<1>(video_front.value()), get<2>(video_front.value()),
-                       get<0>(video_front.value()),
-                       get<3>(video_front.value()));
+    addAndConsumeVideo(video_front.value().data, video_front.value().data_size,
+                       video_front.value().timestamp,
+                       video_front.value().is_key);
   }
 
   spdlog::debug("video was processed");

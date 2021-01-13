@@ -1,6 +1,7 @@
 #include "audio/opus_decoder.hpp"
 
 #include <fmt/core.h>
+#include <opus.h>
 #include <opus_defines.h>
 #include <opus_types.h>
 
@@ -17,8 +18,7 @@ OpusDecoder::OpusDecoder(const int t_channles) : m_channels(t_channles) {
         fmt::format("invalid number of channels: {}", m_channels));
   }
 
-  m_decoder = create_opus_decoder(hisui::Constants::PCM_SAMPLE_RATE,
-                                  static_cast<int>(m_channels));
+  m_decoder = create_opus_decoder({.channels = m_channels});
 
   m_opus_buffer = new std::int16_t[static_cast<std::size_t>(
       hisui::Constants::OPUS_DECODE_MAX_FRAME_SIZE *
