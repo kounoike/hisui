@@ -5,7 +5,7 @@ PROGRAM="$0"
 _PACKAGES=("ubuntu-20.04_x86_64")
 
 function show_help() {
-  echo "$PROGRAM [--clean] [--use-ccache] [--with-test] [--build-type-native] [--package] <package>"
+  echo "$PROGRAM [--clean] [--use-ccache] [--use-fdk-aac] [--with-test] [--build-type-native] [--package] <package>"
   echo "<package>:"
   for package in "${_PACKAGES[@]}"; do
     echo "  - $package"
@@ -18,6 +18,7 @@ FLAG_CLEAN=0
 FLAG_PACKAGE=0
 FLAG_WITH_TEST=0
 FLAG_USE_CCACHE=0
+FLAG_USE_FDK_AAC=0
 
 CMAKE_FLAGS=()
 BUILD_TYPE='Release'
@@ -37,6 +38,9 @@ while [ $# -ne 0 ]; do
         ;;
     "--use-ccache" )
         FLAG_USE_CCACHE=1
+        ;;
+    "--use-fdk-aac" )
+        FLAG_USE_FDK_AAC=1
         ;;
     "--build-type-native" )
         BUILD_TYPE="Native"
@@ -81,6 +85,12 @@ if [ $FLAG_USE_CCACHE -eq 1 ]; then
     CC='ccache clang'
 else
     CMAKE_FLAGS+=('-DUSE_CCACHE=NO')
+fi
+
+if [ $FLAG_USE_FDK_AAC -eq 1 ]; then
+    CMAKE_FLAGS+=('-DUSE_FDK_AAC=YES')
+else
+    CMAKE_FLAGS+=('-DUSE_FDK_AAC=NO')
 fi
 
 echo "--clean: ${FLAG_CLEAN}"
