@@ -4,22 +4,24 @@
 #include <fmt/core.h>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
+#include <vpx/vpx_codec.h>
 #include <vpx/vpx_encoder.h>
+#include <vpx/vpx_image.h>
 
 #include <algorithm>
 #include <stdexcept>
 
 #include <boost/rational.hpp>
 
-#include "constants.hpp"
+#include "frame.hpp"
 #include "video/vpx.hpp"
 
 namespace hisui::video {
 
-BufferVPXEncoder::BufferVPXEncoder(
-    std::queue<hisui::webm::output::FrameTuple>* t_buffer,
-    const VPXEncoderConfig& config)
-    : m_buffer(t_buffer) {
+BufferVPXEncoder::BufferVPXEncoder(std::queue<hisui::Frame>* t_buffer,
+                                   const VPXEncoderConfig& config,
+                                   const std::uint64_t t_timescale)
+    : m_buffer(t_buffer), m_timescale(t_timescale) {
   m_width = config.width;
   m_height = config.height;
   m_fps = config.fps;
@@ -72,13 +74,16 @@ bool BufferVPXEncoder::encodeFrame(::vpx_codec_ctx_t* codec,
 
     if (pkt->kind == VPX_CODEC_CX_FRAME_PKT) {
       std::uint64_t pts_ns = static_cast<std::uint64_t>(pkt->data.frame.pts) *
-                             hisui::Constants::NANO_SECOND *
-                             m_fps.denominator() / m_fps.numerator();
+                             m_timescale * m_fps.denominator() /
+                             m_fps.numerator();
       std::uint8_t* buf = static_cast<uint8_t*>(pkt->data.frame.buf);
       std::uint8_t* data = new std::uint8_t[pkt->data.frame.sz];
       std::copy(buf, buf + pkt->data.frame.sz, data);
-      m_buffer->emplace(pts_ns, data, pkt->data.frame.sz,
-                        pkt->data.frame.flags & VPX_FRAME_IS_KEY);
+      m_buffer->push(hisui::Frame{
+          .timestamp = pts_ns,
+          .data = data,
+          .data_size = pkt->data.frame.sz,
+          .is_key = (pkt->data.frame.flags & VPX_FRAME_IS_KEY) != 0});
 
       m_sum_of_bits += pkt->data.frame.sz * 8;
 

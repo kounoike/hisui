@@ -10,13 +10,11 @@
 
 #include "constants.hpp"
 #include "video/decoder.hpp"
+#include "video/openh264_decoder.hpp"
+#include "video/openh264_handler.hpp"
 #include "video/vpx_decoder.hpp"
 #include "video/yuv.hpp"
 #include "webm/input/video_context.hpp"
-
-#ifdef USE_OPENH264
-#include "video/h264_decoder.hpp"
-#endif
 
 namespace hisui::video {
 
@@ -56,11 +54,12 @@ WebMSource::WebMSource(const std::string& file_path) {
     case hisui::Constants::VP9_FOURCC:
       m_decoder = new VPXDecoder(m_webm);
       break;
-#ifdef USE_OPENH264
     case hisui::Constants::H264_FOURCC:
-      m_decoder = new H264Decoder(m_webm);
-      break;
-#endif
+      if (OpenH264Handler::hasInstance()) {
+        m_decoder = new OpenH264Decoder(m_webm);
+        break;
+      }
+      throw std::runtime_error("openh264 library is not loaded");
     default:
       auto fourcc = m_webm->getFourcc();
       std::fclose(m_file);
