@@ -33,8 +33,8 @@ Linux 版 Hisui のビルドしたい人は [BUILD_LINUX.md](doc/BUILD_LINUX.md)
 Apache License 2.0
 
 ```
-Copyright 2020, HARUYAMA Seigo (Original Author)
-Copyright 2020, Shiguredo Inc.
+Copyright 2020-2021, HARUYAMA Seigo (Original Author)
+Copyright 2020-2021, Shiguredo Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
