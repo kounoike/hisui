@@ -24,7 +24,9 @@ class AsyncWebMMuxer : public Muxer {
   AsyncWebMMuxer(const hisui::Config&, const hisui::Metadata&);
   ~AsyncWebMMuxer();
 
-  void run();
+  void setUp() override;
+  void run() override;
+  void cleanUp() override;
 
  private:
   hisui::webm::output::Context* m_context;

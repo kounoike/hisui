@@ -1,5 +1,7 @@
 #pragma once
 
+#include "config.hpp"
+#include "metadata.hpp"
 #include "muxer/mp4_muxer.hpp"
 
 namespace shiguredo::mp4::writer {
@@ -8,13 +10,6 @@ class FaststartWriter;
 
 }
 
-namespace hisui {
-
-class Config;
-class Metadata;
-
-}  // namespace hisui
-
 namespace hisui::muxer {
 
 class FaststartMP4Muxer : public MP4Muxer {
@@ -22,10 +17,15 @@ class FaststartMP4Muxer : public MP4Muxer {
   FaststartMP4Muxer(const hisui::Config&, const hisui::Metadata&);
   ~FaststartMP4Muxer();
 
-  void run();
+  void setUp() override;
+  void run() override;
+  void cleanUp() override;
 
  private:
   shiguredo::mp4::writer::FaststartWriter* m_faststart_writer;
+
+  hisui::Config m_config;
+  hisui::Metadata m_metadata;
 };
 
 }  // namespace hisui::muxer

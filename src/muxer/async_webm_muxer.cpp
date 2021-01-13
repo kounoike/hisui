@@ -27,7 +27,9 @@ namespace hisui::muxer {
 
 AsyncWebMMuxer::AsyncWebMMuxer(const hisui::Config& t_config,
                                const hisui::Metadata& t_metadata)
-    : m_config(t_config), m_metadata(t_metadata) {
+    : m_config(t_config), m_metadata(t_metadata) {}
+
+void AsyncWebMMuxer::setUp() {
   if (m_config.out_filename == "") {
     std::filesystem::path metadata_path(m_config.in_metadata_filename);
     auto webm_path = metadata_path.replace_extension(".webm");
@@ -162,5 +164,7 @@ void AsyncWebMMuxer::run() {
 
   spdlog::debug("video was processed");
 }  // namespace hisui::muxer
+
+void AsyncWebMMuxer::cleanUp() {}
 
 }  // namespace hisui::muxer
