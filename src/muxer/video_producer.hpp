@@ -1,12 +1,14 @@
 #pragma once
 
+#include <cstdint>
 #include <mutex>
 #include <optional>
 #include <queue>
 
-#include "config.hpp"
-#include "metadata.hpp"
-#include "webm/output/context.hpp"
+#include <boost/cstdint.hpp>
+#include <boost/rational.hpp>
+
+#include "frame.hpp"
 
 namespace hisui::video {
 
@@ -20,33 +22,33 @@ namespace hisui::muxer {
 
 class VideoProducer {
  public:
-  VideoProducer(const hisui::Config&,
-                const hisui::Metadata& i,
-                hisui::webm::output::Context* m_context);
-  ~VideoProducer();
+  virtual ~VideoProducer();
   void produce();
 
   void bufferPop();
-  std::optional<hisui::webm::output::FrameTuple> bufferFront();
+  std::optional<hisui::Frame> bufferFront();
 
   bool isFinished();
 
- private:
-  const hisui::Config m_config;
-  const hisui::Metadata m_metadata;
-  hisui::webm::output::Context* m_context;
+  std::uint32_t getWidth() const;
+  std::uint32_t getHeight() const;
+  std::uint32_t getFourcc() const;
 
-  hisui::video::Sequencer* m_sequencer;
-  hisui::video::Encoder* m_encoder;
-  hisui::video::Composer* m_composer;
+ protected:
+  hisui::video::Sequencer* m_sequencer = nullptr;
+  hisui::video::Encoder* m_encoder = nullptr;
+  hisui::video::Composer* m_composer = nullptr;
 
-  std::queue<hisui::webm::output::FrameTuple> m_buffer;
+  std::queue<hisui::Frame> m_buffer;
 
   bool m_show_progress_bar;
 
   bool m_is_finished = false;
 
   std::mutex m_mutex_buffer;
+
+  double m_max_stop_time_offset;
+  boost::rational<std::uint64_t> m_frame_rate;
 };
 
 }  // namespace hisui::muxer

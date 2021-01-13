@@ -2,9 +2,9 @@
 
 namespace hisui::muxer {
 
-class WebMMuxer {
+class Muxer {
  public:
-  virtual ~WebMMuxer() {}
+  virtual ~Muxer() {}
   virtual void run() = 0;
 };
 
