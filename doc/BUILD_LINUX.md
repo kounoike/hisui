@@ -7,7 +7,7 @@ Ubuntu 20.04 x86_64 でのみビルドを確認しています。
 必要なライブラリをインストールします。
 
 ```
-sudo apt install cmake clang libc6-dev yasm
+sudo apt install cmake clang libc6-dev libstdc++-10-dev yasm
 ```
 
 ## ビルド
