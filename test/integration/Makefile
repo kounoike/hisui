@@ -1,6 +1,7 @@
 .PHONY: all get_input_files test webm_test update_input_check update_output_check clean
 
 HISUI=../../release/hisui --openh264 /usr/local/lib/libopenh264-2.1.1-linux64.6.so
+LIBFKD_AAC_DEV_VERSION=$(shell dpkg -s libfdk-aac-dev | grep Version | cut -d ' ' -f 2)
 
 all: test
 
@@ -11,7 +12,7 @@ get_input_files:
 	sha224sum -c input/check
 
 test: webm_test mp4_test
-	sha224sum -c output/check
+	[ -f "output/check_libfdk-aac-dev-$(LIBFKD_AAC_DEV_VERSION)" ] && sha224sum -c output/check_libfdk-aac-dev-$(LIBFKD_AAC_DEV_VERSION)
 
 webm_test: get_input_files
 	rm -f output/*.webm*
@@ -43,7 +44,7 @@ update_input_check:
 	sha224sum input/*.webm input/*.jpg > input/check
 
 update_output_check:
-	sha224sum output/*.cluster output/*.mp4 > output/check
+	sha224sum output/*.cluster output/*.mp4 > output/check_libfdk-aac-dev-$(LIBFKD_AAC_DEV_VERSION)
 
 clean:
 	rm -f output/*.cluster output/*.mp4 output/*.webm
