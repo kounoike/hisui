@@ -120,7 +120,7 @@ std::uint32_t get_vpx_image_plane_height(const ::vpx_image_t* img,
 }
 
 void update_vpx_image_by_yuv_data(::vpx_image_t* img,
-                                  const std::vector<uint8_t>& v) {
+                                  const std::vector<std::uint8_t>& v) {
   auto base = 0;
   for (auto plane = 0; plane < 3; ++plane) {
     unsigned char* buf = img->planes[plane];
