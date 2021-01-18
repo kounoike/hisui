@@ -55,3 +55,4 @@ target_include_directories(util_test
     )
 
 add_test(NAME util COMMAND util_test)
+set_tests_properties(util PROPERTIES LABELS hisui)
