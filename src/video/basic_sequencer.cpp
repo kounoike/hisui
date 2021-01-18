@@ -91,7 +91,7 @@ BasicSequencer::~BasicSequencer() {
 
 void BasicSequencer::getYUVs(std::vector<const YUVImage*>* yuvs,
                              const std::uint64_t timestamp) {
-  size_t i = 0;
+  std::size_t i = 0;
   for (const auto& p : m_sequence) {
     auto it = std::find_if(
         std::begin(*p.second), std::end(*p.second),

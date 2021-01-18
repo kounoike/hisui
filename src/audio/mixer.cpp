@@ -7,8 +7,8 @@ namespace hisui::audio {
 // https://stackoverflow.com/a/12090491
 std::int16_t mix_sample_simple(const std::int16_t sample1,
                                const std::int16_t sample2) {
-  const int32_t result(static_cast<int32_t>(sample1) +
-                       static_cast<int32_t>(sample2));
+  const std::int32_t result(static_cast<std::int32_t>(sample1) +
+                            static_cast<std::int32_t>(sample2));
   typedef std::numeric_limits<std::int16_t> Range;
   if (Range::max() < result) {
     return Range::max();

@@ -75,7 +75,7 @@ void Context::setVideoTrack(const std::uint32_t width,
   video_track->set_codec_id(codec_id);
 }
 
-void Context::addVideoFrame(const uint8_t* content,
+void Context::addVideoFrame(const std::uint8_t* content,
                             const std::uint64_t length,
                             const std::uint64_t pts_ns,
                             bool is_key_frame) {
@@ -85,7 +85,7 @@ void Context::addVideoFrame(const uint8_t* content,
   }
 }
 
-void Context::addAudioFrame(const uint8_t* content,
+void Context::addAudioFrame(const std::uint8_t* content,
                             const std::uint64_t length,
                             const std::uint64_t pts_ns) {
   if (!m_segment->AddFrame(content, length, m_audio_track_number, pts_ns,

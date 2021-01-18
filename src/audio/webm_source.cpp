@@ -94,7 +94,7 @@ void WebMSource::readFrame() {
     auto decoded =
         m_decoder->decode(m_webm->getBuffer(), m_webm->getBufferSize());
     if (decoded.second > 0) {
-      for (size_t i = 0; i < decoded.second; ++i) {
+      for (std::size_t i = 0; i < decoded.second; ++i) {
         m_data.push(decoded.first[i]);
       }
     }

@@ -37,7 +37,7 @@ class GridComposer : public Composer {
   std::size_t m_column;
   std::size_t m_row;
   std::array<unsigned char*, 3> m_planes;
-  std::array<size_t, 3> m_plane_sizes;
+  std::array<std::size_t, 3> m_plane_sizes;
   std::array<std::uint32_t, 3> m_single_plane_widths;
   std::array<std::uint32_t, 3> m_single_plane_heights;
   std::array<unsigned char, 3> m_plane_default_values;
