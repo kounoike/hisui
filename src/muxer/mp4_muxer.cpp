@@ -1,8 +1,16 @@
 #include "muxer/mp4_muxer.hpp"
 
+#include <cxxabi.h>
+#include <spdlog/spdlog.h>
+
+#include <chrono>
 #include <filesystem>
+#include <future>
 #include <iterator>
+#include <optional>
 #include <string>
+#include <system_error>
+#include <thread>
 #include <vector>
 
 #include "config.hpp"
@@ -133,6 +141,77 @@ void MP4Muxer::writeTrackData() {
   }
   m_vide_track->terminateCurrentChunk();
   m_video_buffer.clear();
+}
+
+void MP4Muxer::mux() {
+  const auto video_future =
+      std::async(std::launch::async, &VideoProducer::produce, m_video_producer);
+
+  const auto audio_future =
+      std::async(std::launch::async, &AudioProducer::produce, m_audio_producer);
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+  bool video_finished = false;
+
+  while (!m_audio_producer->isFinished()) {
+    const auto audio_front = m_audio_producer->bufferFront();
+    if (!audio_front.has_value()) {
+      spdlog::debug("audio queue is empty");
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      continue;
+    }
+    const auto audio_timestamp = audio_front.value().timestamp;
+
+    if (video_finished) {
+      addAudioBuffer(audio_front.value());
+      continue;
+    }
+
+    if (m_video_producer->isFinished()) {
+      video_finished = true;
+      addAudioBuffer(audio_front.value());
+      continue;
+    }
+
+    const auto video_front = m_video_producer->bufferFront();
+    if (!video_front.has_value()) {
+      spdlog::debug("video queue is empty (1)");
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+      continue;
+    }
+    const auto video_timestamp = video_front.value().timestamp *
+                                 m_soun_track->getTimescale() /
+                                 m_vide_track->getTimescale();
+
+    if (video_timestamp <= audio_timestamp) {
+      addVideoBuffer(video_front.value());
+      continue;
+    }
+    addAudioBuffer(audio_front.value());
+  }
+
+  spdlog::debug("audio was processed");
+
+  if (video_finished) {
+    spdlog::debug("video was processed");
+  } else {
+    spdlog::debug("video is processing");
+    while (!m_video_producer->isFinished()) {
+      const auto video_front = m_video_producer->bufferFront();
+      if (!video_front.has_value()) {
+        spdlog::debug("video queue is empty (2)");
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        continue;
+      }
+
+      addVideoBuffer(video_front.value());
+    }
+  }
+
+  spdlog::debug("video was processed");
+
+  writeTrackData();
 }
 
 }  // namespace hisui::muxer

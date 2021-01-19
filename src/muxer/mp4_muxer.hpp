@@ -53,6 +53,7 @@ class MP4Muxer : public Muxer {
   void addAudioBuffer(hisui::Frame);
   void addVideoBuffer(hisui::Frame);
 
+  void mux();
   void writeTrackData();
   void initialize(const hisui::Config& t_config,
                   const hisui::Metadata& t_metadata,
