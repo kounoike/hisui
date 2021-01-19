@@ -54,10 +54,11 @@ void AsyncWebMMuxer::setUp() {
                            m_video_producer->getFourcc());
   OpusAudioProducer* audio_producer =
       new OpusAudioProducer(m_config, m_metadata);
-  auto skip = audio_producer->getSkip();
+  const auto skip = audio_producer->getSkip();
   m_audio_producer = audio_producer;
 
-  auto private_data = hisui::audio::create_opus_private_data({.skip = skip});
+  const auto private_data =
+      hisui::audio::create_opus_private_data({.skip = skip});
 
   m_context->setAudioTrack(static_cast<std::uint64_t>(skip) *
                                hisui::Constants::NANO_SECOND /
@@ -91,24 +92,24 @@ void AsyncWebMMuxer::addAndConsumeVideo(std::uint8_t* data,
 }
 
 void AsyncWebMMuxer::run() {
-  auto video_future = std::async(std::launch::async, &VPXVideoProducer::produce,
-                                 m_video_producer);
+  const auto video_future = std::async(
+      std::launch::async, &VPXVideoProducer::produce, m_video_producer);
 
-  auto audio_future = std::async(std::launch::async,
-                                 &OpusAudioProducer::produce, m_audio_producer);
+  const auto audio_future = std::async(
+      std::launch::async, &OpusAudioProducer::produce, m_audio_producer);
 
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
   bool video_finished = false;
 
   while (!m_audio_producer->isFinished()) {
-    auto audio_front = m_audio_producer->bufferFront();
+    const auto audio_front = m_audio_producer->bufferFront();
     if (!audio_front.has_value()) {
       spdlog::debug("audio queue is empty");
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
       continue;
     }
-    auto audio_timestamp = audio_front.value().timestamp;
+    const auto audio_timestamp = audio_front.value().timestamp;
 
     if (video_finished) {
       addAndConsumeAudio(audio_front.value().data,
@@ -123,13 +124,13 @@ void AsyncWebMMuxer::run() {
       continue;
     }
 
-    auto video_front = m_video_producer->bufferFront();
+    const auto video_front = m_video_producer->bufferFront();
     if (!video_front.has_value()) {
       spdlog::debug("video queue is empty (1)");
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));
       continue;
     }
-    auto video_timestamp = video_front.value().timestamp;
+    const auto video_timestamp = video_front.value().timestamp;
 
     if (video_timestamp <= audio_timestamp) {
       addAndConsumeVideo(video_front.value().data,
@@ -150,7 +151,7 @@ void AsyncWebMMuxer::run() {
 
   spdlog::debug("video is processing");
   while (!m_video_producer->isFinished()) {
-    auto video_front = m_video_producer->bufferFront();
+    const auto video_front = m_video_producer->bufferFront();
     if (!video_front.has_value()) {
       spdlog::debug("video queue is empty (2)");
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));
