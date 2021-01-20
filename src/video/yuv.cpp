@@ -87,9 +87,9 @@ void merge_yuv_planes_from_top_left(
     const auto c = i % column;
     const auto r = i / column;
     for (std::uint32_t y = 0; y < src_height; ++y) {
-      std::copy(srcs[i] + y * src_width, srcs[i] + y * src_width + src_width,
-                merged + r * src_width * src_height * column + c * src_width +
-                    y * column * src_width);
+      std::copy_n(srcs[i] + y * src_width, src_width,
+                  merged + r * src_width * src_height * column + c * src_width +
+                      y * column * src_width);
     }
   }
 }

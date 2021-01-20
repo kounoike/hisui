@@ -78,7 +78,7 @@ void BufferOpusEncoder::encodeAndWrite() {
 
   std::uint8_t* data =
       new std::uint8_t[static_cast<std::size_t>(number_of_bytes)];
-  std::copy(m_opus_buffer, m_opus_buffer + number_of_bytes, data);
+  std::copy_n(m_opus_buffer, number_of_bytes, data);
   m_buffer->push(
       hisui::Frame{.timestamp = m_timestamp,
                    .data = data,

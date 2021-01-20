@@ -83,7 +83,7 @@ void ParallelGridComposer::compose(std::vector<unsigned char>* composed,
                                    m_single_plane_heights[0],
                                    m_plane_default_values[0]);
 
-    std::copy(m_planes[0], m_planes[0] + m_plane_sizes[0], composed->data());
+    std::copy_n(m_planes[0], m_plane_sizes[0], composed->data());
   });
 
   auto future1 = std::async(std::launch::async, [this, composed] {
@@ -95,8 +95,8 @@ void ParallelGridComposer::compose(std::vector<unsigned char>* composed,
                                    m_single_plane_heights[1],
                                    m_plane_default_values[1]);
 
-    std::copy(m_planes[1], m_planes[1] + m_plane_sizes[1],
-              composed->data() + m_plane_sizes[0]);
+    std::copy_n(m_planes[1], m_plane_sizes[1],
+                composed->data() + m_plane_sizes[0]);
   });
 
   auto future2 = std::async(std::launch::async, [this, composed] {
@@ -108,8 +108,8 @@ void ParallelGridComposer::compose(std::vector<unsigned char>* composed,
                                    m_single_plane_heights[2],
                                    m_plane_default_values[2]);
 
-    std::copy(m_planes[2], m_planes[2] + m_plane_sizes[2],
-              composed->data() + m_plane_sizes[0] + m_plane_sizes[1]);
+    std::copy_n(m_planes[2], m_plane_sizes[2],
+                composed->data() + m_plane_sizes[0] + m_plane_sizes[1]);
   });
 
   future0.get();

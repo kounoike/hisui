@@ -76,8 +76,7 @@ void GridComposer::compose(std::vector<unsigned char>* composed,
                                    m_srcs, m_size, m_single_plane_widths[p],
                                    m_single_plane_heights[p],
                                    m_plane_default_values[p]);
-    std::copy(m_planes[p], m_planes[p] + m_plane_sizes[p],
-              composed->data() + base);
+    std::copy_n(m_planes[p], m_plane_sizes[p], composed->data() + base);
     base += m_plane_sizes[p];
   }
 }

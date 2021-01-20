@@ -59,9 +59,8 @@ void update_yuv_image_by_vpx_image(YUVImage* yuv_image,
         static_cast<std::uint32_t>(vpx_image->stride[plane]);
 
     for (std::uint32_t y = 0; y < h; ++y) {
-      std::copy(vpx_image->planes[plane] + y * s,
-                vpx_image->planes[plane] + y * s + w,
-                yuv_image->yuv[i] + y * w);
+      std::copy_n(vpx_image->planes[plane] + y * s, w,
+                  yuv_image->yuv[i] + y * w);
     }
   }
 }
@@ -130,8 +129,7 @@ void update_vpx_image_by_yuv_data(::vpx_image_t* img,
     const std::uint32_t h = get_vpx_image_plane_height(img, plane);
 
     for (std::uint32_t y = 0; y < h; ++y) {
-      std::copy(std::begin(v) + base + y * w, std::begin(v) + base + y * w + w,
-                buf + y * stride);
+      std::copy_n(std::begin(v) + base + y * w, w, buf + y * stride);
     }
     base += h * w;
   }
