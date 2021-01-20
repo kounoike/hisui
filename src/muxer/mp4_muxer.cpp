@@ -49,8 +49,7 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
 
   if (config.out_filename == "") {
     std::filesystem::path metadata_path(config.in_metadata_filename);
-    auto mp4_path = metadata_path.replace_extension(".mp4");
-    config.out_filename = mp4_path;
+    config.out_filename = metadata_path.replace_extension(".mp4");
   }
 
   if (config.out_audio_codec == config::OutAudioCodec::FDK_AAC) {
@@ -78,7 +77,7 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
   } else {
     OpusAudioProducer* audio_producer =
         new OpusAudioProducer(config, metadata, 48000);
-    auto skip = audio_producer->getSkip();
+    const auto skip = audio_producer->getSkip();
     m_audio_producer = audio_producer;
     m_soun_track = new shiguredo::mp4::track::OpusTrack(
         {.pre_skip = static_cast<std::uint64_t>(skip),
@@ -129,13 +128,13 @@ void MP4Muxer::addVideoBuffer(hisui::Frame frame) {
 }
 
 void MP4Muxer::writeTrackData() {
-  for (auto f : m_audio_buffer) {
+  for (const auto f : m_audio_buffer) {
     m_soun_track->addMdatData(f.timestamp, f.data, f.data_size, f.is_key);
     delete[] f.data;
   }
   m_soun_track->terminateCurrentChunk();
   m_audio_buffer.clear();
-  for (auto f : m_video_buffer) {
+  for (const auto f : m_video_buffer) {
     m_vide_track->addMdatData(f.timestamp, f.data, f.data_size, f.is_key);
     delete[] f.data;
   }

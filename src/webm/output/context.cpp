@@ -50,7 +50,7 @@ void Context::setAudioTrack(const std::uint64_t codec_delay,
 void Context::setVideoTrack(const std::uint32_t width,
                             const std::uint32_t height,
                             const std::uint32_t fourcc) {
-  std::uint64_t video_track_id = m_segment->AddVideoTrack(
+  const std::uint64_t video_track_id = m_segment->AddVideoTrack(
       static_cast<int>(width), static_cast<int>(height),
       static_cast<int>(m_video_track_number));
   mkvmuxer::VideoTrack* const video_track = static_cast<mkvmuxer::VideoTrack*>(

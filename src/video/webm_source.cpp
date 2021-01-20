@@ -61,7 +61,7 @@ WebMSource::WebMSource(const std::string& file_path) {
       }
       throw std::runtime_error("openh264 library is not loaded");
     default:
-      auto fourcc = m_webm->getFourcc();
+      const auto fourcc = m_webm->getFourcc();
       std::fclose(m_file);
       delete m_webm;
       m_webm = nullptr;
