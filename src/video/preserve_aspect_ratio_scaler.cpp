@@ -81,23 +81,20 @@ const YUVImage* PreserveAspectRatioScaler::marginInHeightScale(
 
   m_scaled->setBlack();
 
-  std::copy(m_intermediate->yuv[0],
-            m_intermediate->yuv[0] +
-                m_intermediate->getWidth(0) * m_intermediate->getHeight(0),
-            m_scaled->yuv[0] + ((m_height - intermediate_height) >> 1) *
-                                   m_intermediate->getWidth(0));
+  std::copy_n(m_intermediate->yuv[0],
+              m_intermediate->getWidth(0) * m_intermediate->getHeight(0),
+              m_scaled->yuv[0] + ((m_height - intermediate_height) >> 1) *
+                                     m_intermediate->getWidth(0));
 
-  std::copy(m_intermediate->yuv[1],
-            m_intermediate->yuv[1] +
-                m_intermediate->getWidth(1) * m_intermediate->getHeight(1),
-            m_scaled->yuv[1] + ((m_height - intermediate_height) >> 2) *
-                                   m_intermediate->getWidth(1));
+  std::copy_n(m_intermediate->yuv[1],
+              m_intermediate->getWidth(1) * m_intermediate->getHeight(1),
+              m_scaled->yuv[1] + ((m_height - intermediate_height) >> 2) *
+                                     m_intermediate->getWidth(1));
 
-  std::copy(m_intermediate->yuv[2],
-            m_intermediate->yuv[2] +
-                m_intermediate->getWidth(2) * m_intermediate->getHeight(2),
-            m_scaled->yuv[2] + ((m_height - intermediate_height) >> 2) *
-                                   m_intermediate->getWidth(2));
+  std::copy_n(m_intermediate->yuv[2],
+              m_intermediate->getWidth(2) * m_intermediate->getHeight(2),
+              m_scaled->yuv[2] + ((m_height - intermediate_height) >> 2) *
+                                     m_intermediate->getWidth(2));
   return m_scaled;
 }
 
@@ -135,28 +132,25 @@ const YUVImage* PreserveAspectRatioScaler::marginInWidthScale(
   m_scaled->setBlack();
 
   for (std::uint32_t h = 0, m = m_intermediate->getHeight(0); h < m; ++h) {
-    std::copy(
-        m_intermediate->yuv[0] + h * intermediate_width,
-        m_intermediate->yuv[0] + h * intermediate_width + intermediate_width,
+    std::copy_n(
+        m_intermediate->yuv[0] + h * intermediate_width, intermediate_width,
         m_scaled->yuv[0] + m_width * h + ((m_width - intermediate_width) >> 1));
   }
 
   const auto m_width2 = m_scaled->getWidth(1);
   const auto intermediate_width2 = intermediate_width >> 1;
   for (std::uint32_t h = 0, m = m_intermediate->getHeight(1); h < m; ++h) {
-    std::copy(
-        m_intermediate->yuv[1] + h * intermediate_width2,
-        m_intermediate->yuv[1] + h * intermediate_width2 + intermediate_width2,
-        m_scaled->yuv[1] + m_width2 * h +
-            ((m_width2 - intermediate_width2) >> 1));
+    std::copy_n(m_intermediate->yuv[1] + h * intermediate_width2,
+                intermediate_width2,
+                m_scaled->yuv[1] + m_width2 * h +
+                    ((m_width2 - intermediate_width2) >> 1));
   }
 
   for (std::uint32_t h = 0, m = m_intermediate->getHeight(2); h < m; ++h) {
-    std::copy(
-        m_intermediate->yuv[2] + h * intermediate_width2,
-        m_intermediate->yuv[2] + h * intermediate_width2 + intermediate_width2,
-        m_scaled->yuv[2] + m_width2 * h +
-            ((m_width2 - intermediate_width2) >> 1));
+    std::copy_n(m_intermediate->yuv[2] + h * intermediate_width2,
+                intermediate_width2,
+                m_scaled->yuv[2] + m_width2 * h +
+                    ((m_width2 - intermediate_width2) >> 1));
   }
 
   return m_scaled;
