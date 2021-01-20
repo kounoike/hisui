@@ -26,8 +26,8 @@ ImageSource::ImageSource(const std::string& file_path) {
 
   m_yuv_image = new YUVImage(m_width, m_height);
 
-  int width2 = (m_width + 1) >> 1;
-  auto ret = libyuv::ABGRToI420(
+  const int width2 = (m_width + 1) >> 1;
+  const auto ret = libyuv::ABGRToI420(
       reinterpret_cast<const std::uint8_t*>(data), width * 4,
       m_yuv_image->yuv[0], static_cast<int>(m_width), m_yuv_image->yuv[1],
       width2, m_yuv_image->yuv[2], width2, width, height);

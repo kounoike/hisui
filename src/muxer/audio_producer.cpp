@@ -31,7 +31,7 @@ void AudioProducer::produce() {
     std::int16_t right = 0;
     m_sequencer->getSamples(&samples, p);
     for (const auto& s : samples) {
-      auto [l, r] = s;
+      const auto [l, r] = s;
       if (l != 0) {
         left = m_mix_sample(left, l);
       }

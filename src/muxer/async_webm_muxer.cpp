@@ -32,8 +32,7 @@ AsyncWebMMuxer::AsyncWebMMuxer(const hisui::Config& t_config,
 void AsyncWebMMuxer::setUp() {
   if (m_config.out_filename == "") {
     std::filesystem::path metadata_path(m_config.in_metadata_filename);
-    auto webm_path = metadata_path.replace_extension(".webm");
-    m_config.out_filename = webm_path;
+    m_config.out_filename = metadata_path.replace_extension(".webm");
   }
 
   m_file = std::fopen(m_config.out_filename.c_str(), "wb");

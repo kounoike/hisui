@@ -23,11 +23,12 @@ VPXVideoProducer::VPXVideoProducer(const hisui::Config& t_config,
 
   m_sequencer = new hisui::video::BasicSequencer(t_metadata.getArchives());
 
-  auto scaling_width = t_config.scaling_width != 0 ? t_config.scaling_width
-                                                   : m_sequencer->getMaxWidth();
-  auto scaling_height = t_config.scaling_height != 0
-                            ? t_config.scaling_height
-                            : m_sequencer->getMaxHeight();
+  const auto scaling_width = t_config.scaling_width != 0
+                                 ? t_config.scaling_width
+                                 : m_sequencer->getMaxWidth();
+  const auto scaling_height = t_config.scaling_height != 0
+                                  ? t_config.scaling_height
+                                  : m_sequencer->getMaxHeight();
 
   switch (t_config.video_composer) {
     case hisui::config::VideoComposer::Grid:
