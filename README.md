@@ -52,6 +52,27 @@ Hisui を使ってみたい人は [USE.md](doc/USE.md) をお読みください�
 
 Linux 版 Hisui のビルドしたい人は [BUILD_LINUX.md](doc/BUILD_LINUX.md) をお読みください
 
+
+## 優先実装
+
+優先実装とは Sora のライセンスを契約頂いているお客様限定で Hisui の実装予定機能を有償にて前倒しで実装することです。
+
+- エンコード時間の改善
+- CPU / メモリを可能な限り利用するようにする
+- AV1 出力対応
+- AV1 入力対応
+- 複数チャンネル対応
+- JSON によるレイアウト指定対応
+- 音声のみ合成対応
+- アイコン埋め込み対応
+    - 音声のみの場合は指定したアイコンを埋め込めるようにする
+- タイトルの埋め込み対応
+    - 会議のタイトルなどを埋め込めるようにする
+- 時間の埋め込み対応
+    - タイムスタンプを埋め込めるようにする
+- 配信情報の埋め込み対応
+    - ConnectionID や Metadata 情報を指定して埋め込めるようにする
+
 ## ライセンス
 
 Apache License 2.0
@@ -72,3 +93,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
