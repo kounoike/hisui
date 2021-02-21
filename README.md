@@ -54,7 +54,7 @@ Linux 版 Hisui のビルドしたい人は [BUILD_LINUX.md](doc/BUILD_LINUX.md)
 
 ## 廃止予定
 
-- Safari が WebM/MP4 の Opus に対応したタイミングで AAC は非対応とする
+- Safari が WebM/MP4 の Opus に対応したタイミングで AAC は廃止する
 
 ## 優先実装
 
