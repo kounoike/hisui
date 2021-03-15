@@ -91,11 +91,11 @@ void AsyncWebMMuxer::addAndConsumeVideo(std::uint8_t* data,
 }
 
 void AsyncWebMMuxer::run() {
-  const auto video_future = std::async(
-      std::launch::async, &VPXVideoProducer::produce, m_video_producer);
+  auto video_future = std::async(std::launch::async, &VPXVideoProducer::produce,
+                                 m_video_producer);
 
-  const auto audio_future = std::async(
-      std::launch::async, &OpusAudioProducer::produce, m_audio_producer);
+  auto audio_future = std::async(std::launch::async,
+                                 &OpusAudioProducer::produce, m_audio_producer);
 
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
@@ -118,6 +118,8 @@ void AsyncWebMMuxer::run() {
 
     if (m_video_producer->isFinished()) {
       video_finished = true;
+      video_future.get();
+      spdlog::debug("video was processed");
       addAndConsumeAudio(audio_front.value().data,
                          audio_front.value().data_size, audio_timestamp);
       continue;
@@ -141,10 +143,10 @@ void AsyncWebMMuxer::run() {
                        audio_timestamp);
   }
 
+  audio_future.get();
   spdlog::debug("audio was processed");
 
   if (video_finished) {
-    spdlog::debug("video was processed");
     return;
   }
 
@@ -162,6 +164,7 @@ void AsyncWebMMuxer::run() {
                        video_front.value().is_key);
   }
 
+  video_future.get();
   spdlog::debug("video was processed");
 }  // namespace hisui::muxer
 
