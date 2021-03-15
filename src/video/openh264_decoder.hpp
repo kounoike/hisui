@@ -30,8 +30,7 @@ class OpenH264Decoder : public Decoder {
   std::uint64_t m_current_timestamp = 0;
   std::uint64_t m_next_timestamp = 0;
   YUVImage* m_current_yuv_image = nullptr;
-  ::SBufferInfo m_current_buffer_info;
-  ::SBufferInfo m_next_buffer_info;
+  YUVImage* m_next_yuv_image = nullptr;
   std::uint8_t* m_tmp_yuv[3];
 
   void updateImage(const std::uint64_t);
