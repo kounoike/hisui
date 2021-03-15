@@ -4,6 +4,7 @@
 #include <codec/api/svc/codec_app_def.h>
 #include <codec/api/svc/codec_def.h>
 #include <fmt/core.h>
+#include <spdlog/spdlog.h>
 
 #include <limits>
 #include <stdexcept>
@@ -99,6 +100,8 @@ void OpenH264Decoder::updateImageByTimestamp(const std::uint64_t timestamp) {
           m_webm->getBuffer(), static_cast<int>(m_webm->getBufferSize()),
           m_tmp_yuv, &buffer_info);
       if (ret != 0) {
+        spdlog::error(
+            "OpenH264Decoder DecodeFrameNoDelay failed: error_code={}", ret);
         throw std::runtime_error(fmt::format(
             "m_decoder->DecodeFrameNoDelay() failed: error_code={}", ret));
       }
