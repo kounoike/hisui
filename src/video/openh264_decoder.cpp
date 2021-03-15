@@ -89,7 +89,7 @@ void OpenH264Decoder::updateImageByTimestamp(const std::uint64_t timestamp) {
     m_current_buffer_info = m_next_buffer_info;
     m_current_timestamp = m_next_timestamp;
     if (m_webm->readFrame()) {
-      SBufferInfo buffer_info;
+      ::SBufferInfo buffer_info;
       const auto ret = m_decoder->DecodeFrameNoDelay(
           m_webm->getBuffer(), static_cast<int>(m_webm->getBufferSize()),
           m_tmp_yuv, &buffer_info);
