@@ -21,6 +21,7 @@
 #include "muxer/faststart_mp4_muxer.hpp"
 #include "muxer/muxer.hpp"
 #include "muxer/simple_mp4_muxer.hpp"
+#include "report/success.hpp"
 #include "video/openh264_handler.hpp"
 
 int main(int argc, char** argv) {
@@ -93,6 +94,13 @@ int main(int argc, char** argv) {
     return 1;
   }
   delete muxer;
+
+  if (config.out_success_report != "") {
+    std::ofstream os(std::filesystem::path(config.out_success_report) /
+                     fmt::format("{}_success.json", metadata.getRecordingID()));
+    hisui::report::SuccessReporter reporter;
+    os << reporter.make();
+  }
 
   return 0;
 }

@@ -197,6 +197,7 @@ target_sources(hisui
     src/muxer/faststart_mp4_muxer.cpp
     src/muxer/video_producer.cpp
     src/muxer/vpx_video_producer.cpp
+    src/report/success.cpp
     src/util/interval.cpp
     src/version/version.cpp
     src/video/buffer_vpx_encoder.cpp

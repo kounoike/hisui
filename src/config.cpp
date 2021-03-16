@@ -141,6 +141,11 @@ void set_cli_options(CLI::App* app, Config* config) {
                   "OpenH264 dynamic library path");
 
   app->add_flag("--verbose", config->verbose, "Verbose mode");
+
+  app->add_option("--out-success-report", config->out_success_report,
+                  "Directory for success report")
+      ->check(CLI::ExistingDirectory);
+
   app->add_option("--show-progress-bar", config->show_progress_bar,
                   "Toggle to show progress bar. default: true");
 
