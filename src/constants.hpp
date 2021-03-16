@@ -23,6 +23,8 @@ class Constants {
   static const std::uint64_t OPUS_DECODE_MAX_FRAME_SIZE = 5760;
   static const std::uint64_t OPUS_MAX_PACKET_SIZE = 1276;
   inline static const std::string HISUI_APPLICATION_NAME = "hisui";
+  static const std::uint32_t VERSION_YEAR = 2021;
+  static const std::uint32_t VERSION_NUMBER_OF_RELEASES = 2;
 };
 
 }  // namespace hisui
