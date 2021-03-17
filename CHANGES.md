@@ -11,6 +11,15 @@
 
 ## develop
 
+## 2021.1.1
+
+- [FIX] std::async で作った Future を get() し例外を伝播させる
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/22
+- [FIX] 解像度の変更が入っている H.264 の WebM を合成しようとすると落ちるのを修正
+    - https://github.com/shiguredo/hisui/pull/21
+    - @haruyama
+
 ## 2021.1
 
 - [ADD] OpenH264 を利用した WebM 中の H.264 の decode
