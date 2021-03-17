@@ -18,7 +18,7 @@ const YUVImage* SimpleScaler::scale(const YUVImage* src) {
   if (src->getWidth(0) == m_width && src->getHeight(0) == m_height) {
     return src;
   }
-  int ret = libyuv::I420Scale(
+  const int ret = libyuv::I420Scale(
       src->yuv[0], static_cast<int>(src->getWidth(0)), src->yuv[1],
       static_cast<int>(src->getWidth(1)), src->yuv[2],
       static_cast<int>(src->getWidth(2)), static_cast<int>(src->getWidth(0)),

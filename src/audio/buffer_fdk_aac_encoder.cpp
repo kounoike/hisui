@@ -63,7 +63,7 @@ void BufferFDKAACEncoder::encodeAndWrite() {
   void *in_ptr, *out_ptr;
   ::AACENC_ERROR err;
 
-  int num_in_samples = static_cast<int>(std::size(m_pcm_buffer));
+  const int num_in_samples = static_cast<int>(std::size(m_pcm_buffer));
 
   in_ptr = m_pcm_buffer.data();
   in_size = num_in_samples * 2;
@@ -97,7 +97,7 @@ void BufferFDKAACEncoder::encodeAndWrite() {
     return;
   }
 
-  std::size_t data_size = static_cast<std::size_t>(out_args.numOutBytes);
+  const std::size_t data_size = static_cast<std::size_t>(out_args.numOutBytes);
 
   std::uint8_t* data = new std::uint8_t[data_size];
   std::copy_n(m_aac_buffer, data_size, data);

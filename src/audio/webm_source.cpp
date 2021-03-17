@@ -91,10 +91,10 @@ void WebMSource::readFrame() {
   if (m_webm->readFrame()) {
     m_current_position = static_cast<std::uint64_t>(m_webm->getTimestamp()) *
                          m_sampling_rate / hisui::Constants::NANO_SECOND;
-    auto decoded =
+    const auto decoded =
         m_decoder->decode(m_webm->getBuffer(), m_webm->getBufferSize());
     if (decoded.second > 0) {
-      for (size_t i = 0; i < decoded.second; ++i) {
+      for (std::size_t i = 0; i < decoded.second; ++i) {
         m_data.push(decoded.first[i]);
       }
     }

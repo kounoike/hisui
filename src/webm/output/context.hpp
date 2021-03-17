@@ -25,11 +25,11 @@ class Context {
                      const std::uint32_t height,
                      const std::uint32_t fourcc);
 
-  void addVideoFrame(const uint8_t* content,
+  void addVideoFrame(const std::uint8_t* content,
                      const std::uint64_t length,
                      const std::uint64_t pts_ns,
                      bool is_key_frame);
-  void addAudioFrame(const uint8_t* content,
+  void addAudioFrame(const std::uint8_t* content,
                      const std::uint64_t length,
                      const std::uint64_t pts_ns);
 

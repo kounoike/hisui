@@ -54,7 +54,7 @@ void BufferOpusEncoder::addSample(const std::int16_t left,
 
 void BufferOpusEncoder::flush() {
   // 1 sample しかない場合に実施すると ::OPUS_BUFFER_TOO_SMALL が返るので, その場合は切り捨てる
-  auto size = std::size(m_pcm_buffer);
+  const auto size = std::size(m_pcm_buffer);
   if (size > 2) {
     encodeAndWrite();
   } else if (size > 0) {
@@ -67,7 +67,7 @@ void BufferOpusEncoder::flush() {
 }
 
 void BufferOpusEncoder::encodeAndWrite() {
-  int number_of_bytes =
+  const int number_of_bytes =
       ::opus_encode(m_encoder, m_pcm_buffer.data(),
                     static_cast<int>(std::size(m_pcm_buffer) / 2),
                     m_opus_buffer, hisui::Constants::OPUS_MAX_PACKET_SIZE);
@@ -78,7 +78,7 @@ void BufferOpusEncoder::encodeAndWrite() {
 
   std::uint8_t* data =
       new std::uint8_t[static_cast<std::size_t>(number_of_bytes)];
-  std::copy(m_opus_buffer, m_opus_buffer + number_of_bytes, data);
+  std::copy_n(m_opus_buffer, number_of_bytes, data);
   m_buffer->push(
       hisui::Frame{.timestamp = m_timestamp,
                    .data = data,

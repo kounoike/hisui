@@ -59,9 +59,8 @@ void update_yuv_image_by_vpx_image(YUVImage* yuv_image,
         static_cast<std::uint32_t>(vpx_image->stride[plane]);
 
     for (std::uint32_t y = 0; y < h; ++y) {
-      std::copy(vpx_image->planes[plane] + y * s,
-                vpx_image->planes[plane] + y * s + w,
-                yuv_image->yuv[i] + y * w);
+      std::copy_n(vpx_image->planes[plane] + y * s, w,
+                  yuv_image->yuv[i] + y * w);
     }
   }
 }
@@ -107,7 +106,7 @@ std::uint32_t get_vpx_image_plane_height(const ::vpx_image_t* img,
 ::vpx_image_t* create_black_vpx_image(const std::uint32_t width,
                                       const std::uint32_t height) {
   const std::array<int, 3> PLANES_YUV = {VPX_PLANE_Y, VPX_PLANE_U, VPX_PLANE_V};
-  auto img = ::vpx_img_alloc(nullptr, VPX_IMG_FMT_I420, width, height, 0);
+  const auto img = ::vpx_img_alloc(nullptr, VPX_IMG_FMT_I420, width, height, 0);
   std::fill(img->planes[PLANES_YUV[0]],
             img->planes[PLANES_YUV[0]] + width * height, 0);
   for (std::size_t i = 1; i < 3; ++i) {
@@ -120,7 +119,7 @@ std::uint32_t get_vpx_image_plane_height(const ::vpx_image_t* img,
 }
 
 void update_vpx_image_by_yuv_data(::vpx_image_t* img,
-                                  const std::vector<uint8_t>& v) {
+                                  const std::vector<std::uint8_t>& v) {
   auto base = 0;
   for (auto plane = 0; plane < 3; ++plane) {
     unsigned char* buf = img->planes[plane];
@@ -130,8 +129,7 @@ void update_vpx_image_by_yuv_data(::vpx_image_t* img,
     const std::uint32_t h = get_vpx_image_plane_height(img, plane);
 
     for (std::uint32_t y = 0; y < h; ++y) {
-      std::copy(std::begin(v) + base + y * w, std::begin(v) + base + y * w + w,
-                buf + y * stride);
+      std::copy_n(std::begin(v) + base + y * w, w, buf + y * stride);
     }
     base += h * w;
   }

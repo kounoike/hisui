@@ -71,3 +71,4 @@ target_link_libraries(video_test
     )
 
 add_test(NAME video COMMAND video_test)
+set_tests_properties(video PROPERTIES LABELS hisui)

@@ -38,14 +38,14 @@ void Context::initReaderAndSegment(std::FILE* file) {
 
   mkvparser::EBMLHeader header;
   long long pos = 0; /* NOLINT */
-  auto parse_ret = header.Parse(m_reader, pos);
+  const auto parse_ret = header.Parse(m_reader, pos);
   if (parse_ret < 0) {
     reset();
     throw std::runtime_error(
         fmt::format("WebM header.Parse() failed: error_code={}", parse_ret));
   }
 
-  auto create_instance_ret =
+  const auto create_instance_ret =
       mkvparser::Segment::CreateInstance(m_reader, pos, m_segment);
   if (create_instance_ret != 0) {
     reset();
@@ -53,7 +53,7 @@ void Context::initReaderAndSegment(std::FILE* file) {
         "WebM mkvparser::Segment::CreateInstance() failed: error_code={}",
         create_instance_ret));
   }
-  auto segument_load_ret = m_segment->Load();
+  const auto segument_load_ret = m_segment->Load();
   if (segument_load_ret < 0) {
     reset();
     throw std::runtime_error(fmt::format(
@@ -144,7 +144,7 @@ bool Context::readFrame() {
   m_timestamp_ns = m_block->GetTime(m_cluster);
   m_is_key_frame = m_block->IsKey();
 
-  auto status = frame.Read(m_reader, m_buffer);
+  const auto status = frame.Read(m_reader, m_buffer);
   if (status != 0) {
     throw std::runtime_error(
         fmt::format("Frame::Read() failed: status={}", status));

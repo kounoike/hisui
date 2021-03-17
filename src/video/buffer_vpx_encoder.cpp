@@ -73,12 +73,12 @@ bool BufferVPXEncoder::encodeFrame(::vpx_codec_ctx_t* codec,
     got_pkts = true;
 
     if (pkt->kind == VPX_CODEC_CX_FRAME_PKT) {
-      std::uint64_t pts_ns = static_cast<std::uint64_t>(pkt->data.frame.pts) *
-                             m_timescale * m_fps.denominator() /
-                             m_fps.numerator();
-      std::uint8_t* buf = static_cast<uint8_t*>(pkt->data.frame.buf);
+      const std::uint64_t pts_ns =
+          static_cast<std::uint64_t>(pkt->data.frame.pts) * m_timescale *
+          m_fps.denominator() / m_fps.numerator();
+      const std::uint8_t* buf = static_cast<std::uint8_t*>(pkt->data.frame.buf);
       std::uint8_t* data = new std::uint8_t[pkt->data.frame.sz];
-      std::copy(buf, buf + pkt->data.frame.sz, data);
+      std::copy_n(buf, pkt->data.frame.sz, data);
       m_buffer->push(hisui::Frame{
           .timestamp = pts_ns,
           .data = data,

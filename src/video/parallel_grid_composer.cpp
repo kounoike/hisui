@@ -26,8 +26,8 @@ ParallelGridComposer::ParallelGridComposer(
       m_column(t_colomn) {
   m_column = std::min(m_column, m_size);
   m_row = m_column == 1 ? m_size : ((m_size + m_column - 1) / m_column);
-  m_width = static_cast<uint32_t>(m_single_width * m_column);
-  m_height = static_cast<uint32_t>(m_single_height * m_row);
+  m_width = static_cast<std::uint32_t>(m_single_width * m_column);
+  m_height = static_cast<std::uint32_t>(m_single_height * m_row);
   for (std::size_t i = 0; i < m_size; ++i) {
     switch (scaler_type) {
       case hisui::config::VideoScaler::PreserveAspectRatio:
@@ -75,7 +75,7 @@ void ParallelGridComposer::compose(std::vector<unsigned char>* composed,
   }
 
   auto future0 = std::async(std::launch::async, [this, composed] {
-    for (size_t i = 0; i < m_size; ++i) {
+    for (std::size_t i = 0; i < m_size; ++i) {
       m_srcs[0][i] = m_scaled_images[i]->yuv[0];
     }
     merge_yuv_planes_from_top_left(m_planes[0], m_plane_sizes[0], m_column,
@@ -83,11 +83,11 @@ void ParallelGridComposer::compose(std::vector<unsigned char>* composed,
                                    m_single_plane_heights[0],
                                    m_plane_default_values[0]);
 
-    std::copy(m_planes[0], m_planes[0] + m_plane_sizes[0], composed->data());
+    std::copy_n(m_planes[0], m_plane_sizes[0], composed->data());
   });
 
   auto future1 = std::async(std::launch::async, [this, composed] {
-    for (size_t i = 0; i < m_size; ++i) {
+    for (std::size_t i = 0; i < m_size; ++i) {
       m_srcs[1][i] = m_scaled_images[i]->yuv[1];
     }
     merge_yuv_planes_from_top_left(m_planes[1], m_plane_sizes[1], m_column,
@@ -95,12 +95,12 @@ void ParallelGridComposer::compose(std::vector<unsigned char>* composed,
                                    m_single_plane_heights[1],
                                    m_plane_default_values[1]);
 
-    std::copy(m_planes[1], m_planes[1] + m_plane_sizes[1],
-              composed->data() + m_plane_sizes[0]);
+    std::copy_n(m_planes[1], m_plane_sizes[1],
+                composed->data() + m_plane_sizes[0]);
   });
 
   auto future2 = std::async(std::launch::async, [this, composed] {
-    for (size_t i = 0; i < m_size; ++i) {
+    for (std::size_t i = 0; i < m_size; ++i) {
       m_srcs[2][i] = m_scaled_images[i]->yuv[2];
     }
     merge_yuv_planes_from_top_left(m_planes[2], m_plane_sizes[2], m_column,
@@ -108,8 +108,8 @@ void ParallelGridComposer::compose(std::vector<unsigned char>* composed,
                                    m_single_plane_heights[2],
                                    m_plane_default_values[2]);
 
-    std::copy(m_planes[2], m_planes[2] + m_plane_sizes[2],
-              composed->data() + m_plane_sizes[0] + m_plane_sizes[1]);
+    std::copy_n(m_planes[2], m_plane_sizes[2],
+                composed->data() + m_plane_sizes[0] + m_plane_sizes[1]);
   });
 
   future0.get();

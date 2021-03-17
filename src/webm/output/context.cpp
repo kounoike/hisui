@@ -50,7 +50,7 @@ void Context::setAudioTrack(const std::uint64_t codec_delay,
 void Context::setVideoTrack(const std::uint32_t width,
                             const std::uint32_t height,
                             const std::uint32_t fourcc) {
-  std::uint64_t video_track_id = m_segment->AddVideoTrack(
+  const std::uint64_t video_track_id = m_segment->AddVideoTrack(
       static_cast<int>(width), static_cast<int>(height),
       static_cast<int>(m_video_track_number));
   mkvmuxer::VideoTrack* const video_track = static_cast<mkvmuxer::VideoTrack*>(
@@ -75,7 +75,7 @@ void Context::setVideoTrack(const std::uint32_t width,
   video_track->set_codec_id(codec_id);
 }
 
-void Context::addVideoFrame(const uint8_t* content,
+void Context::addVideoFrame(const std::uint8_t* content,
                             const std::uint64_t length,
                             const std::uint64_t pts_ns,
                             bool is_key_frame) {
@@ -85,7 +85,7 @@ void Context::addVideoFrame(const uint8_t* content,
   }
 }
 
-void Context::addAudioFrame(const uint8_t* content,
+void Context::addAudioFrame(const std::uint8_t* content,
                             const std::uint64_t length,
                             const std::uint64_t pts_ns) {
   if (!m_segment->AddFrame(content, length, m_audio_track_number, pts_ns,

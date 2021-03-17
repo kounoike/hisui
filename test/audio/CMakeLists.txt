@@ -55,3 +55,4 @@ target_include_directories(audio_test
     )
 
 add_test(NAME audio COMMAND audio_test)
+set_tests_properties(audio PROPERTIES LABELS hisui)

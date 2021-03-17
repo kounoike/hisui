@@ -21,8 +21,8 @@ GridComposer::GridComposer(const std::uint32_t t_single_width,
       m_column(t_colomn) {
   m_column = std::min(m_column, m_size);
   m_row = m_column == 1 ? m_size : ((m_size + m_column - 1) / m_column);
-  m_width = static_cast<uint32_t>(m_single_width * m_column);
-  m_height = static_cast<uint32_t>(m_single_height * m_row);
+  m_width = static_cast<std::uint32_t>(m_single_width * m_column);
+  m_height = static_cast<std::uint32_t>(m_single_height * m_row);
   for (std::size_t i = 0; i < m_size; ++i) {
     switch (scaler_type) {
       case hisui::config::VideoScaler::PreserveAspectRatio:
@@ -76,8 +76,7 @@ void GridComposer::compose(std::vector<unsigned char>* composed,
                                    m_srcs, m_size, m_single_plane_widths[p],
                                    m_single_plane_heights[p],
                                    m_plane_default_values[p]);
-    std::copy(m_planes[p], m_planes[p] + m_plane_sizes[p],
-              composed->data() + base);
+    std::copy_n(m_planes[p], m_plane_sizes[p], composed->data() + base);
     base += m_plane_sizes[p];
   }
 }

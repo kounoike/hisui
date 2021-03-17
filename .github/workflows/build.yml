@@ -80,7 +80,7 @@ jobs:
         run: ./build.bash ${{ matrix.os }} --package --use-ccache --with-test
         timeout-minutes: 120
       - name: Test hisui
-        run: cmake --build release --target test -- ARGS='-V'
+        run: cmake --build release --target test -- ARGS='-V -L hisui'
       - name: Output package name
         shell: bash
         run: |

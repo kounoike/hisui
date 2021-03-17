@@ -1,5 +1,7 @@
 #include "muxer/audio_producer.hpp"
 
+#include <spdlog/spdlog.h>
+
 #include <cmath>
 #include <mutex>
 #include <utility>
@@ -21,34 +23,40 @@ AudioProducer::~AudioProducer() {
 }
 
 void AudioProducer::produce() {
-  std::vector<std::pair<std::int16_t, std::int16_t>> samples;
+  try {
+    std::vector<std::pair<std::int16_t, std::int16_t>> samples;
 
-  for (std::uint64_t p = 0, m = static_cast<std::uint64_t>(
-                                std::ceil(m_max_stop_time_offset *
-                                          hisui::Constants::PCM_SAMPLE_RATE));
-       p < m; ++p) {
-    std::int16_t left = 0;
-    std::int16_t right = 0;
-    m_sequencer->getSamples(&samples, p);
-    for (const auto& s : samples) {
-      auto [l, r] = s;
-      if (l != 0) {
-        left = m_mix_sample(left, l);
+    for (std::uint64_t p = 0, m = static_cast<std::uint64_t>(
+                                  std::ceil(m_max_stop_time_offset *
+                                            hisui::Constants::PCM_SAMPLE_RATE));
+         p < m; ++p) {
+      std::int16_t left = 0;
+      std::int16_t right = 0;
+      m_sequencer->getSamples(&samples, p);
+      for (const auto& s : samples) {
+        const auto [l, r] = s;
+        if (l != 0) {
+          left = m_mix_sample(left, l);
+        }
+        if (r != 0) {
+          right = m_mix_sample(right, r);
+        }
       }
-      if (r != 0) {
-        right = m_mix_sample(right, r);
+      {
+        std::lock_guard<std::mutex> lock(m_mutex_buffer);
+        m_encoder->addSample(left, right);
       }
     }
+
     {
       std::lock_guard<std::mutex> lock(m_mutex_buffer);
-      m_encoder->addSample(left, right);
+      m_encoder->flush();
+      m_is_finished = true;
     }
-  }
-
-  {
-    std::lock_guard<std::mutex> lock(m_mutex_buffer);
-    m_encoder->flush();
+  } catch (const std::exception& e) {
+    spdlog::error("AudioProducer::produce() failed: what={}", e.what());
     m_is_finished = true;
+    throw e;
   }
 }
 
