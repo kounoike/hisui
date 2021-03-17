@@ -3,6 +3,7 @@
 #include <codec/api/svc/codec_def.h>
 
 #include <cstdint>
+#include <memory>
 
 #include "video/decoder.hpp"
 
@@ -29,8 +30,8 @@ class OpenH264Decoder : public Decoder {
   ::ISVCDecoder* m_decoder = nullptr;
   std::uint64_t m_current_timestamp = 0;
   std::uint64_t m_next_timestamp = 0;
-  YUVImage* m_current_yuv_image = nullptr;
-  YUVImage* m_next_yuv_image = nullptr;
+  std::shared_ptr<YUVImage> m_current_yuv_image = nullptr;
+  std::shared_ptr<YUVImage> m_next_yuv_image = nullptr;
   std::uint8_t* m_tmp_yuv[3];
 
   void updateImage(const std::uint64_t);

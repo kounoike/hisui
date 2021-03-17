@@ -7,6 +7,7 @@
 #include <spdlog/spdlog.h>
 
 #include <limits>
+#include <memory>
 #include <stdexcept>
 
 #include "video/openh264.hpp"
@@ -39,8 +40,10 @@ OpenH264Decoder::OpenH264Decoder(hisui::webm::input::VideoContext* t_webm)
                     decoder_initialize_ret));
   }
 
-  m_current_yuv_image = create_black_yuv_image(m_width, m_height);
-  m_next_yuv_image = create_black_yuv_image(m_width, m_height);
+  m_current_yuv_image =
+      std::shared_ptr<YUVImage>(create_black_yuv_image(m_width, m_height));
+  m_next_yuv_image =
+      std::shared_ptr<YUVImage>(create_black_yuv_image(m_width, m_height));
 
   m_tmp_yuv[0] = nullptr;
   m_tmp_yuv[1] = nullptr;
@@ -48,12 +51,6 @@ OpenH264Decoder::OpenH264Decoder(hisui::webm::input::VideoContext* t_webm)
 }
 
 OpenH264Decoder::~OpenH264Decoder() {
-  if (m_next_yuv_image && m_next_yuv_image != m_current_yuv_image) {
-    delete m_next_yuv_image;
-  }
-  if (m_current_yuv_image) {
-    delete m_current_yuv_image;
-  }
   if (m_decoder) {
     m_decoder->Uninitialize();
     OpenH264Handler::getInstance().destroyDecoder(m_decoder);
@@ -71,7 +68,7 @@ const YUVImage* OpenH264Decoder::getImage(const std::uint64_t timestamp) {
     return m_black_yuv_image;
   }
   updateImage(timestamp);
-  return m_current_yuv_image;
+  return m_current_yuv_image.get();
 }
 
 void OpenH264Decoder::updateImage(const std::uint64_t timestamp) {
@@ -89,9 +86,6 @@ void OpenH264Decoder::updateImageByTimestamp(const std::uint64_t timestamp) {
   }
 
   do {
-    if (m_current_yuv_image && m_current_yuv_image != m_next_yuv_image) {
-      delete m_current_yuv_image;
-    }
     m_current_yuv_image = m_next_yuv_image;
     m_current_timestamp = m_next_timestamp;
     if (m_webm->readFrame()) {
@@ -107,8 +101,9 @@ void OpenH264Decoder::updateImageByTimestamp(const std::uint64_t timestamp) {
       }
       m_next_timestamp = static_cast<std::uint64_t>(m_webm->getTimestamp());
       if (buffer_info.iBufferStatus == 1) {
-        m_next_yuv_image = new YUVImage(m_width, m_height);
-        update_yuv_image_by_openh264_buffer_info(m_next_yuv_image, buffer_info);
+        m_next_yuv_image = std::make_shared<YUVImage>(m_width, m_height);
+        update_yuv_image_by_openh264_buffer_info(m_next_yuv_image.get(),
+                                                 buffer_info);
       }
     } else {
       // m_duration までは m_current_image を出すので webm を読み終えても m_current_image を維持する
