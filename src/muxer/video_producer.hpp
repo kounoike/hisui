@@ -24,10 +24,8 @@ class VideoProducer {
  public:
   virtual ~VideoProducer();
   void produce();
-
   void bufferPop();
   std::optional<hisui::Frame> bufferFront();
-
   bool isFinished();
 
   std::uint32_t getWidth() const;

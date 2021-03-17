@@ -143,10 +143,10 @@ void MP4Muxer::writeTrackData() {
 }
 
 void MP4Muxer::mux() {
-  const auto video_future =
+  auto video_future =
       std::async(std::launch::async, &VideoProducer::produce, m_video_producer);
 
-  const auto audio_future =
+  auto audio_future =
       std::async(std::launch::async, &AudioProducer::produce, m_audio_producer);
 
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -168,6 +168,8 @@ void MP4Muxer::mux() {
     }
 
     if (m_video_producer->isFinished()) {
+      video_future.get();
+      spdlog::debug("video was processed");
       video_finished = true;
       addAudioBuffer(audio_front.value());
       continue;
@@ -190,11 +192,10 @@ void MP4Muxer::mux() {
     addAudioBuffer(audio_front.value());
   }
 
+  audio_future.get();
   spdlog::debug("audio was processed");
 
-  if (video_finished) {
-    spdlog::debug("video was processed");
-  } else {
+  if (!video_finished) {
     spdlog::debug("video is processing");
     while (!m_video_producer->isFinished()) {
       const auto video_front = m_video_producer->bufferFront();
@@ -206,9 +207,9 @@ void MP4Muxer::mux() {
 
       addVideoBuffer(video_front.value());
     }
+    video_future.get();
+    spdlog::debug("video was processed");
   }
-
-  spdlog::debug("video was processed");
 
   writeTrackData();
 }
