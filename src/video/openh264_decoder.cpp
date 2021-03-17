@@ -89,7 +89,7 @@ void OpenH264Decoder::updateImageByTimestamp(const std::uint64_t timestamp) {
   }
 
   do {
-    if (m_current_yuv_image) {
+    if (m_current_yuv_image && m_current_yuv_image != m_next_yuv_image) {
       delete m_current_yuv_image;
     }
     m_current_yuv_image = m_next_yuv_image;
