@@ -1,7 +1,10 @@
 #include "muxer/video_producer.hpp"
 
+#include <spdlog/spdlog.h>
+
 #include <cmath>
 #include <cstdint>
+#include <exception>
 #include <mutex>
 #include <optional>
 #include <vector>
@@ -36,42 +39,48 @@ VideoProducer::~VideoProducer() {
 }
 
 void VideoProducer::produce() {
-  std::vector<const video::YUVImage*> yuvs;
-  std::vector<unsigned char> raw_image;
-  yuvs.resize(m_sequencer->getSize());
-  raw_image.resize(m_composer->getWidth() * m_composer->getHeight() * 3 >> 1);
+  try {
+    std::vector<const video::YUVImage*> yuvs;
+    std::vector<unsigned char> raw_image;
+    yuvs.resize(m_sequencer->getSize());
+    raw_image.resize(m_composer->getWidth() * m_composer->getHeight() * 3 >> 1);
 
-  const std::uint64_t max_time = static_cast<std::uint64_t>(
-      std::ceil(m_max_stop_time_offset * hisui::Constants::NANO_SECOND));
+    const std::uint64_t max_time = static_cast<std::uint64_t>(
+        std::ceil(m_max_stop_time_offset * hisui::Constants::NANO_SECOND));
 
-  progresscpp::ProgressBar progress_bar(max_time, 60);
+    progresscpp::ProgressBar progress_bar(max_time, 60);
 
-  for (std::uint64_t t = 0, step = hisui::Constants::NANO_SECOND *
-                                   m_frame_rate.denominator() /
-                                   m_frame_rate.numerator();
-       t < max_time; t += step) {
-    m_sequencer->getYUVs(&yuvs, t);
-    m_composer->compose(&raw_image, yuvs);
+    for (std::uint64_t t = 0, step = hisui::Constants::NANO_SECOND *
+                                     m_frame_rate.denominator() /
+                                     m_frame_rate.numerator();
+         t < max_time; t += step) {
+      m_sequencer->getYUVs(&yuvs, t);
+      m_composer->compose(&raw_image, yuvs);
+      {
+        std::lock_guard<std::mutex> lock(m_mutex_buffer);
+        m_encoder->outputImage(raw_image);
+      }
+
+      if (m_show_progress_bar) {
+        progress_bar.setTicks(t);
+        progress_bar.display();
+      }
+    }
+
     {
       std::lock_guard<std::mutex> lock(m_mutex_buffer);
-      m_encoder->outputImage(raw_image);
+      m_encoder->flush();
+      m_is_finished = true;
     }
 
     if (m_show_progress_bar) {
-      progress_bar.setTicks(t);
-      progress_bar.display();
+      progress_bar.setTicks(max_time);
+      progress_bar.done();
     }
-  }
-
-  {
-    std::lock_guard<std::mutex> lock(m_mutex_buffer);
-    m_encoder->flush();
+  } catch (const std::exception& e) {
+    spdlog::error("VideoProducer::produce() failed: what={}", e.what());
     m_is_finished = true;
-  }
-
-  if (m_show_progress_bar) {
-    progress_bar.setTicks(max_time);
-    progress_bar.done();
+    throw e;
   }
 }
 

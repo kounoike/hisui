@@ -102,5 +102,9 @@ int main(int argc, char** argv) {
     os << reporter.make();
   }
 
+  if (!config.openh264.empty()) {
+    hisui::video::OpenH264Handler::close();
+  }
+
   return 0;
 }
