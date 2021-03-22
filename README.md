@@ -76,6 +76,16 @@ Linux 版 Hisui のビルドしたい人は [BUILD_LINUX.md](doc/BUILD_LINUX.md)
 - 配信情報の埋め込み対応
     - ConnectionID や Metadata 情報を指定して埋め込めるようにする
 
+## 対応予定
+
+- Sora が AV1 録画に対応したら AV1 デコード機能へ対応予定です
+- Safari が AV1 再生に対応したら AV1 エンコード機能へ対応予定です
+
+## 廃止予定
+
+- Safari が Opus 再生に対応したら AAC 対応を削除予定です
+
+
 ## ライセンス
 
 Apache License 2.0
