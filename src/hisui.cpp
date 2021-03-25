@@ -21,7 +21,7 @@
 #include "muxer/faststart_mp4_muxer.hpp"
 #include "muxer/muxer.hpp"
 #include "muxer/simple_mp4_muxer.hpp"
-#include "report/success.hpp"
+#include "report/reporter.hpp"
 #include "video/openh264_handler.hpp"
 
 int main(int argc, char** argv) {
@@ -71,6 +71,10 @@ int main(int argc, char** argv) {
     }
   }
 
+  if (config.out_success_report != "") {
+    hisui::report::Reporter::open();
+  }
+
   hisui::muxer::Muxer* muxer = nullptr;
   if (config.out_container == hisui::config::OutContainer::WebM) {
     muxer = new hisui::muxer::AsyncWebMMuxer(config, metadata);
@@ -98,8 +102,8 @@ int main(int argc, char** argv) {
   if (config.out_success_report != "") {
     std::ofstream os(std::filesystem::path(config.out_success_report) /
                      fmt::format("{}_success.json", metadata.getRecordingID()));
-    hisui::report::SuccessReporter reporter;
-    os << reporter.make();
+    os << hisui::report::Reporter::getInstance().makeSuccessReport();
+    hisui::report::Reporter::close();
   }
 
   if (!config.openh264.empty()) {

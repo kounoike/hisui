@@ -1,4 +1,4 @@
-#include "report/success.hpp"
+#include "report/reporter.hpp"
 
 #include <string>
 
@@ -7,13 +7,13 @@
 
 namespace hisui::report {
 
-std::string SuccessReporter::make() {
-  getVersions();
+std::string Reporter::makeSuccessReport() {
+  collectVersions();
 
   return boost::json::serialize(report);
 }
 
-void SuccessReporter::getVersions() {
+void Reporter::collectVersions() {
   report["versions"] = {
       {"libvpx", version::get_libvpx_version()},
       {"libwebm", version::get_libwebm_version()},
@@ -24,6 +24,25 @@ void SuccessReporter::getVersions() {
       {"hisui", version::get_hisui_version()},
       {"cpp-mp4", version::get_cppmp4_version()},
   };
+}
+
+void Reporter::open() {
+  if (!m_reporter) {
+    m_reporter = new Reporter();
+  }
+}
+
+bool Reporter::hasInstance() {
+  return m_reporter != nullptr;
+}
+
+Reporter& Reporter::getInstance() {
+  return *m_reporter;
+}
+
+void Reporter::close() {
+  delete m_reporter;
+  m_reporter = nullptr;
 }
 
 }  // namespace hisui::report
