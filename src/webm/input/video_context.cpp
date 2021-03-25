@@ -6,12 +6,15 @@
 #include <spdlog/spdlog.h>
 
 #include <cstring>
+#include <string>
 
 #include "constants.hpp"
+#include "webm/input/context.hpp"
 
 namespace hisui::webm::input {
 
-VideoContext::VideoContext() {}
+VideoContext::VideoContext(const std::string& t_file_path)
+    : Context(t_file_path) {}
 
 VideoContext::~VideoContext() {
   reset();
@@ -22,8 +25,12 @@ void VideoContext::reset() {
   m_fourcc = 0;
 }
 
-bool VideoContext::init(std::FILE* file) {
-  initReaderAndSegment(file);
+bool VideoContext::init() {
+  m_file = std::fopen(m_file_path.c_str(), "rb");
+  if (m_file == nullptr) {
+    throw std::runtime_error("Unable to open: " + m_file_path);
+  }
+  initReaderAndSegment(m_file);
 
   const mkvparser::Tracks* const tracks = m_segment->GetTracks();
   const mkvparser::VideoTrack* video_track = nullptr;

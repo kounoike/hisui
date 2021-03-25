@@ -31,7 +31,6 @@ class WebMSource : public Source {
   std::uint64_t m_sampling_rate;
   std::queue<std::int16_t> m_data;
   std::uint64_t m_current_position = 0;
-  std::FILE* m_file;
 
   void readFrame();
 };

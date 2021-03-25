@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <cstdio>
+#include <string>
 
 #include "webm/input/context.hpp"
 
@@ -14,11 +15,11 @@ enum struct AudioCodec {
 
 class AudioContext : public Context {
  public:
-  AudioContext();
+  explicit AudioContext(const std::string&);
   ~AudioContext();
 
   void reset();
-  bool init(std::FILE*);
+  bool init();
   int getChannels() const;
   std::uint64_t getBitDepth() const;
   double getSamplingRate() const;
