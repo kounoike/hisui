@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <tuple>
 
 #include "video/decoder.hpp"
 
@@ -33,6 +34,7 @@ class OpenH264Decoder : public Decoder {
   std::shared_ptr<YUVImage> m_current_yuv_image = nullptr;
   std::shared_ptr<YUVImage> m_next_yuv_image = nullptr;
   std::uint8_t* m_tmp_yuv[3];
+  bool m_report_enabled = false;
 
   void updateImage(const std::uint64_t);
 

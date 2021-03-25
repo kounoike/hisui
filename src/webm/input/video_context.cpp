@@ -6,6 +6,7 @@
 #include <spdlog/spdlog.h>
 
 #include <cstring>
+#include <string>
 
 #include "constants.hpp"
 
@@ -81,6 +82,14 @@ bool VideoContext::init(std::FILE* file) {
   m_cluster = m_segment->GetFirst();
 
   return true;
+}
+
+void VideoContext::setFilename(const std::string& filename) {
+  m_filename = filename;
+}
+
+std::string VideoContext::getFilename() const {
+  return m_filename;
 }
 
 std::uint32_t VideoContext::getFourcc() const {

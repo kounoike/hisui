@@ -9,7 +9,9 @@
 #include <limits>
 #include <memory>
 #include <stdexcept>
+#include <tuple>
 
+#include "report/reporter.hpp"
 #include "video/openh264.hpp"
 #include "video/openh264_handler.hpp"
 #include "video/yuv.hpp"
@@ -44,6 +46,12 @@ OpenH264Decoder::OpenH264Decoder(hisui::webm::input::VideoContext* t_webm)
       std::shared_ptr<YUVImage>(create_black_yuv_image(m_width, m_height));
   m_next_yuv_image =
       std::shared_ptr<YUVImage>(create_black_yuv_image(m_width, m_height));
+
+  if (hisui::report::Reporter::hasInstance()) {
+    m_report_enabled = true;
+    hisui::report::Reporter::getInstance().registerResolutionChange(
+        m_webm->getFilename(), {0, m_width, m_height});
+  }
 
   m_tmp_yuv[0] = nullptr;
   m_tmp_yuv[1] = nullptr;
@@ -86,6 +94,15 @@ void OpenH264Decoder::updateImageByTimestamp(const std::uint64_t timestamp) {
   }
 
   do {
+    if (m_report_enabled) {
+      if (m_current_yuv_image->getWidth(0) != m_next_yuv_image->getWidth(0) ||
+          m_current_yuv_image->getHeight(0) != m_next_yuv_image->getHeight(0)) {
+        hisui::report::Reporter::getInstance().registerResolutionChange(
+            m_webm->getFilename(),
+            {m_next_timestamp, m_next_yuv_image->getWidth(0),
+             m_next_yuv_image->getHeight(0)});
+      }
+    }
     m_current_yuv_image = m_next_yuv_image;
     m_current_timestamp = m_next_timestamp;
     if (m_webm->readFrame()) {

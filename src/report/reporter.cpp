@@ -3,11 +3,15 @@
 #include <string>
 
 #include "boost/json/serialize.hpp"
+#include "boost/json/value_from.hpp"
 #include "version/version.hpp"
 
 namespace hisui::report {
 
 std::string Reporter::makeSuccessReport() {
+  report["inputs"].emplace_object()["resolution_changes"] =
+      boost::json::value_from(m_resolution_changes);
+
   collectVersions();
 
   return boost::json::serialize(report);
@@ -43,6 +47,12 @@ Reporter& Reporter::getInstance() {
 void Reporter::close() {
   delete m_reporter;
   m_reporter = nullptr;
+}
+
+void Reporter::registerResolutionChange(
+    const std::string& filename,
+    const std::tuple<std::uint64_t, std::uint32_t, std::uint32_t>& value) {
+  m_resolution_changes[filename].emplace_back(value);
 }
 
 }  // namespace hisui::report
