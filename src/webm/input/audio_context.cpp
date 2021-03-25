@@ -47,7 +47,6 @@ bool AudioContext::init() {
 
   if (audio_track == nullptr || audio_track->GetCodecId() == nullptr) {
     spdlog::info("audio track not found");
-    reset();
     return false;
   }
 
@@ -67,7 +66,6 @@ bool AudioContext::init() {
     }
   } else {
     spdlog::info("unsuppoted codec: codec_id={}", audio_track->GetCodecId());
-    reset();
     return false;
   }
 

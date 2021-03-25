@@ -45,7 +45,6 @@ bool VideoContext::init() {
 
   if (video_track == nullptr || video_track->GetCodecId() == nullptr) {
     spdlog::info("video track not found");
-    reset();
     return false;
   }
 
@@ -59,7 +58,6 @@ bool VideoContext::init() {
     const auto codec_name_as_utf8 = video_track->GetCodecNameAsUTF8();
     if (codec_name_as_utf8 == nullptr) {
       spdlog::info("V_MPEG4/ISO/AVC: codec_name_as_utf8 is null");
-      reset();
       return false;
     }
     if (!std::strncmp(codec_name_as_utf8, "H.264", 5)) {
@@ -67,7 +65,6 @@ bool VideoContext::init() {
     } else {
       spdlog::info("V_MPEG4/ISO/AVC: unknown codec_name_as_utf8: {}",
                    codec_name_as_utf8);
-      reset();
       return false;
     }
   } else {
@@ -78,7 +75,6 @@ bool VideoContext::init() {
                    video_track->GetCodecId(),
                    video_track->GetCodecNameAsUTF8());
     }
-    reset();
     return false;
   }
 
