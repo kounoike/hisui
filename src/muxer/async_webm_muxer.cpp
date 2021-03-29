@@ -28,11 +28,8 @@ void AsyncWebMMuxer::setUp() {
     m_config.out_filename = metadata_path.replace_extension(".webm");
   }
 
-  m_file = std::fopen(m_config.out_filename.c_str(), "wb");
-  if (!m_file) {
-    throw std::runtime_error("Unable to open: " + m_config.out_filename);
-  }
-  m_context = new hisui::webm::output::Context(m_file);
+  m_context = new hisui::webm::output::Context(m_config.out_filename);
+  m_context->init();
 
   if (m_config.out_video_bit_rate == 0) {
     m_config.out_video_bit_rate =
@@ -60,7 +57,6 @@ void AsyncWebMMuxer::setUp() {
 
 AsyncWebMMuxer::~AsyncWebMMuxer() {
   delete m_context;
-  std::fclose(m_file);
 
   delete m_video_producer;
   delete m_audio_producer;
