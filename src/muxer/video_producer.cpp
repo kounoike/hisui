@@ -1,10 +1,10 @@
 #include "muxer/video_producer.hpp"
 
+#include <bits/exception.h>
 #include <spdlog/spdlog.h>
 
 #include <cmath>
 #include <cstdint>
-#include <exception>
 #include <mutex>
 #include <optional>
 #include <vector>
@@ -26,6 +26,10 @@ class YUVImage;
 
 namespace hisui::muxer {
 
+VideoProducer::VideoProducer(const VideoProducerParameters& params)
+    : m_show_progress_bar(params.show_progress_bar),
+      m_is_finished(params.is_finished) {}
+
 VideoProducer::~VideoProducer() {
   if (m_encoder) {
     delete m_encoder;
@@ -39,6 +43,10 @@ VideoProducer::~VideoProducer() {
 }
 
 void VideoProducer::produce() {
+  if (isFinished()) {
+    return;
+  }
+
   try {
     std::vector<const video::YUVImage*> yuvs;
     std::vector<unsigned char> raw_image;
