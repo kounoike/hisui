@@ -18,20 +18,14 @@
 
 namespace hisui::video {
 
-WebMSource::WebMSource(const std::string& file_path) {
-  m_file = std::fopen(file_path.c_str(), "rb");
-  if (m_file == nullptr) {
-    throw std::runtime_error("Unable to open: " + file_path);
-  }
-
-  m_webm = new hisui::webm::input::VideoContext();
-  if (!m_webm->init(m_file)) {
+WebMSource::WebMSource(const std::string& t_file_path) {
+  m_webm = new hisui::webm::input::VideoContext(t_file_path);
+  if (!m_webm->init()) {
     spdlog::info(
         "VideoContext initialization failed. no video track or unsupported "
         "codec: file_path={}",
-        file_path);
+        t_file_path);
 
-    std::fclose(m_file);
     delete m_webm;
     m_webm = nullptr;
     m_width = 320;
@@ -45,7 +39,7 @@ WebMSource::WebMSource(const std::string& file_path) {
   m_width = m_webm->getWidth();
   m_height = m_webm->getHeight();
 
-  spdlog::trace("WebMSource: file_path={}, width={}, height={}", file_path,
+  spdlog::trace("WebMSource: file_path={}, width={}, height={}", t_file_path,
                 m_width, m_height);
 
   m_duration = static_cast<std::uint64_t>(m_webm->getDuration());
@@ -64,7 +58,6 @@ WebMSource::WebMSource(const std::string& file_path) {
       throw std::runtime_error("openh264 library is not loaded");
     default:
       const auto fourcc = m_webm->getFourcc();
-      std::fclose(m_file);
       delete m_webm;
       m_webm = nullptr;
       throw std::runtime_error(fmt::format("unknown fourcc: {}", fourcc));
@@ -74,7 +67,6 @@ WebMSource::WebMSource(const std::string& file_path) {
 WebMSource::~WebMSource() {
   if (m_webm) {
     delete m_webm;
-    std::fclose(m_file);
   }
   if (m_decoder) {
     delete m_decoder;

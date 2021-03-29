@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
+#include <string>
 
 namespace mkvparser {
 
@@ -18,12 +19,13 @@ namespace hisui::webm::input {
 
 class Context {
  public:
-  Context();
+  explicit Context(const std::string&);
   virtual ~Context();
 
-  virtual bool init(std::FILE*) = 0;
+  virtual bool init() = 0;
   std::size_t getBufferSize() const;
   unsigned char* getBuffer();
+  std::string getFilePath() const;
   std::int64_t getTimestamp() const;
   std::int64_t getDuration() const;
   bool readFrame();
@@ -32,6 +34,8 @@ class Context {
   mkvparser::Segment* m_segment = nullptr;
   const mkvparser::Cluster* m_cluster = nullptr;
   int m_track_index = 0;
+  std::string m_file_path;
+  std::FILE* m_file = nullptr;
 
   void reset();
   void initReaderAndSegment(std::FILE*);

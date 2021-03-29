@@ -10,12 +10,12 @@ namespace hisui::webm::input {
 
 class VideoContext : public Context {
  public:
-  VideoContext();
+  explicit VideoContext(const std::string&);
   ~VideoContext();
 
   void reset();
 
-  bool init(std::FILE*);
+  bool init();
 
   void setFilename(const std::string&);
   std::string getFilename() const;

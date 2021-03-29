@@ -32,7 +32,6 @@ class WebMSource : public Source {
   std::uint32_t m_width;
   std::uint32_t m_height;
   std::uint64_t m_duration;
-  std::FILE* m_file;
 
   void readFrame();
 };

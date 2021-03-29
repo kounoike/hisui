@@ -7,10 +7,12 @@
 
 #include <cstddef>
 #include <cstring>
+#include "webm/input/context.hpp"
 
 namespace hisui::webm::input {
 
-AudioContext::AudioContext() {}
+AudioContext::AudioContext(const std::string& t_file_path)
+    : Context(t_file_path) {}
 
 AudioContext::~AudioContext() {
   reset();
@@ -24,8 +26,13 @@ void AudioContext::reset() {
   m_codec = AudioCodec::None;
 }
 
-bool AudioContext::init(std::FILE* file) {
-  initReaderAndSegment(file);
+bool AudioContext::init() {
+  m_file = std::fopen(m_file_path.c_str(), "rb");
+  if (m_file == nullptr) {
+    throw std::runtime_error("Unable to open: " + m_file_path);
+  }
+
+  initReaderAndSegment(m_file);
 
   const mkvparser::Tracks* const tracks = m_segment->GetTracks();
   const mkvparser::AudioTrack* audio_track = nullptr;
@@ -40,7 +47,6 @@ bool AudioContext::init(std::FILE* file) {
 
   if (audio_track == nullptr || audio_track->GetCodecId() == nullptr) {
     spdlog::info("audio track not found");
-    reset();
     return false;
   }
 
@@ -60,7 +66,6 @@ bool AudioContext::init(std::FILE* file) {
     }
   } else {
     spdlog::info("unsuppoted codec: codec_id={}", audio_track->GetCodecId());
-    reset();
     return false;
   }
 
