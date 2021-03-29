@@ -50,7 +50,7 @@ OpenH264Decoder::OpenH264Decoder(hisui::webm::input::VideoContext* t_webm)
   if (hisui::report::Reporter::hasInstance()) {
     m_report_enabled = true;
     hisui::report::Reporter::getInstance().registerResolutionChange(
-        m_webm->getFilename(), {0, m_width, m_height});
+        m_webm->getFilePath(), {0, m_width, m_height});
   }
 
   m_tmp_yuv[0] = nullptr;
@@ -98,7 +98,7 @@ void OpenH264Decoder::updateImageByTimestamp(const std::uint64_t timestamp) {
       if (m_current_yuv_image->getWidth(0) != m_next_yuv_image->getWidth(0) ||
           m_current_yuv_image->getHeight(0) != m_next_yuv_image->getHeight(0)) {
         hisui::report::Reporter::getInstance().registerResolutionChange(
-            m_webm->getFilename(),
+            m_webm->getFilePath(),
             {m_next_timestamp, m_next_yuv_image->getWidth(0),
              m_next_yuv_image->getHeight(0)});
       }

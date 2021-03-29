@@ -86,14 +86,6 @@ bool VideoContext::init() {
   return true;
 }
 
-void VideoContext::setFilename(const std::string& filename) {
-  m_filename = filename;
-}
-
-std::string VideoContext::getFilename() const {
-  return m_filename;
-}
-
 std::uint32_t VideoContext::getFourcc() const {
   return m_fourcc;
 }

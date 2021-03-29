@@ -34,8 +34,6 @@ WebMSource::WebMSource(const std::string& t_file_path) {
     return;
   }
 
-  m_webm->setFilename(file_path);
-
   m_width = m_webm->getWidth();
   m_height = m_webm->getHeight();
 
