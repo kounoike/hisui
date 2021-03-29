@@ -11,6 +11,10 @@
 
 ## develop
 
+- [ADD] 音声の mix のみを行なう --audio-only コマンドラインオプションの追加
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/26
+
 ## 2021.1.1
 
 - [FIX] std::async で作った Future を get() し例外を伝播させる
