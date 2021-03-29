@@ -6,12 +6,15 @@
 #include <spdlog/spdlog.h>
 
 #include <cstring>
+#include <string>
 
 #include "constants.hpp"
+#include "webm/input/context.hpp"
 
 namespace hisui::webm::input {
 
-VideoContext::VideoContext() {}
+VideoContext::VideoContext(const std::string& t_file_path)
+    : Context(t_file_path) {}
 
 VideoContext::~VideoContext() {
   reset();
@@ -22,8 +25,12 @@ void VideoContext::reset() {
   m_fourcc = 0;
 }
 
-bool VideoContext::init(std::FILE* file) {
-  initReaderAndSegment(file);
+bool VideoContext::init() {
+  m_file = std::fopen(m_file_path.c_str(), "rb");
+  if (m_file == nullptr) {
+    throw std::runtime_error("Unable to open: " + m_file_path);
+  }
+  initReaderAndSegment(m_file);
 
   const mkvparser::Tracks* const tracks = m_segment->GetTracks();
   const mkvparser::VideoTrack* video_track = nullptr;
@@ -38,7 +45,6 @@ bool VideoContext::init(std::FILE* file) {
 
   if (video_track == nullptr || video_track->GetCodecId() == nullptr) {
     spdlog::info("video track not found");
-    reset();
     return false;
   }
 
@@ -52,7 +58,6 @@ bool VideoContext::init(std::FILE* file) {
     const auto codec_name_as_utf8 = video_track->GetCodecNameAsUTF8();
     if (codec_name_as_utf8 == nullptr) {
       spdlog::info("V_MPEG4/ISO/AVC: codec_name_as_utf8 is null");
-      reset();
       return false;
     }
     if (!std::strncmp(codec_name_as_utf8, "H.264", 5)) {
@@ -60,7 +65,6 @@ bool VideoContext::init(std::FILE* file) {
     } else {
       spdlog::info("V_MPEG4/ISO/AVC: unknown codec_name_as_utf8: {}",
                    codec_name_as_utf8);
-      reset();
       return false;
     }
   } else {
@@ -71,7 +75,6 @@ bool VideoContext::init(std::FILE* file) {
                    video_track->GetCodecId(),
                    video_track->GetCodecNameAsUTF8());
     }
-    reset();
     return false;
   }
 

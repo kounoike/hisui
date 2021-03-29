@@ -15,19 +15,13 @@
 
 namespace hisui::audio {
 
-WebMSource::WebMSource(const std::string& file_path) {
-  m_file = std::fopen(file_path.c_str(), "rb");
-  if (m_file == nullptr) {
-    throw std::runtime_error("Unable to open: " + file_path);
-  }
-
-  m_webm = new hisui::webm::input::AudioContext();
-  if (!m_webm->init(m_file)) {
+WebMSource::WebMSource(const std::string& t_file_path) {
+  m_webm = new hisui::webm::input::AudioContext(t_file_path);
+  if (!m_webm->init()) {
     spdlog::info(
         "AudioContext initialization failed. no audio track or unsupported "
         "codec: file_path='{}'",
-        file_path);
-    std::fclose(m_file);
+        t_file_path);
     delete m_webm;
     m_webm = nullptr;
     return;
@@ -41,10 +35,9 @@ WebMSource::WebMSource(const std::string& file_path) {
       break;
     default:
       // 対応していない WebM の場合は {0, 0} を返す
-      std::fclose(m_file);
       delete m_webm;
       m_webm = nullptr;
-      spdlog::info("unsupported audio codec: file_path ='{}'", file_path);
+      spdlog::info("unsupported audio codec: file_path ='{}'", t_file_path);
       return;
   }
 }
@@ -52,7 +45,6 @@ WebMSource::WebMSource(const std::string& file_path) {
 WebMSource::~WebMSource() {
   if (m_webm) {
     delete m_webm;
-    std::fclose(m_file);
   }
   if (m_decoder) {
     delete m_decoder;
