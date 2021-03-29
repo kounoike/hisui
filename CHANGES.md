@@ -14,6 +14,13 @@
 - [ADD] 音声の mix のみを行なう --audio-only コマンドラインオプションの追加
     - @haruyama
     - https://github.com/shiguredo/hisui/pull/26
+- [UPDATE] --libvp9-tile-columns コマンドラインオプションの追加
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/24
+    - https://github.com/shiguredo/hisui/pull/28
+- [UPDATE] WebM/MP4 Muxer の mux() を共通化
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/23
 
 ## 2021.1.1
 
