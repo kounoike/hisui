@@ -29,7 +29,8 @@ VPXDecoder::VPXDecoder(hisui::webm::input::VideoContext* t_webm)
   if (hisui::report::Reporter::hasInstance()) {
     m_report_enabled = true;
     hisui::report::Reporter::getInstance().registerResolutionChange(
-        m_webm->getFilePath(), {0, m_width, m_height});
+        m_webm->getFilePath(),
+        {.timestamp = 0, .width = m_width, .height = m_height});
   }
 
   updateVPXImageByTimestamp(0);
@@ -88,8 +89,9 @@ void VPXDecoder::updateVPXImageByTimestamp(const std::uint64_t timestamp) {
                 get_vpx_image_plane_height(m_next_vpx_image, 0)) {
           hisui::report::Reporter::getInstance().registerResolutionChange(
               m_webm->getFilePath(),
-              {m_next_timestamp, get_vpx_image_plane_width(m_next_vpx_image, 0),
-               get_vpx_image_plane_height(m_next_vpx_image, 0)});
+              {.timestamp = m_next_timestamp,
+               .width = get_vpx_image_plane_width(m_next_vpx_image, 0),
+               .height = get_vpx_image_plane_height(m_next_vpx_image, 0)});
         }
       }
       ::vpx_img_free(m_current_vpx_image);

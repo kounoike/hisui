@@ -49,10 +49,19 @@ void Reporter::close() {
   m_reporter = nullptr;
 }
 
-void Reporter::registerResolutionChange(
-    const std::string& filename,
-    const std::tuple<std::uint64_t, std::uint32_t, std::uint32_t>& value) {
-  m_resolution_changes[filename].emplace_back(value);
+void Reporter::registerResolutionChange(const std::string& filename,
+                                        const ResolutionWithTimestamp& rwt) {
+  m_resolution_changes[filename].push_back(rwt);
+}
+
+void tag_invoke(const boost::json::value_from_tag&,
+                boost::json::value& jv,  // NOLINT
+                const ResolutionWithTimestamp& rwt) {
+  jv = {
+      {"timestamp", rwt.timestamp},
+      {"width", rwt.width},
+      {"height", rwt.height},
+  };
 }
 
 }  // namespace hisui::report

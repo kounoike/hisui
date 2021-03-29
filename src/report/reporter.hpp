@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <map>
 #include <string>
 #include <tuple>
@@ -10,15 +11,24 @@
 
 namespace hisui::report {
 
+struct ResolutionWithTimestamp {
+  std::uint64_t timestamp;
+  std::uint32_t width;
+  std::uint32_t height;
+};
+
+void tag_invoke(const boost::json::value_from_tag&,
+                boost::json::value& jv,  // NOLINT
+                const ResolutionWithTimestamp& rwt);
+
 class Reporter {
  public:
   Reporter& operator=(const Reporter&) = delete;
   Reporter(Reporter&&) = delete;
   Reporter& operator=(Reporter&&) = delete;
   std::string makeSuccessReport();
-  void registerResolutionChange(
-      const std::string& filename,
-      const std::tuple<std::uint64_t, std::uint32_t, std::uint32_t>& value);
+  void registerResolutionChange(const std::string&,
+                                const ResolutionWithTimestamp&);
 
   static void open();
   static bool hasInstance();
@@ -29,8 +39,7 @@ class Reporter {
   Reporter() = default;
   ~Reporter() = default;
   void collectVersions();
-  std::map<std::string,
-           std::vector<std::tuple<std::uint64_t, std::uint32_t, std::uint32_t>>>
+  std::map<std::string, std::vector<ResolutionWithTimestamp>>
       m_resolution_changes;
 
   boost::json::object report;
