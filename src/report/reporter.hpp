@@ -11,6 +11,16 @@
 
 namespace hisui::report {
 
+struct AudioDecoderInfo {
+  const std::string codec;
+  const int channels;
+  const std::int64_t duration;
+};
+
+void tag_invoke(const boost::json::value_from_tag&,
+                boost::json::value& jv,  // NOLINT
+                const AudioDecoderInfo& adi);
+
 struct VideoDecoderInfo {
   const std::string codec;
   const std::int64_t duration;
@@ -36,6 +46,7 @@ class Reporter {
   Reporter(Reporter&&) = delete;
   Reporter& operator=(Reporter&&) = delete;
   std::string makeSuccessReport();
+  void registerAudioDecoder(const std::string&, const AudioDecoderInfo&);
   void registerVideoDecoder(const std::string&, const VideoDecoderInfo&);
 
   void registerResolutionChange(const std::string&,
@@ -50,6 +61,7 @@ class Reporter {
   Reporter() = default;
   ~Reporter() = default;
   void collectVersions();
+  std::map<std::string, AudioDecoderInfo> m_audio_decoder_map;
   std::map<std::string, VideoDecoderInfo> m_video_decoder_map;
   std::map<std::string, std::vector<ResolutionWithTimestamp>>
       m_resolution_changes_map;

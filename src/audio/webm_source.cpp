@@ -11,6 +11,7 @@
 #include "audio/decoder.hpp"
 #include "audio/opus_decoder.hpp"
 #include "constants.hpp"
+#include "report/reporter.hpp"
 #include "webm/input/audio_context.hpp"
 
 namespace hisui::audio {
@@ -24,6 +25,10 @@ WebMSource::WebMSource(const std::string& t_file_path) {
         t_file_path);
     delete m_webm;
     m_webm = nullptr;
+    if (hisui::report::Reporter::hasInstance()) {
+      hisui::report::Reporter::getInstance().registerAudioDecoder(
+          t_file_path, {.codec = "none", .channels = 0, .duration = 0});
+    }
     return;
   }
 
@@ -32,12 +37,23 @@ WebMSource::WebMSource(const std::string& t_file_path) {
       m_channels = m_webm->getChannels(),
       m_sampling_rate = static_cast<std::uint64_t>(m_webm->getSamplingRate());
       m_decoder = new OpusDecoder(m_channels);
+      if (hisui::report::Reporter::hasInstance()) {
+        hisui::report::Reporter::getInstance().registerAudioDecoder(
+            m_webm->getFilePath(), {.codec = "opus",
+                                    .channels = m_webm->getChannels(),
+                                    .duration = m_webm->getDuration()});
+      }
       break;
     default:
       // 対応していない WebM の場合は {0, 0} を返す
       delete m_webm;
       m_webm = nullptr;
       spdlog::info("unsupported audio codec: file_path ='{}'", t_file_path);
+      if (hisui::report::Reporter::hasInstance()) {
+        hisui::report::Reporter::getInstance().registerAudioDecoder(
+            t_file_path,
+            {.codec = "unsupported", .channels = 0, .duration = 0});
+      }
       return;
   }
 }

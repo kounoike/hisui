@@ -12,12 +12,20 @@ namespace hisui::report {
 
 std::string Reporter::makeSuccessReport() {
   boost::json::object inputs;
-  for (const auto& [path, vdi] : m_video_decoder_map) {
-    inputs[path] = {
-        {"video_decoder_info", boost::json::value_from(vdi)},
-        {"video_resolution_changes",
-         boost::json::value_from(m_resolution_changes_map[path])},
-    };
+  for (const auto& [path, adi] : m_audio_decoder_map) {
+    if (m_video_decoder_map.contains(path)) {
+      inputs[path] = {
+          {"audio_decoder_info", boost::json::value_from(adi)},
+          {"video_decoder_info",
+           boost::json::value_from(m_video_decoder_map.at(path))},
+          {"video_resolution_changes",
+           boost::json::value_from(m_resolution_changes_map.at(path))},
+      };
+    } else {
+      inputs[path] = {
+          {"audio_decoder_info", boost::json::value_from(adi)},
+      };
+    }
   }
 
   report["inputs"] = inputs;
@@ -64,9 +72,24 @@ void Reporter::registerResolutionChange(const std::string& filename,
   m_resolution_changes_map[filename].push_back(rwt);
 }
 
+void Reporter::registerAudioDecoder(const std::string& filename,
+                                    const AudioDecoderInfo& adi) {
+  m_audio_decoder_map.insert({filename, adi});
+}
+
 void Reporter::registerVideoDecoder(const std::string& filename,
                                     const VideoDecoderInfo& vdi) {
   m_video_decoder_map.insert({filename, vdi});
+}
+
+void tag_invoke(const boost::json::value_from_tag&,
+                boost::json::value& jv,  // NOLINT
+                const AudioDecoderInfo& adi) {
+  jv = {
+      {"codec", adi.codec},
+      {"channels", adi.channels},
+      {"duration", adi.duration},
+  };
 }
 
 void tag_invoke(const boost::json::value_from_tag&,
