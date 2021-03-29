@@ -142,6 +142,8 @@ void set_cli_options(CLI::App* app, Config* config) {
 
   app->add_flag("--verbose", config->verbose, "Verbose mode");
 
+  app->add_flag("--audio-only", config->audio_only, "Audio only mode");
+
   app->add_option("--out-success-report", config->out_success_report,
                   "Directory for success report")
       ->check(CLI::ExistingDirectory);

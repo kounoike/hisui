@@ -80,6 +80,7 @@ class Config {
   std::size_t max_columns = 3;
 
   bool verbose = false;
+  bool audio_only = false;
   std::string out_success_report = "";
 
   // 以降は SPEC.rst にないオプション
