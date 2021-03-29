@@ -1,5 +1,7 @@
 #include "report/reporter.hpp"
 
+#include <spdlog/spdlog.h>
+
 #include <string>
 
 #include "boost/json/serialize.hpp"
@@ -9,13 +11,21 @@
 namespace hisui::report {
 
 std::string Reporter::makeSuccessReport() {
-  report["inputs"].emplace_object()["resolution_changes"] =
-      boost::json::value_from(m_resolution_changes);
+  boost::json::object inputs;
+  for (const auto& [path, vdi] : m_video_decoder_map) {
+    inputs[path] = {
+        {"video_decoder_info", boost::json::value_from(vdi)},
+        {"video_resolution_changes",
+         boost::json::value_from(m_resolution_changes_map[path])},
+    };
+  }
+
+  report["inputs"] = inputs;
 
   collectVersions();
 
   return boost::json::serialize(report);
-}
+}  // namespace hisui::report
 
 void Reporter::collectVersions() {
   report["versions"] = {
@@ -51,7 +61,21 @@ void Reporter::close() {
 
 void Reporter::registerResolutionChange(const std::string& filename,
                                         const ResolutionWithTimestamp& rwt) {
-  m_resolution_changes[filename].push_back(rwt);
+  m_resolution_changes_map[filename].push_back(rwt);
+}
+
+void Reporter::registerVideoDecoder(const std::string& filename,
+                                    const VideoDecoderInfo& vdi) {
+  m_video_decoder_map.insert({filename, vdi});
+}
+
+void tag_invoke(const boost::json::value_from_tag&,
+                boost::json::value& jv,  // NOLINT
+                const VideoDecoderInfo& vdi) {
+  jv = {
+      {"codec", vdi.codec},
+      {"duration", vdi.duration},
+  };
 }
 
 void tag_invoke(const boost::json::value_from_tag&,

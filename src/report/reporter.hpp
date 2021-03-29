@@ -11,10 +11,19 @@
 
 namespace hisui::report {
 
+struct VideoDecoderInfo {
+  const std::string codec;
+  const std::int64_t duration;
+};
+
+void tag_invoke(const boost::json::value_from_tag&,
+                boost::json::value& jv,  // NOLINT
+                const VideoDecoderInfo& vdi);
+
 struct ResolutionWithTimestamp {
-  std::uint64_t timestamp;
-  std::uint32_t width;
-  std::uint32_t height;
+  const std::uint64_t timestamp;
+  const std::uint32_t width;
+  const std::uint32_t height;
 };
 
 void tag_invoke(const boost::json::value_from_tag&,
@@ -27,6 +36,8 @@ class Reporter {
   Reporter(Reporter&&) = delete;
   Reporter& operator=(Reporter&&) = delete;
   std::string makeSuccessReport();
+  void registerVideoDecoder(const std::string&, const VideoDecoderInfo&);
+
   void registerResolutionChange(const std::string&,
                                 const ResolutionWithTimestamp&);
 
@@ -39,8 +50,9 @@ class Reporter {
   Reporter() = default;
   ~Reporter() = default;
   void collectVersions();
+  std::map<std::string, VideoDecoderInfo> m_video_decoder_map;
   std::map<std::string, std::vector<ResolutionWithTimestamp>>
-      m_resolution_changes;
+      m_resolution_changes_map;
 
   boost::json::object report;
   inline static Reporter* m_reporter = nullptr;

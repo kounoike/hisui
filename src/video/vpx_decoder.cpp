@@ -11,6 +11,7 @@
 #include <limits>
 #include <stdexcept>
 
+#include "constants.hpp"
 #include "report/reporter.hpp"
 #include "video/vpx.hpp"
 #include "video/yuv.hpp"
@@ -28,6 +29,13 @@ VPXDecoder::VPXDecoder(hisui::webm::input::VideoContext* t_webm)
 
   if (hisui::report::Reporter::hasInstance()) {
     m_report_enabled = true;
+
+    hisui::report::Reporter::getInstance().registerVideoDecoder(
+        m_webm->getFilePath(),
+        {.codec = m_webm->getFourcc() == hisui::Constants::VP9_FOURCC ? "vp9"
+                                                                      : "vp8",
+         .duration = m_webm->getDuration()});
+
     hisui::report::Reporter::getInstance().registerResolutionChange(
         m_webm->getFilePath(),
         {.timestamp = 0, .width = m_width, .height = m_height});

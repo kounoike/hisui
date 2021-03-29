@@ -49,6 +49,11 @@ OpenH264Decoder::OpenH264Decoder(hisui::webm::input::VideoContext* t_webm)
 
   if (hisui::report::Reporter::hasInstance()) {
     m_report_enabled = true;
+
+    hisui::report::Reporter::getInstance().registerVideoDecoder(
+        m_webm->getFilePath(),
+        {.codec = "H.264", .duration = m_webm->getDuration()});
+
     hisui::report::Reporter::getInstance().registerResolutionChange(
         m_webm->getFilePath(),
         {.timestamp = 0, .width = m_width, .height = m_height});
