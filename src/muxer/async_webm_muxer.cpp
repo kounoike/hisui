@@ -15,6 +15,7 @@
 #include "muxer/opus_audio_producer.hpp"
 #include "muxer/video_producer.hpp"
 #include "muxer/vpx_video_producer.hpp"
+#include "report/reporter.hpp"
 #include "webm/output/context.hpp"
 
 namespace hisui::muxer {
@@ -63,6 +64,17 @@ void AsyncWebMMuxer::setUp() {
                                hisui::Constants::NANO_SECOND /
                                hisui::Constants::PCM_SAMPLE_RATE,
                            private_data.data(), std::size(private_data));
+
+  if (hisui::report::Reporter::hasInstance()) {
+    hisui::report::Reporter::getInstance().registerOutput(
+        {.container = "WebM",
+         .video_codec =
+             m_config.audio_only ? "none"
+             : m_video_producer->getFourcc() == hisui::Constants::VP9_FOURCC
+                 ? "vp9"
+                 : "vp8",
+         .audio_codec = "opus"});
+  }
 }
 
 AsyncWebMMuxer::~AsyncWebMMuxer() {

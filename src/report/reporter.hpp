@@ -40,12 +40,24 @@ void tag_invoke(const boost::json::value_from_tag&,
                 boost::json::value& jv,  // NOLINT
                 const ResolutionWithTimestamp& rwt);
 
+struct OutputInfo {
+  std::string container;
+  std::string mux_type;
+  std::string video_codec;
+  std::string audio_codec;
+};
+
+void tag_invoke(const boost::json::value_from_tag&,
+                boost::json::value& jv,  // NOLINT
+                const OutputInfo& oi);
+
 class Reporter {
  public:
   Reporter& operator=(const Reporter&) = delete;
   Reporter(Reporter&&) = delete;
   Reporter& operator=(Reporter&&) = delete;
   std::string makeSuccessReport();
+  void registerOutput(const OutputInfo&);
   void registerAudioDecoder(const std::string&, const AudioDecoderInfo&);
   void registerVideoDecoder(const std::string&, const VideoDecoderInfo&);
 
@@ -65,6 +77,7 @@ class Reporter {
   std::map<std::string, VideoDecoderInfo> m_video_decoder_map;
   std::map<std::string, std::vector<ResolutionWithTimestamp>>
       m_resolution_changes_map;
+  OutputInfo m_output_info;
 
   boost::json::object report;
   inline static Reporter* m_reporter = nullptr;

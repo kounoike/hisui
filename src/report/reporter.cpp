@@ -29,6 +29,7 @@ std::string Reporter::makeSuccessReport() {
   }
 
   report["inputs"] = inputs;
+  report["output"] = boost::json::value_from(m_output_info);
 
   collectVersions();
 
@@ -82,6 +83,10 @@ void Reporter::registerVideoDecoder(const std::string& filename,
   m_video_decoder_map.insert({filename, vdi});
 }
 
+void Reporter::registerOutput(const OutputInfo& output_info) {
+  m_output_info = output_info;
+}
+
 void tag_invoke(const boost::json::value_from_tag&,
                 boost::json::value& jv,  // NOLINT
                 const AudioDecoderInfo& adi) {
@@ -108,6 +113,17 @@ void tag_invoke(const boost::json::value_from_tag&,
       {"timestamp", rwt.timestamp},
       {"width", rwt.width},
       {"height", rwt.height},
+  };
+}
+
+void tag_invoke(const boost::json::value_from_tag&,
+                boost::json::value& jv,  // NOLINT
+                const OutputInfo& oi) {
+  jv = {
+      {"container", oi.container},
+      {"mux_type", oi.mux_type},
+      {"video_codec", oi.video_codec},
+      {"audio_codec", oi.audio_codec},
   };
 }
 
