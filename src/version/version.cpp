@@ -13,6 +13,7 @@
 #include <string>
 
 #include "constants.hpp"
+#include "shiguredo/mp4/version.hpp"
 #include "video/openh264_handler.hpp"
 
 namespace hisui::version {
@@ -53,7 +54,7 @@ std::string get_hisui_version() {
 }
 
 std::string get_cppmp4_version() {
-  return "TODO";
+  return shiguredo::mp4::get_version_string();
 }
 
 }  // namespace hisui::version
