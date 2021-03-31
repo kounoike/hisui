@@ -11,6 +11,11 @@
 
 ## develop
 
+- [ADD] [実験的機能] 合成成功時にレポートを出力する
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/30
+- [UPDATE] `cpp-mp4` を `2021.2` に
+    - @haruyama
 - [ADD] 音声の mix のみを行なう --audio-only コマンドラインオプションの追加
     - @haruyama
     - https://github.com/shiguredo/hisui/pull/26
