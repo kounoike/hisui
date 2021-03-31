@@ -49,8 +49,7 @@ std::string get_fdkaac_aacenc_version() {
 #endif
 
 std::string get_hisui_version() {
-  return fmt::format("{}.{}", Constants::VERSION_YEAR,
-                     Constants::VERSION_NUMBER_OF_RELEASES);
+  return "2021.2";
 }
 
 std::string get_cppmp4_version() {
