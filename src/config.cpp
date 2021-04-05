@@ -15,6 +15,8 @@
 #include <CLI/Formatter.hpp>
 #include <boost/rational.hpp>
 
+#define EXPERIMENTAL_OPTIONS "Experimental Options"
+
 #ifdef NDEBUG
 #define OPTIONS_FOR_TUNING ""
 #define OPTIONS_FOR_DEVELOPING ""
@@ -146,7 +148,8 @@ void set_cli_options(CLI::App* app, Config* config) {
 
   app->add_option("--out-success-report", config->out_success_report,
                   "Directory for success report")
-      ->check(CLI::ExistingDirectory);
+      ->check(CLI::ExistingDirectory)
+      ->group(EXPERIMENTAL_OPTIONS);
 
   app->add_option("--show-progress-bar", config->show_progress_bar,
                   "Toggle to show progress bar. default: true");
