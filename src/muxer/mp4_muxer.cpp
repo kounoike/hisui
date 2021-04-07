@@ -1,22 +1,18 @@
 #include "muxer/mp4_muxer.hpp"
 
-#include <cxxabi.h>
-#include <spdlog/spdlog.h>
-
-#include <chrono>
+#include <cstdint>
 #include <filesystem>
-#include <future>
 #include <iterator>
-#include <optional>
 #include <string>
-#include <system_error>
-#include <thread>
 #include <vector>
+
+#include <boost/rational.hpp>
 
 #include "config.hpp"
 #include "constants.hpp"
 #include "metadata.hpp"
 #include "muxer/audio_producer.hpp"
+#include "muxer/no_video_producer.hpp"
 #include "muxer/opus_audio_producer.hpp"
 #include "muxer/video_producer.hpp"
 #include "muxer/vpx_video_producer.hpp"
@@ -49,7 +45,11 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
 
   if (config.out_filename == "") {
     std::filesystem::path metadata_path(config.in_metadata_filename);
-    config.out_filename = metadata_path.replace_extension(".mp4");
+    if (config.audio_only) {
+      config.out_filename = metadata_path.replace_extension(".m4a");
+    } else {
+      config.out_filename = metadata_path.replace_extension(".mp4");
+    }
   }
 
   if (config.out_audio_codec == config::OutAudioCodec::FDK_AAC) {
@@ -86,26 +86,36 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
          .writer = m_writer});
   }
 
-  m_video_producer = new VPXVideoProducer(config, metadata, 16000);
-  m_vide_track = new shiguredo::mp4::track::VPXTrack(
-      {.timescale = 16000,
-       .duration = duration,
-       .track_id = m_writer->getAndUpdateNextTrackID(),
-       .width = m_video_producer->getWidth(),
-       .height = m_video_producer->getHeight(),
-       .writer = m_writer});
+  if (config.audio_only) {
+    m_video_producer = new NoVideoProducer();
+    m_timescale_ratio.assign(1, 1);
+  } else {
+    m_video_producer = new VPXVideoProducer(config, metadata, 16000);
+    m_vide_track = new shiguredo::mp4::track::VPXTrack(
+        {.timescale = 16000,
+         .duration = duration,
+         .track_id = m_writer->getAndUpdateNextTrackID(),
+         .width = m_video_producer->getWidth(),
+         .height = m_video_producer->getHeight(),
+         .writer = m_writer});
+
+    m_timescale_ratio.assign(m_soun_track->getTimescale(),
+                             m_vide_track->getTimescale());
+  }
 }
 
 MP4Muxer::~MP4Muxer() {
   m_ofs.close();
 
-  delete m_vide_track;
+  if (m_vide_track) {
+    delete m_vide_track;
+  }
   delete m_soun_track;
   delete m_video_producer;
   delete m_audio_producer;
 }
 
-void MP4Muxer::addAudioBuffer(hisui::Frame frame) {
+void MP4Muxer::appendAudio(hisui::Frame frame) {
   if ((frame.timestamp * m_writer->getMvhdTimescale() /
        m_soun_track->getTimescale()) >= m_chunk_start + m_chunk_interval) {
     m_chunk_start += m_chunk_interval;
@@ -116,7 +126,7 @@ void MP4Muxer::addAudioBuffer(hisui::Frame frame) {
   m_audio_producer->bufferPop();
 }
 
-void MP4Muxer::addVideoBuffer(hisui::Frame frame) {
+void MP4Muxer::appendVideo(hisui::Frame frame) {
   if ((frame.timestamp * m_writer->getMvhdTimescale() /
        m_vide_track->getTimescale()) >= m_chunk_start + m_chunk_interval) {
     m_chunk_start += m_chunk_interval;
@@ -134,6 +144,9 @@ void MP4Muxer::writeTrackData() {
   }
   m_soun_track->terminateCurrentChunk();
   m_audio_buffer.clear();
+  if (!m_vide_track) {
+    return;
+  }
   for (const auto f : m_video_buffer) {
     m_vide_track->addMdatData(f.timestamp, f.data, f.data_size, f.is_key);
     delete[] f.data;
@@ -142,75 +155,7 @@ void MP4Muxer::writeTrackData() {
   m_video_buffer.clear();
 }
 
-void MP4Muxer::mux() {
-  auto video_future =
-      std::async(std::launch::async, &VideoProducer::produce, m_video_producer);
-
-  auto audio_future =
-      std::async(std::launch::async, &AudioProducer::produce, m_audio_producer);
-
-  std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-  bool video_finished = false;
-
-  while (!m_audio_producer->isFinished()) {
-    const auto audio_front = m_audio_producer->bufferFront();
-    if (!audio_front.has_value()) {
-      spdlog::debug("audio queue is empty");
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      continue;
-    }
-    const auto audio_timestamp = audio_front.value().timestamp;
-
-    if (video_finished) {
-      addAudioBuffer(audio_front.value());
-      continue;
-    }
-
-    if (m_video_producer->isFinished()) {
-      video_future.get();
-      spdlog::debug("video was processed");
-      video_finished = true;
-      addAudioBuffer(audio_front.value());
-      continue;
-    }
-
-    const auto video_front = m_video_producer->bufferFront();
-    if (!video_front.has_value()) {
-      spdlog::debug("video queue is empty (1)");
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-      continue;
-    }
-    const auto video_timestamp = video_front.value().timestamp *
-                                 m_soun_track->getTimescale() /
-                                 m_vide_track->getTimescale();
-
-    if (video_timestamp <= audio_timestamp) {
-      addVideoBuffer(video_front.value());
-      continue;
-    }
-    addAudioBuffer(audio_front.value());
-  }
-
-  audio_future.get();
-  spdlog::debug("audio was processed");
-
-  if (!video_finished) {
-    spdlog::debug("video is processing");
-    while (!m_video_producer->isFinished()) {
-      const auto video_front = m_video_producer->bufferFront();
-      if (!video_front.has_value()) {
-        spdlog::debug("video queue is empty (2)");
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        continue;
-      }
-
-      addVideoBuffer(video_front.value());
-    }
-    video_future.get();
-    spdlog::debug("video was processed");
-  }
-
+void MP4Muxer::muxFinalize() {
   writeTrackData();
 }
 

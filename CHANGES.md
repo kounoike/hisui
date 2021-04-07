@@ -11,6 +11,28 @@
 
 ## develop
 
+## 2021.2
+
+- [UPDATE] `libvpx` を `v1.10.0` に
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/31
+- [CHANGE] libvpx のパラメータのデフォルト値を調整
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/31
+- [UPDATE] --libvp9-row-mt コマンドラインオプションの追加
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/31
+- [UPDATE] --libvp9-tile-columns コマンドラインオプションの追加
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/24
+    - https://github.com/shiguredo/hisui/pull/28
+- [UPDATE] WebM/MP4 Muxer の mux() を共通化
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/23
+- [ADD] 音声の mix のみを行なう --audio-only コマンドラインオプションの追加
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/26
+
 ## 2021.1.1
 
 - [FIX] std::async で作った Future を get() し例外を伝播させる

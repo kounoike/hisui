@@ -52,10 +52,6 @@ Hisui を使ってみたい人は [USE.md](doc/USE.md) をお読みください�
 
 Linux 版 Hisui のビルドしたい人は [BUILD_LINUX.md](doc/BUILD_LINUX.md) をお読みください
 
-## 廃止予定
-
-- Safari が WebM/MP4 の Opus に対応したタイミングで AAC は廃止する
-
 ## 優先実装
 
 優先実装とは Sora のライセンスを契約頂いているお客様限定で Hisui の実装予定機能を有償にて前倒しで実装することです。
@@ -75,6 +71,16 @@ Linux 版 Hisui のビルドしたい人は [BUILD_LINUX.md](doc/BUILD_LINUX.md)
     - タイムスタンプを埋め込めるようにする
 - 配信情報の埋め込み対応
     - ConnectionID や Metadata 情報を指定して埋め込めるようにする
+
+## 対応予定
+
+- Sora が AV1 録画に対応したら AV1 デコード機能へ対応予定です
+- Safari が AV1 再生に対応したら AV1 エンコード機能へ対応予定です
+
+## 廃止予定
+
+- Safari が Opus 再生に対応したら AAC 対応を削除予定です
+
 
 ## ライセンス
 

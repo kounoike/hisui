@@ -68,9 +68,9 @@ class Config {
 
   boost::rational<std::uint64_t> out_video_frame_rate =
       boost::rational<std::uint64_t>(25, 1);
-  std::uint32_t libvpx_cq_level = 10;
-  std::uint32_t libvpx_min_q = 3;
-  std::uint32_t libvpx_max_q = 40;
+  std::uint32_t libvpx_cq_level = 30;
+  std::uint32_t libvpx_min_q = 10;
+  std::uint32_t libvpx_max_q = 50;
   std::uint32_t out_opus_bit_rate = Constants::OPUS_DEFAULT_BIT_RATE;
   std::uint32_t out_aac_bit_rate = Constants::FDK_AAC_DEFAULT_BIT_RATE;
 
@@ -80,6 +80,7 @@ class Config {
   std::size_t max_columns = 3;
 
   bool verbose = false;
+  bool audio_only = false;
 
   // 以降は SPEC.rst にないオプション
   bool show_progress_bar = true;
@@ -93,8 +94,10 @@ class Config {
   std::uint32_t scaling_height = 240;
 
   std::uint32_t libvpx_threads = 0;
-  std::int32_t libvpx_cpu_used = 4;
+  std::int32_t libvpx_cpu_used = 8;
   std::uint32_t libvp9_frame_parallel = 1;
+  std::uint32_t libvp9_tile_columns = 0;
+  std::uint32_t libvp9_row_mt = 0;
 
   libyuv::FilterMode libyuv_filter_mode = libyuv::kFilterBox;
 

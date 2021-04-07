@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <cstdio>
+#include <string>
 
 #include "webm/input/context.hpp"
 
@@ -9,12 +10,12 @@ namespace hisui::webm::input {
 
 class VideoContext : public Context {
  public:
-  VideoContext();
+  explicit VideoContext(const std::string&);
   ~VideoContext();
 
   void reset();
 
-  bool init(std::FILE*);
+  bool init();
 
   std::uint32_t getFourcc() const;
   std::uint32_t getWidth() const;

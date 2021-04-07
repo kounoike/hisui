@@ -30,6 +30,10 @@ void Context::reset() {
   m_timestamp_ns = 0;
   m_track_index = 0;
   m_is_key_frame = false;
+  if (m_file) {
+    std::fclose(m_file);
+    m_file = nullptr;
+  }
 }
 
 void Context::initReaderAndSegment(std::FILE* file) {
@@ -115,7 +119,7 @@ void Context::rewindCluster() {
   m_reached_eos = false;
 }
 
-Context::Context() {}
+Context::Context(const std::string& t_file_path) : m_file_path(t_file_path) {}
 Context::~Context() {
   reset();
 }
@@ -166,6 +170,10 @@ std::int64_t Context::getTimestamp() const {
 
 std::int64_t Context::getDuration() const {
   return m_segment->GetDuration();
+}
+
+std::string Context::getFilePath() const {
+  return m_file_path;
 }
 
 };  // namespace hisui::webm::input

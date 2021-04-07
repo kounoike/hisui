@@ -59,8 +59,8 @@ bool BufferVPXEncoder::encodeFrame(::vpx_codec_ctx_t* codec,
                                    ::vpx_image_t* img,
                                    const int frame_index,
                                    const int flags) {
-  const ::vpx_codec_err_t ret = ::vpx_codec_encode(codec, img, frame_index, 1,
-                                                   flags, VPX_DL_GOOD_QUALITY);
+  const ::vpx_codec_err_t ret =
+      ::vpx_codec_encode(codec, img, frame_index, 1, flags, VPX_DL_REALTIME);
   if (ret != VPX_CODEC_OK) {
     throw std::runtime_error(fmt::format("Failed to encode frame: error='{}'",
                                          ::vpx_codec_err_to_string(ret)));
