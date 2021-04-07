@@ -39,7 +39,8 @@ VPXEncoderConfig::VPXEncoderConfig(const std::uint32_t t_width,
       threads(config.libvpx_threads),
       frame_parallel(config.libvp9_frame_parallel),
       cpu_used(config.libvpx_cpu_used),
-      tile_columns(config.libvp9_tile_columns) {}
+      tile_columns(config.libvp9_tile_columns),
+      row_mt(config.libvp9_row_mt) {}
 
 void update_yuv_image_by_vpx_image(YUVImage* yuv_image,
                                    const vpx_image_t* vpx_image) {
@@ -180,6 +181,7 @@ void create_vpx_codec_ctx_t_for_encoding(::vpx_codec_ctx_t* codec,
                         config.frame_parallel);
     ::vpx_codec_control(codec, VP9E_SET_TILE_COLUMNS,
                         static_cast<int>(config.tile_columns));
+    ::vpx_codec_control(codec, VP9E_SET_ROW_MT, config.row_mt);
   }
 }
 

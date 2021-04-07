@@ -210,6 +210,12 @@ void set_cli_options(CLI::App* app, Config* config) {
       ->check(CLI::Range(0, 6))
       ->group(OPTIONS_FOR_TUNING);
 
+  app->add_option("--libvp9-row-mt", config->libvp9_row_mt,
+                  "libvp9 row based non-deterministic multi-threading"
+                  "default: 0 (0, 1)")
+      ->check(CLI::Range(0, 1))
+      ->group(OPTIONS_FOR_TUNING);
+
   std::vector<std::pair<std::string, spdlog::level::level_enum>>
       log_level_assoc{
           {"trace", spdlog::level::trace},
