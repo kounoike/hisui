@@ -11,6 +11,15 @@
 
 ## develop
 
+- [UPDATE] `libvpx` を `v1.10.0` に
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/31
+- [CHANGE] libvpx のパラメータのデフォルト値を調整
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/31
+- [UPDATE] --libvp9-row-mt コマンドラインオプションの追加
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/31
 - [ADD] 音声の mix のみを行なう --audio-only コマンドラインオプションの追加
     - @haruyama
     - https://github.com/shiguredo/hisui/pull/26

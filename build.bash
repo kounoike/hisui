@@ -116,8 +116,14 @@ fi
 [ -d third_party ] || mkdir third_party
 cd third_party || exit 1
 
-[ -d libvpx ] || git clone https://chromium.googlesource.com/webm/libvpx
-cd libvpx || exit 1
+if [ -d libvpx ] ; then
+    cd libvpx || exit 1
+    git checkout master
+    git pull
+else
+    git clone https://chromium.googlesource.com/webm/libvpx
+    cd libvpx || exit 1
+fi
 git checkout v"${LIBVPX_VERSION}"
 
 libvpx_configure_options=('--disable-examples' '--disable-tools' '--disable-docs' '--disable-unit-tests' )
