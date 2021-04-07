@@ -11,6 +11,8 @@
 
 ## develop
 
+## 2021.2
+
 - [UPDATE] `libvpx` を `v1.10.0` に
     - @haruyama
     - https://github.com/shiguredo/hisui/pull/31
