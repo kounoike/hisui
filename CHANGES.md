@@ -11,6 +11,12 @@
 
 ## develop
 
+## 2021.2.1
+
+- [FIX] --libvpx-therads が指定されていない場合の挙動を修正
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/34
+
 ## 2021.2
 
 - [UPDATE] `libvpx` を `v1.10.0` に
