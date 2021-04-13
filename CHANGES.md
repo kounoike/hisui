@@ -11,6 +11,12 @@
 
 ## develop
 
+## 2021.2.3
+
+- [FIX] PixelWidth/Height が 0 な VideoTrack を持つ WebM に対応するで混入したバグを修正する
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/39
+
 ## 2021.2.2
 
 - [FIX] PixelWidth/Height が 0 な VideoTrack を持つ WebM に対応する
