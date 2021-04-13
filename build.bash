@@ -118,7 +118,7 @@ cd third_party || exit 1
 
 if [ -d libvpx ] ; then
     cd libvpx || exit 1
-    patch -p1 -R < ../libwebm.patch
+    patch -p1 -R < ../libwebm.patch || echo "reverse patch failed"
     git checkout master
     git pull
 else
