@@ -5,7 +5,7 @@
 #include <spdlog/spdlog.h>
 
 #include <algorithm>
-#include <compare>
+#include <compare>  // NOLINT
 #include <filesystem>
 #include <fstream>
 #include <iterator>
