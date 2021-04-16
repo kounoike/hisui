@@ -204,6 +204,7 @@ target_sources(hisui
     src/video/composer.cpp
     src/video/decoder.cpp
     src/video/grid_composer.cpp
+    src/video/multi_channel_sequencer.cpp
     src/video/openh264.cpp
     src/video/openh264_decoder.cpp
     src/video/openh264_handler.cpp
