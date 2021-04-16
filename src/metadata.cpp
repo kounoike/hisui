@@ -238,7 +238,7 @@ void MetadataSet::setPrefered(const Metadata& t_preferred) {
   if (diff > 0) {
     m_normal.adjustTimeOffsets(diff);
   } else {
-    m_preferred.adjustTimeOffsets(diff);
+    m_preferred.adjustTimeOffsets(-diff);
   }
 }
 
