@@ -22,7 +22,7 @@ namespace hisui::muxer {
 
 class AsyncWebMMuxer : public Muxer {
  public:
-  AsyncWebMMuxer(const hisui::Config&, const hisui::Metadata&);
+  AsyncWebMMuxer(const hisui::Config&, const hisui::MetadataSet&);
   ~AsyncWebMMuxer();
 
   void setUp() override;
@@ -38,7 +38,7 @@ class AsyncWebMMuxer : public Muxer {
   std::FILE* m_file;
 
   hisui::Config m_config;
-  hisui::Metadata m_metadata;
+  hisui::MetadataSet m_metadata_set;
 };
 
 }  // namespace hisui::muxer

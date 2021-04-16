@@ -192,6 +192,7 @@ target_sources(hisui
     src/muxer/async_webm_muxer.cpp
     src/muxer/audio_producer.cpp
     src/muxer/mp4_muxer.cpp
+    src/muxer/multi_channel_vpx_video_producer.cpp
     src/muxer/opus_audio_producer.cpp
     src/muxer/simple_mp4_muxer.cpp
     src/muxer/faststart_mp4_muxer.cpp

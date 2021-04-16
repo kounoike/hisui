@@ -12,7 +12,7 @@
 namespace hisui::muxer {
 
 OpusAudioProducer::OpusAudioProducer(const hisui::Config& t_config,
-                                     const hisui::Metadata& t_metadata,
+                                     const hisui::MetadataSet& t_metadata_set,
                                      const std::uint64_t timescale)
     : AudioProducer({.show_progress_bar =
                          t_config.show_progress_bar && t_config.audio_only}) {
@@ -25,8 +25,9 @@ OpusAudioProducer::OpusAudioProducer(const hisui::Config& t_config,
       break;
   }
 
-  m_sequencer = new hisui::audio::BasicSequencer(t_metadata.getArchives());
-  m_max_stop_time_offset = t_metadata.getMaxStopTimeOffset();
+  m_sequencer = new hisui::audio::BasicSequencer(t_metadata_set.getArchives());
+
+  m_max_stop_time_offset = t_metadata_set.getMaxStopTimeOffset();
 
   hisui::audio::BufferOpusEncoder* encoder =
       new hisui::audio::BufferOpusEncoder(

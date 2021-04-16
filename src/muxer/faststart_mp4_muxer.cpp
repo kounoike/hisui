@@ -1,6 +1,8 @@
 #include "muxer/faststart_mp4_muxer.hpp"
 
 #include <bits/exception.h>
+#include <spdlog/fmt/bundled/format.h>
+#include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 
 #include <filesystem>
@@ -23,8 +25,8 @@ class Track;
 namespace hisui::muxer {
 
 FaststartMP4Muxer::FaststartMP4Muxer(const hisui::Config& t_config,
-                                     const hisui::Metadata& t_metadata)
-    : m_config(t_config), m_metadata(t_metadata) {}
+                                     const hisui::MetadataSet& t_metadata_set)
+    : m_config(t_config), m_metadata_set(t_metadata_set) {}
 
 void FaststartMP4Muxer::setUp() {
   std::filesystem::path directory_for_faststart_intermediate_file;
@@ -47,14 +49,15 @@ void FaststartMP4Muxer::setUp() {
   spdlog::debug("directory_for_faststart_intermediate_file: {}",
                 directory_for_faststart_intermediate_file.string());
 
-  const float duration = static_cast<float>(m_metadata.getMaxStopTimeOffset());
+  const float duration =
+      static_cast<float>(m_metadata_set.getMaxStopTimeOffset());
   m_faststart_writer = new shiguredo::mp4::writer::FaststartWriter(
       m_ofs, {.mvhd_timescale = 1000,
               .duration = duration,
               .mdat_path_templete =
                   directory_for_faststart_intermediate_file.string() +
                   std::filesystem::path::preferred_separator + "mdatXXXXXX"});
-  initialize(m_config, m_metadata, m_faststart_writer, duration);
+  initialize(m_config, m_metadata_set, m_faststart_writer, duration);
 }
 
 FaststartMP4Muxer::~FaststartMP4Muxer() {

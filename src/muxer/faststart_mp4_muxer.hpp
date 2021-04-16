@@ -14,7 +14,7 @@ namespace hisui::muxer {
 
 class FaststartMP4Muxer : public MP4Muxer {
  public:
-  FaststartMP4Muxer(const hisui::Config&, const hisui::Metadata&);
+  FaststartMP4Muxer(const hisui::Config&, const hisui::MetadataSet&);
   ~FaststartMP4Muxer();
 
   void setUp() override;
@@ -25,7 +25,7 @@ class FaststartMP4Muxer : public MP4Muxer {
   shiguredo::mp4::writer::FaststartWriter* m_faststart_writer;
 
   hisui::Config m_config;
-  hisui::Metadata m_metadata;
+  hisui::MetadataSet m_metadata_set;
 };
 
 }  // namespace hisui::muxer
