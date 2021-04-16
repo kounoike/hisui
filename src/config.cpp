@@ -70,16 +70,21 @@ void set_cli_options(CLI::App* app, Config* config) {
       ->check(CLI::ExistingFile)
       ->group(EXPERIMENTAL_OPTIONS);
 
-  app->add_option("--screen-capture-width", config->screen_capture_width,
-                  "Width for screen-capture. default: 960")
+  app->add_option(
+         "--screen-capture-width", config->screen_capture_width,
+         "Width for screen-capture (NON NAGATIVE multiple of 4). default: 960")
+      ->check(NonNegativeMultipleOf4)
       ->group(EXPERIMENTAL_OPTIONS);
 
-  app->add_option("--screen-capture-height", config->screen_capture_height,
-                  "Height for screen-capture. default: 640")
+  app->add_option(
+         "--screen-capture-height", config->screen_capture_height,
+         "Height for screen-capture (NON NAGATIVE multiple of 4). default: 640")
+      ->check(NonNegativeMultipleOf4)
       ->group(EXPERIMENTAL_OPTIONS);
 
   app->add_option("--screen-capture-bit-rate", config->screen_capture_bit_rate,
                   "Bit rate for screen-capture (kbps). default: 1000")
+      ->check(CLI::PositiveNumber)
       ->group(EXPERIMENTAL_OPTIONS);
 
   app->add_option("--mix-screen-capture-audio",
