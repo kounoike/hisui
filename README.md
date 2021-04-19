@@ -21,6 +21,10 @@ Sora が出力した録画ファイルを合成し WebM や MP4 で出力する�
 
 ## 特徴
 
+- Sora が生成する録画ファイルや録画レポートをそのまま利用できます
+- 特に設定することなくすぐに使い始められます
+- 細かいチューニングも可能です
+
 ## ファイル形式
 
 - Sora が生成した WebM ファイルに対応しています
@@ -110,4 +114,3 @@ https://www.openh264.org/BINARY_LICENSE.txt
 ```
 "OpenH264 Video Codec provided by Cisco Systems, Inc."
 ```
-
