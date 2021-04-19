@@ -11,6 +11,7 @@
 #include <CLI/Formatter.hpp>
 
 #include "config.hpp"
+#include "datetime.hpp"
 #include "metadata.hpp"
 #include "muxer/async_webm_muxer.hpp"
 #include "muxer/faststart_mp4_muxer.hpp"
@@ -86,7 +87,8 @@ int main(int argc, char** argv) {
 
   if (config.enabledSuccessReport()) {
     std::ofstream os(std::filesystem::path(config.success_report) /
-                     fmt::format("{}_success.json",
+                     fmt::format("{}_{}_success.json",
+                                 hisui::datetime::get_current_utc_string(),
                                  metadata_set.getNormal().getRecordingID()));
     os << hisui::report::Reporter::getInstance().makeSuccessReport();
     hisui::report::Reporter::close();
