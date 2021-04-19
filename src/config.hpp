@@ -61,6 +61,8 @@ enum struct OutAudioCodec {
 
 class Config {
  public:
+  void validate() const;
+
   std::string in_metadata_filename;
   std::string screen_capture_metadata_filename = "";
   config::OutVideoCodec out_video_codec = config::OutVideoCodec::VP9;

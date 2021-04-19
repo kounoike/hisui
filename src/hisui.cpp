@@ -26,11 +26,7 @@ int main(int argc, char** argv) {
 
   CLI11_PARSE(app, argc, argv);
 
-  if (config.out_container == hisui::config::OutContainer::WebM &&
-      config.out_audio_codec == hisui::config::OutAudioCodec::FDK_AAC) {
-    spdlog::error("hisui does not support AAC output in WebM");
-    return 1;
-  }
+  config.validate();
 
   if (config.verbose) {
     spdlog::set_level(spdlog::level::debug);

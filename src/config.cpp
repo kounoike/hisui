@@ -283,4 +283,11 @@ void set_cli_options(CLI::App* app, Config* config) {
       ->group(OPTIONS_FOR_DEVELOPING);
 }
 
+void Config::validate() const {
+  if (out_container == hisui::config::OutContainer::WebM &&
+      out_audio_codec == hisui::config::OutAudioCodec::FDK_AAC) {
+    throw std::runtime_error("hisui does not support AAC output in WebM");
+  }
+}
+
 }  // namespace hisui
