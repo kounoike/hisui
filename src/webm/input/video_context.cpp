@@ -5,7 +5,9 @@
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 
+#include <cstdio>
 #include <cstring>
+#include <stdexcept>
 #include <string>
 
 #include "constants.hpp"
@@ -45,6 +47,11 @@ bool VideoContext::init() {
 
   if (video_track == nullptr || video_track->GetCodecId() == nullptr) {
     spdlog::info("video track not found");
+    return false;
+  }
+
+  if (video_track->GetWidth() == 0 || video_track->GetHeight() == 0) {
+    spdlog::info("invalid video track");
     return false;
   }
 

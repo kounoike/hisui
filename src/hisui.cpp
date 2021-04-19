@@ -1,19 +1,14 @@
 #include <bits/exception.h>
+#include <spdlog/common.h>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 
-#include <fstream>
-#include <initializer_list>
-#include <iterator>
-#include <map>
 #include <stdexcept>
 #include <string>
-#include <vector>
 
 #include <CLI/App.hpp>
 #include <CLI/Config.hpp>
 #include <CLI/Formatter.hpp>
-#include <boost/json.hpp>
 
 #include "config.hpp"
 #include "metadata.hpp"
@@ -45,24 +40,6 @@ int main(int argc, char** argv) {
   }
   spdlog::debug("log level={}", config.log_level);
 
-  std::ifstream i(config.in_metadata_filename);
-  if (!i.is_open()) {
-    spdlog::error("failed to open metadata json file: {}",
-                  config.in_metadata_filename);
-    return 1;
-  }
-  std::string string_json((std::istreambuf_iterator<char>(i)),
-                          std::istreambuf_iterator<char>());
-  boost::json::error_code ec;
-  boost::json::value jv = boost::json::parse(string_json, ec);
-  if (ec) {
-    spdlog::error("failed to parse metadata json file: message", ec.message());
-    return 1;
-  }
-
-  const hisui::Metadata metadata =
-      hisui::parse_metadata(config.in_metadata_filename, jv);
-
   if (!config.openh264.empty()) {
     try {
       hisui::video::OpenH264Handler::open(config.openh264);
@@ -75,14 +52,22 @@ int main(int argc, char** argv) {
     hisui::report::Reporter::open();
   }
 
+  hisui::MetadataSet metadata_set(
+      hisui::parse_metadata(config.in_metadata_filename));
+
+  if (config.screen_capture_metadata_filename != "") {
+    metadata_set.setPrefered(
+        hisui::parse_metadata(config.screen_capture_metadata_filename));
+  }
+
   hisui::muxer::Muxer* muxer = nullptr;
   if (config.out_container == hisui::config::OutContainer::WebM) {
-    muxer = new hisui::muxer::AsyncWebMMuxer(config, metadata);
+    muxer = new hisui::muxer::AsyncWebMMuxer(config, metadata_set);
   } else if (config.out_container == hisui::config::OutContainer::MP4) {
     if (config.mp4_muxer == hisui::config::MP4Muxer::Simple) {
-      muxer = new hisui::muxer::SimpleMP4Muxer(config, metadata);
+      muxer = new hisui::muxer::SimpleMP4Muxer(config, metadata_set);
     } else if (config.mp4_muxer == hisui::config::MP4Muxer::Faststart) {
-      muxer = new hisui::muxer::FaststartMP4Muxer(config, metadata);
+      muxer = new hisui::muxer::FaststartMP4Muxer(config, metadata_set);
     } else {
       throw std::runtime_error("config.mp4_muxer is invalid");
     }
@@ -101,7 +86,8 @@ int main(int argc, char** argv) {
 
   if (config.out_success_report != "") {
     std::ofstream os(std::filesystem::path(config.out_success_report) /
-                     fmt::format("{}_success.json", metadata.getRecordingID()));
+                     fmt::format("{}_success.json",
+                                 metadata_set.getNormal().getRecordingID()));
     os << hisui::report::Reporter::getInstance().makeSuccessReport();
     hisui::report::Reporter::close();
   }
