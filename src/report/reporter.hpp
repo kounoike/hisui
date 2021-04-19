@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <ctime>
 #include <map>
 #include <string>
 #include <tuple>
@@ -70,7 +71,7 @@ class Reporter {
   static void close();
 
  private:
-  Reporter() = default;
+  Reporter();
   ~Reporter() = default;
   void collectVersions();
   std::map<std::string, AudioDecoderInfo> m_audio_decoder_map;
@@ -79,8 +80,9 @@ class Reporter {
       m_resolution_changes_map;
   OutputInfo m_output_info;
 
-  boost::json::object report;
   inline static Reporter* m_reporter = nullptr;
+  boost::json::object m_report;
+  std::clock_t m_start_clock;
 };
 
 }  // namespace hisui::report

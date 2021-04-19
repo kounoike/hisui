@@ -10,6 +10,10 @@
 
 namespace hisui::report {
 
+Reporter::Reporter() {
+  m_start_clock = std::clock();
+}
+
 std::string Reporter::makeSuccessReport() {
   boost::json::object inputs;
   for (const auto& [path, adi] : m_audio_decoder_map) {
@@ -28,16 +32,18 @@ std::string Reporter::makeSuccessReport() {
     }
   }
 
-  report["inputs"] = inputs;
-  report["output"] = boost::json::value_from(m_output_info);
+  m_report["inputs"] = inputs;
+  m_report["output"] = boost::json::value_from(m_output_info);
+  m_report["execution_time"] =
+      static_cast<double>(std::clock() - m_start_clock) / CLOCKS_PER_SEC;
 
   collectVersions();
 
-  return boost::json::serialize(report);
+  return boost::json::serialize(m_report);
 }  // namespace hisui::report
 
 void Reporter::collectVersions() {
-  report["versions"] = {
+  m_report["versions"] = {
       {"libvpx", version::get_libvpx_version()},
       {"libwebm", version::get_libwebm_version()},
       {"openh264", version::get_openh264_version()},
