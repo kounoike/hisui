@@ -49,7 +49,7 @@ std::string get_fdkaac_aacenc_version() {
 #endif
 
 std::string get_hisui_version() {
-  return "2021.2";
+  return "2021.3";
 }
 
 std::string get_cppmp4_version() {
