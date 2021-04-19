@@ -65,6 +65,7 @@ class Config {
 
   std::string in_metadata_filename;
   std::string screen_capture_metadata_filename = "";
+  std::string screen_capture_connection_id = "";
   config::OutVideoCodec out_video_codec = config::OutVideoCodec::VP9;
   config::OutContainer out_container = config::OutContainer::WebM;
   std::uint32_t out_video_bit_rate = 0;

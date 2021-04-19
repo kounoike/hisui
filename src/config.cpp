@@ -64,10 +64,17 @@ void set_cli_options(CLI::App* app, Config* config) {
       ->check(CLI::ExistingFile)
       ->required();
 
-  app->add_option("--screen-capture-report",
-                  config->screen_capture_metadata_filename,
-                  "Screen Capture Metadata filename")
-      ->check(CLI::ExistingFile)
+  auto option_screen_capture_report =
+      app->add_option("--screen-capture-report",
+                      config->screen_capture_metadata_filename,
+                      "Screen capture metadata filename")
+          ->check(CLI::ExistingFile)
+          ->group(EXPERIMENTAL_OPTIONS);
+
+  app->add_option("--screen-capture-connection-id",
+                  config->screen_capture_connection_id,
+                  "Screen capture connection id")
+      ->excludes(option_screen_capture_report)
       ->group(EXPERIMENTAL_OPTIONS);
 
   app->add_option(
