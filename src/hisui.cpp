@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
     }
   }
 
-  if (config.out_success_report != "") {
+  if (config.enabledReport()) {
     hisui::report::Reporter::open();
   }
 
@@ -84,8 +84,8 @@ int main(int argc, char** argv) {
   }
   delete muxer;
 
-  if (config.out_success_report != "") {
-    std::ofstream os(std::filesystem::path(config.out_success_report) /
+  if (config.enabledSuccessReport()) {
+    std::ofstream os(std::filesystem::path(config.success_report) /
                      fmt::format("{}_success.json",
                                  metadata_set.getNormal().getRecordingID()));
     os << hisui::report::Reporter::getInstance().makeSuccessReport();

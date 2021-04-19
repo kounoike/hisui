@@ -61,6 +61,9 @@ enum struct OutAudioCodec {
 
 class Config {
  public:
+  bool enabledReport() const;
+  bool enabledSuccessReport() const;
+
   std::string in_metadata_filename;
   std::string screen_capture_metadata_filename = "";
   config::OutVideoCodec out_video_codec = config::OutVideoCodec::VP9;
@@ -82,7 +85,7 @@ class Config {
 
   bool verbose = false;
   bool audio_only = false;
-  std::string out_success_report = "";
+  std::string success_report = "";
 
   // 以降は SPEC.rst にないオプション
   bool show_progress_bar = true;

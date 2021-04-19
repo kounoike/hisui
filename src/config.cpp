@@ -176,7 +176,7 @@ void set_cli_options(CLI::App* app, Config* config) {
 
   app->add_flag("--audio-only", config->audio_only, "Audio only mode");
 
-  app->add_option("--out-success-report", config->out_success_report,
+  app->add_option("--success-report", config->success_report,
                   "Directory for success report")
       ->check(CLI::ExistingDirectory)
       ->group(EXPERIMENTAL_OPTIONS);
@@ -286,6 +286,14 @@ void set_cli_options(CLI::App* app, Config* config) {
   app->add_option("--audio-mixer", config->audio_mixer, "audio mixer")
       ->transform(CLI::CheckedTransformer(audio_mixer_assoc, CLI::ignore_case))
       ->group(OPTIONS_FOR_DEVELOPING);
+}
+
+bool Config::enabledReport() const {
+  return success_report != "";
+}
+
+bool Config::enabledSuccessReport() const {
+  return success_report != "";
 }
 
 }  // namespace hisui
