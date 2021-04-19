@@ -75,14 +75,16 @@ void AsyncWebMMuxer::setUp() {
                            private_data.data(), std::size(private_data));
 
   if (hisui::report::Reporter::hasInstance()) {
-    hisui::report::Reporter::getInstance().registerOutput(
-        {.container = "WebM",
-         .video_codec =
-             m_config.audio_only ? "none"
-             : m_video_producer->getFourcc() == hisui::Constants::VP9_FOURCC
-                 ? "vp9"
-                 : "vp8",
-         .audio_codec = "opus"});
+    hisui::report::Reporter::getInstance().registerOutput({
+        .container = "WebM",
+        .video_codec =
+            m_config.audio_only ? "none"
+            : m_video_producer->getFourcc() == hisui::Constants::VP9_FOURCC
+                ? "vp9"
+                : "vp8",
+        .audio_codec = "opus",
+        .duration = m_metadata_set.getMaxStopTimeOffset(),
+    });
   }
 }
 

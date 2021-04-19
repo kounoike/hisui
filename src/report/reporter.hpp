@@ -46,6 +46,7 @@ struct OutputInfo {
   std::string mux_type;
   std::string video_codec;
   std::string audio_codec;
+  double duration;
 };
 
 void tag_invoke(const boost::json::value_from_tag&,

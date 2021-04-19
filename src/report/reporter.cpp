@@ -126,10 +126,9 @@ void tag_invoke(const boost::json::value_from_tag&,
                 boost::json::value& jv,  // NOLINT
                 const OutputInfo& oi) {
   jv = {
-      {"container", oi.container},
-      {"mux_type", oi.mux_type},
-      {"video_codec", oi.video_codec},
-      {"audio_codec", oi.audio_codec},
+      {"container", oi.container},     {"mux_type", oi.mux_type},
+      {"video_codec", oi.video_codec}, {"audio_codec", oi.audio_codec},
+      {"duration", oi.duration},
   };
 }
 
