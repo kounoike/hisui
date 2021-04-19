@@ -181,6 +181,11 @@ void set_cli_options(CLI::App* app, Config* config) {
       ->check(CLI::ExistingDirectory)
       ->group(EXPERIMENTAL_OPTIONS);
 
+  app->add_option("--failure-report", config->failure_report,
+                  "Directory for failure report")
+      ->check(CLI::ExistingDirectory)
+      ->group(EXPERIMENTAL_OPTIONS);
+
   app->add_option("--show-progress-bar", config->show_progress_bar,
                   "Toggle to show progress bar. default: true");
 
@@ -289,11 +294,15 @@ void set_cli_options(CLI::App* app, Config* config) {
 }
 
 bool Config::enabledReport() const {
-  return success_report != "";
+  return success_report != "" || failure_report != "";
 }
 
 bool Config::enabledSuccessReport() const {
   return success_report != "";
+}
+
+bool Config::enabledFailureReport() const {
+  return failure_report != "";
 }
 
 }  // namespace hisui

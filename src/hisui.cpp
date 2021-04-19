@@ -81,6 +81,14 @@ int main(int argc, char** argv) {
   } catch (const std::exception& e) {
     spdlog::error("muxing failed: {}", e.what());
     muxer->cleanUp();
+    if (config.enabledFailureReport()) {
+      std::ofstream os(std::filesystem::path(config.failure_report) /
+                       fmt::format("{}_{}_failure.json",
+                                   hisui::datetime::get_current_utc_string(),
+                                   metadata_set.getNormal().getRecordingID()));
+      os << hisui::report::Reporter::getInstance().makeFailureReport(e.what());
+      hisui::report::Reporter::close();
+    }
     return 1;
   }
   delete muxer;

@@ -15,6 +15,15 @@ Reporter::Reporter() {
 }
 
 std::string Reporter::makeSuccessReport() {
+  return makeReport();
+}
+
+std::string Reporter::makeFailureReport(const std::string& error) {
+  m_report["error"] = error;
+  return makeReport();
+}
+
+std::string Reporter::makeReport() {
   boost::json::object inputs;
   for (const auto& [path, adi] : m_audio_decoder_map) {
     if (m_video_decoder_map.contains(path)) {

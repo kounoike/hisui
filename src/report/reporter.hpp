@@ -59,6 +59,7 @@ class Reporter {
   Reporter(Reporter&&) = delete;
   Reporter& operator=(Reporter&&) = delete;
   std::string makeSuccessReport();
+  std::string makeFailureReport(const std::string&);
   void registerOutput(const OutputInfo&);
   void registerAudioDecoder(const std::string&, const AudioDecoderInfo&);
   void registerVideoDecoder(const std::string&, const VideoDecoderInfo&);
@@ -75,13 +76,14 @@ class Reporter {
   Reporter();
   ~Reporter() = default;
   void collectVersions();
+  std::string makeReport();
+
+  inline static Reporter* m_reporter = nullptr;
   std::map<std::string, AudioDecoderInfo> m_audio_decoder_map;
   std::map<std::string, VideoDecoderInfo> m_video_decoder_map;
   std::map<std::string, std::vector<ResolutionWithTimestamp>>
       m_resolution_changes_map;
   OutputInfo m_output_info;
-
-  inline static Reporter* m_reporter = nullptr;
   boost::json::object m_report;
   std::clock_t m_start_clock;
 };

@@ -63,6 +63,7 @@ class Config {
  public:
   bool enabledReport() const;
   bool enabledSuccessReport() const;
+  bool enabledFailureReport() const;
 
   std::string in_metadata_filename;
   std::string screen_capture_metadata_filename = "";
@@ -86,6 +87,7 @@ class Config {
   bool verbose = false;
   bool audio_only = false;
   std::string success_report = "";
+  std::string failure_report = "";
 
   // 以降は SPEC.rst にないオプション
   bool show_progress_bar = true;
