@@ -11,10 +11,12 @@
 
 ## develop
 
-- [ADD] [実験的機能] 合成成功時にレポートを出力する
+- [ADD] [実験的機能] 合成成功/失敗時にレポートを出力する
     - @haruyama
     - https://github.com/shiguredo/hisui/pull/30
 - [UPDATE] `cpp-mp4` を `2021.3` に
+    - @haruyama
+- [UPDATE] `boost` を `1.76.0` に
     - @haruyama
 
 ## 2021.2.3
