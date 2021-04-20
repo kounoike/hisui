@@ -12,6 +12,7 @@
 #include <stdexcept>
 #include <tuple>
 #include <utility>
+#include <vector>
 
 #include <boost/json/impl/array.hpp>
 #include <boost/json/parse.hpp>
@@ -302,6 +303,51 @@ double get_double_from_json_object(boost::json::object o,
     return value;
   }
   throw std::runtime_error("start_time_offset is not number");
+}
+
+void MetadataSet::split(const std::string& connection_id) {
+  m_preferred.copyWithoutArchives(m_normal);
+  const auto archives = m_normal.deleteArchivesByConnectionID(connection_id);
+  if (archives.empty()) {
+    throw std::runtime_error(
+        fmt::format("connection_id {} is not found", connection_id));
+  }
+
+  m_preferred.setArchives(archives);
+  m_has_preferred = true;
+}
+
+void Metadata::copyWithoutArchives(const Metadata& orig) {
+  m_path = orig.getPath();
+  m_min_start_time_offset = orig.getMinStartTimeOffset();
+  m_max_stop_time_offset = orig.getMaxStopTimeOffset();
+  m_created_at = orig.getCreatedAt();
+  m_recording_id = orig.m_recording_id;
+}
+
+std::vector<Archive> Metadata::deleteArchivesByConnectionID(
+    const std::string& connection_id) {
+  std::vector<Archive> undeleted{};
+  std::vector<Archive> deleted{};
+
+  for (const auto& archive : m_archives) {
+    if (archive.getConnectionID() == connection_id) {
+      deleted.push_back(archive);
+    } else {
+      undeleted.push_back(archive);
+    }
+  }
+  m_archives = undeleted;
+  spdlog::debug("undeleted: {}, deleted: {}", undeleted.size(), deleted.size());
+  return deleted;
+}
+
+void Metadata::setArchives(const std::vector<Archive>& t_archives) {
+  m_archives = t_archives;
+}
+
+std::filesystem::path Metadata::getPath() const {
+  return m_path;
 }
 
 }  // namespace hisui

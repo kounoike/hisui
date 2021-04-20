@@ -46,9 +46,11 @@ int main(int argc, char** argv) {
   hisui::MetadataSet metadata_set(
       hisui::parse_metadata(config.in_metadata_filename));
 
-  if (config.screen_capture_metadata_filename != "") {
+  if (!config.screen_capture_metadata_filename.empty()) {
     metadata_set.setPrefered(
         hisui::parse_metadata(config.screen_capture_metadata_filename));
+  } else if (!config.screen_capture_connection_id.empty()) {
+    metadata_set.split(config.screen_capture_connection_id);
   }
 
   hisui::muxer::Muxer* muxer = nullptr;
