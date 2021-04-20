@@ -14,7 +14,7 @@
 - [ADD] [実験的機能] 合成成功時にレポートを出力する
     - @haruyama
     - https://github.com/shiguredo/hisui/pull/30
-- [UPDATE] `cpp-mp4` を `2021.2` に
+- [UPDATE] `cpp-mp4` を `2021.3` に
     - @haruyama
 
 ## 2021.2.3
