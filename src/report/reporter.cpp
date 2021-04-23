@@ -1,11 +1,17 @@
 #include "report/reporter.hpp"
 
-#include <spdlog/spdlog.h>
+#include <sys/time.h>
 
 #include <string>
+#include <type_traits>
+#include <utility>
 
-#include "boost/json/serialize.hpp"
-#include "boost/json/value_from.hpp"
+#include <boost/json/impl/array.hpp>
+#include <boost/json/object.hpp>
+#include <boost/json/serialize.hpp>
+#include <boost/json/value.hpp>
+#include <boost/json/value_from.hpp>
+
 #include "version/version.hpp"
 
 namespace hisui::report {

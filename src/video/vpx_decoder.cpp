@@ -9,6 +9,7 @@
 #include <vpx/vpx_image.h>
 
 #include <limits>
+#include <memory>
 #include <stdexcept>
 
 #include "constants.hpp"

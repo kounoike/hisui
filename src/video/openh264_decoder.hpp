@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <memory>
-#include <tuple>
 
 #include "video/decoder.hpp"
 

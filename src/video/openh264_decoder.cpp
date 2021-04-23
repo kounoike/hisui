@@ -11,7 +11,6 @@
 #include <limits>
 #include <memory>
 #include <stdexcept>
-#include <tuple>
 
 #include "report/reporter.hpp"
 #include "video/openh264.hpp"

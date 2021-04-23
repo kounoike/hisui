@@ -1,6 +1,6 @@
 #pragma once
 
-#include <codec/api/svc/codec_api.h>
+#include <codec/api/svc/codec_app_def.h>
 
 #include <string>
 

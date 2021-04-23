@@ -1,8 +1,11 @@
 #include <bits/exception.h>
 #include <spdlog/common.h>
+#include <spdlog/fmt/bundled/format.h>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 
+#include <filesystem>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 

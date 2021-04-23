@@ -14,9 +14,13 @@
 #include <utility>
 #include <vector>
 
+#include <boost/json/array.hpp>
 #include <boost/json/impl/array.hpp>
+#include <boost/json/object.hpp>
 #include <boost/json/parse.hpp>
+#include <boost/json/string.hpp>
 #include <boost/json/system_error.hpp>
+#include <boost/json/value.hpp>
 
 namespace hisui {
 

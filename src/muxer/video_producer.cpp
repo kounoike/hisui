@@ -8,7 +8,6 @@
 #include <cstdint>
 #include <mutex>
 #include <optional>
-#include <stdexcept>
 #include <vector>
 
 #include <boost/rational.hpp>

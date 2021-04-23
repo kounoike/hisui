@@ -1,6 +1,6 @@
 #include "version/version.hpp"
 
-#include <codec/api/svc/codec_api.h>
+#include <codec/api/svc/codec_app_def.h>
 #include <fmt/core.h>
 #include <mkvparser/mkvparser.h>
 #include <vpx/vpx_codec.h>
@@ -12,7 +12,6 @@
 
 #include <string>
 
-#include "constants.hpp"
 #include "shiguredo/mp4/version.hpp"
 #include "video/openh264_handler.hpp"
 

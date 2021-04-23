@@ -1,5 +1,6 @@
 #include "datetime.hpp"
 
+#include <bits/types/struct_tm.h>
 #include <fmt/core.h>
 
 #include <ctime>
