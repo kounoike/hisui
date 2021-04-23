@@ -64,10 +64,17 @@ void set_cli_options(CLI::App* app, Config* config) {
       ->check(CLI::ExistingFile)
       ->required();
 
-  app->add_option("--screen-capture-report",
-                  config->screen_capture_metadata_filename,
-                  "Screen Capture Metadata filename")
-      ->check(CLI::ExistingFile)
+  auto option_screen_capture_report =
+      app->add_option("--screen-capture-report",
+                      config->screen_capture_metadata_filename,
+                      "Screen capture metadata filename")
+          ->check(CLI::ExistingFile)
+          ->group(EXPERIMENTAL_OPTIONS);
+
+  app->add_option("--screen-capture-connection-id",
+                  config->screen_capture_connection_id,
+                  "Screen capture connection id")
+      ->excludes(option_screen_capture_report)
       ->group(EXPERIMENTAL_OPTIONS);
 
   app->add_option(
@@ -303,6 +310,13 @@ bool Config::enabledSuccessReport() const {
 
 bool Config::enabledFailureReport() const {
   return failure_report != "";
+}
+
+void Config::validate() const {
+  if (out_container == hisui::config::OutContainer::WebM &&
+      out_audio_codec == hisui::config::OutAudioCodec::FDK_AAC) {
+    throw std::runtime_error("hisui does not support AAC output in WebM");
+  }
 }
 
 }  // namespace hisui

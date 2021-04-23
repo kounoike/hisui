@@ -28,11 +28,7 @@ int main(int argc, char** argv) {
 
   CLI11_PARSE(app, argc, argv);
 
-  if (config.out_container == hisui::config::OutContainer::WebM &&
-      config.out_audio_codec == hisui::config::OutAudioCodec::FDK_AAC) {
-    spdlog::error("hisui does not support AAC output in WebM");
-    return 1;
-  }
+  config.validate();
 
   if (config.verbose) {
     spdlog::set_level(spdlog::level::debug);
@@ -56,9 +52,11 @@ int main(int argc, char** argv) {
   hisui::MetadataSet metadata_set(
       hisui::parse_metadata(config.in_metadata_filename));
 
-  if (config.screen_capture_metadata_filename != "") {
+  if (!config.screen_capture_metadata_filename.empty()) {
     metadata_set.setPrefered(
         hisui::parse_metadata(config.screen_capture_metadata_filename));
+  } else if (!config.screen_capture_connection_id.empty()) {
+    metadata_set.split(config.screen_capture_connection_id);
   }
 
   hisui::muxer::Muxer* muxer = nullptr;
