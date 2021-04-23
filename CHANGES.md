@@ -11,6 +11,9 @@
 
 ## develop
 
+- [ADD] [実験的機能] 画面共有合成機能を追加する
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/40
 - [ADD] [実験的機能] 合成成功/失敗時にレポートを出力する
     - @haruyama
     - https://github.com/shiguredo/hisui/pull/30
