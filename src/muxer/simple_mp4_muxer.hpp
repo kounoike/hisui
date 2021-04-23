@@ -14,7 +14,7 @@ namespace hisui::muxer {
 
 class SimpleMP4Muxer : public MP4Muxer {
  public:
-  SimpleMP4Muxer(const hisui::Config&, const hisui::Metadata&);
+  SimpleMP4Muxer(const hisui::Config&, const hisui::MetadataSet&);
   ~SimpleMP4Muxer();
 
   void setUp() override;
@@ -25,7 +25,7 @@ class SimpleMP4Muxer : public MP4Muxer {
   shiguredo::mp4::writer::SimpleWriter* m_simple_writer;
 
   hisui::Config m_config;
-  hisui::Metadata m_metadata;
+  hisui::MetadataSet m_metadata_set;
 };
 
 }  // namespace hisui::muxer
