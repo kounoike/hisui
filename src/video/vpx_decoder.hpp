@@ -32,6 +32,7 @@ class VPXDecoder : public Decoder {
   ::vpx_image_t* m_current_vpx_image = nullptr;
   ::vpx_image_t* m_next_vpx_image = nullptr;
   YUVImage* m_current_yuv_image = nullptr;
+  bool m_report_enabled = false;
 
   void updateVPXImage(const std::uint64_t);
 

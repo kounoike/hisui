@@ -52,15 +52,15 @@ class Metadata {
   std::vector<Archive> deleteArchivesByConnectionID(const std::string&);
 
  private:
-  void setTimeOffsets();
   boost::json::array prepare(const boost::json::value& jv);
+  void setTimeOffsets();
 
   std::filesystem::path m_path;
   std::vector<Archive> m_archives;
   double m_min_start_time_offset = std::numeric_limits<double>::max();
   double m_max_stop_time_offset = std::numeric_limits<double>::min();
-  double m_created_at;
   boost::json::string m_recording_id;
+  double m_created_at;
 };
 
 Metadata parse_metadata(const std::string&);
@@ -82,7 +82,7 @@ class MetadataSet {
   Metadata m_preferred;
   bool m_has_preferred = false;
 };
-Metadata parse_metadata(const std::string&, const boost::json::value&);
+
 boost::json::string get_string_from_json_object(boost::json::object o,
                                                 const std::string& key);
 double get_double_from_json_object(boost::json::object o,

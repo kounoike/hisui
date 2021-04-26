@@ -59,6 +59,12 @@ OpenH264Handler::OpenH264Handler(const std::string& openh264_path) {
     ::dlclose(m_openh264_handle);
     throw std::runtime_error("dlsym(WelsDestroySVCEncoder) failed");
   }
+  getCodecVersion = reinterpret_cast<GetCodecVersoinFunc>(
+      ::dlsym(m_openh264_handle, "WelsGetCodecVersion"));
+  if (getCodecVersion == nullptr) {
+    ::dlclose(m_openh264_handle);
+    throw std::runtime_error("dlsym(WelsGetCodecVersion) failed");
+  }
 }
 
 OpenH264Handler::~OpenH264Handler() {

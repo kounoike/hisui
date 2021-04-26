@@ -183,6 +183,16 @@ void set_cli_options(CLI::App* app, Config* config) {
 
   app->add_flag("--audio-only", config->audio_only, "Audio only mode");
 
+  app->add_option("--success-report", config->success_report,
+                  "Directory for success report")
+      ->check(CLI::ExistingDirectory)
+      ->group(EXPERIMENTAL_OPTIONS);
+
+  app->add_option("--failure-report", config->failure_report,
+                  "Directory for failure report")
+      ->check(CLI::ExistingDirectory)
+      ->group(EXPERIMENTAL_OPTIONS);
+
   app->add_option("--show-progress-bar", config->show_progress_bar,
                   "Toggle to show progress bar. default: true");
 
@@ -288,6 +298,18 @@ void set_cli_options(CLI::App* app, Config* config) {
   app->add_option("--audio-mixer", config->audio_mixer, "audio mixer")
       ->transform(CLI::CheckedTransformer(audio_mixer_assoc, CLI::ignore_case))
       ->group(OPTIONS_FOR_DEVELOPING);
+}
+
+bool Config::enabledReport() const {
+  return success_report != "" || failure_report != "";
+}
+
+bool Config::enabledSuccessReport() const {
+  return success_report != "";
+}
+
+bool Config::enabledFailureReport() const {
+  return failure_report != "";
 }
 
 void Config::validate() const {

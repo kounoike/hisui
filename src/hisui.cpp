@@ -1,8 +1,11 @@
 #include <bits/exception.h>
 #include <spdlog/common.h>
+#include <spdlog/fmt/bundled/format.h>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 
+#include <filesystem>
+#include <ostream>
 #include <stdexcept>
 #include <string>
 
@@ -11,11 +14,13 @@
 #include <CLI/Formatter.hpp>
 
 #include "config.hpp"
+#include "datetime.hpp"
 #include "metadata.hpp"
 #include "muxer/async_webm_muxer.hpp"
 #include "muxer/faststart_mp4_muxer.hpp"
 #include "muxer/muxer.hpp"
 #include "muxer/simple_mp4_muxer.hpp"
+#include "report/reporter.hpp"
 #include "video/openh264_handler.hpp"
 
 int main(int argc, char** argv) {
@@ -41,6 +46,10 @@ int main(int argc, char** argv) {
     } catch (const std::exception& e) {
       spdlog::warn("failed to open openh264 library: {}", e.what());
     }
+  }
+
+  if (config.enabledReport()) {
+    hisui::report::Reporter::open();
   }
 
   hisui::MetadataSet metadata_set(
@@ -73,9 +82,26 @@ int main(int argc, char** argv) {
   } catch (const std::exception& e) {
     spdlog::error("muxing failed: {}", e.what());
     muxer->cleanUp();
+    if (config.enabledFailureReport()) {
+      std::ofstream os(std::filesystem::path(config.failure_report) /
+                       fmt::format("{}_{}_failure.json",
+                                   hisui::datetime::get_current_utc_string(),
+                                   metadata_set.getNormal().getRecordingID()));
+      os << hisui::report::Reporter::getInstance().makeFailureReport(e.what());
+      hisui::report::Reporter::close();
+    }
     return 1;
   }
   delete muxer;
+
+  if (config.enabledSuccessReport()) {
+    std::ofstream os(std::filesystem::path(config.success_report) /
+                     fmt::format("{}_{}_success.json",
+                                 hisui::datetime::get_current_utc_string(),
+                                 metadata_set.getNormal().getRecordingID()));
+    os << hisui::report::Reporter::getInstance().makeSuccessReport();
+    hisui::report::Reporter::close();
+  }
 
   if (!config.openh264.empty()) {
     hisui::video::OpenH264Handler::close();

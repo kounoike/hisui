@@ -14,9 +14,13 @@
 #include <utility>
 #include <vector>
 
+#include <boost/json/array.hpp>
 #include <boost/json/impl/array.hpp>
+#include <boost/json/object.hpp>
 #include <boost/json/parse.hpp>
+#include <boost/json/string.hpp>
 #include <boost/json/system_error.hpp>
+#include <boost/json/value.hpp>
 
 namespace hisui {
 
@@ -191,6 +195,32 @@ boost::json::array Metadata::prepare(const boost::json::value& jv) {
   return ja;
 }
 
+boost::json::string Metadata::getRecordingID() const {
+  return m_recording_id;
+}
+
+boost::json::string get_string_from_json_object(boost::json::object o,
+                                                const std::string& key) {
+  if (auto p = o[key].if_string()) {
+    return *p;
+  }
+  throw std::runtime_error(fmt::format("o[{}].if_string() failed", key));
+}
+
+double get_double_from_json_object(boost::json::object o,
+                                   const std::string& key) {
+  if (o[key].is_number()) {
+    boost::json::error_code ec;
+    auto value = o[key].to_number<double>(ec);
+    if (ec) {
+      throw std::runtime_error(
+          fmt::format("o[{}].to_number() failed: {}", key, ec.message()));
+    }
+    return value;
+  }
+  throw std::runtime_error(fmt::format("o[{}] is not number", key));
+}
+
 Metadata parse_metadata(const std::string& filename) {
   std::ifstream i(filename);
   if (!i.is_open()) {
@@ -277,32 +307,6 @@ double MetadataSet::getMaxStopTimeOffset() const {
                     m_preferred.getMaxStopTimeOffset());
   }
   return m_normal.getMaxStopTimeOffset();
-}
-
-boost::json::string Metadata::getRecordingID() const {
-  return m_recording_id;
-}
-
-boost::json::string get_string_from_json_object(boost::json::object o,
-                                                const std::string& key) {
-  if (auto p = o[key].if_string()) {
-    return *p;
-  }
-  throw std::runtime_error(fmt::format("o[{}].if_string() failed", key));
-}
-
-double get_double_from_json_object(boost::json::object o,
-                                   const std::string& key) {
-  if (o[key].is_number()) {
-    boost::json::error_code ec;
-    auto value = o[key].to_number<double>(ec);
-    if (ec) {
-      throw std::runtime_error(
-          fmt::format("o[{}].to_number() failed: {}", key, ec.message()));
-    }
-    return value;
-  }
-  throw std::runtime_error("start_time_offset is not number");
 }
 
 void MetadataSet::split(const std::string& connection_id) {

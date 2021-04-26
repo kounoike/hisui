@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdio>
-
 #include "config.hpp"
 #include "metadata.hpp"
 #include "muxer/muxer.hpp"
@@ -35,7 +33,6 @@ class AsyncWebMMuxer : public Muxer {
   void appendVideo(hisui::Frame) override;
 
   hisui::webm::output::Context* m_context;
-  std::FILE* m_file;
 
   hisui::Config m_config;
   hisui::MetadataSet m_metadata_set;

@@ -11,8 +11,15 @@
 
 namespace hisui::webm::output {
 
-Context::Context(std::FILE* file) {
-  m_writer = new mkvmuxer::MkvWriter(file);
+Context::Context(const std::string& t_file_path) : m_file_path(t_file_path) {}
+
+void Context::init() {
+  m_file = std::fopen(m_file_path.c_str(), "wb");
+  if (m_file == nullptr) {
+    throw std::runtime_error("Unable to open: " + m_file_path);
+  }
+
+  m_writer = new mkvmuxer::MkvWriter(m_file);
   m_segment = new mkvmuxer::Segment();
   m_segment->Init(m_writer);
   m_segment->set_mode(mkvmuxer::Segment::kFile);
@@ -26,6 +33,9 @@ Context::~Context() {
   m_segment->Finalize();
   delete m_segment;
   delete m_writer;
+  if (m_file) {
+    std::fclose(m_file);
+  }
 }
 
 void Context::setAudioTrack(const std::uint64_t codec_delay,

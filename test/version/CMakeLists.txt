@@ -17,17 +17,18 @@ add_compile_options(
     -Wmisleading-indentation
     -pedantic)
 
-add_executable(audio_test
+add_executable(version_test
     main.cpp
-    mixer_test.cpp
-    ../../src/audio/mixer.cpp
+    version_test.cpp
+    ../../src/version/version.cpp
+    ../../src/video/openh264_handler.cpp
+    ../../third_party/libvpx/third_party/libwebm/mkvparser/mkvparser.cc
     )
 
-set_target_properties(audio_test PROPERTIES CXX_STANDARD 20 C_STANDARD 11)
+set_target_properties(version_test PROPERTIES CXX_STANDARD 20 C_STANDARD 11)
 
-target_include_directories(audio_test
+target_include_directories(version_test
     PRIVATE
-    ../../src
     ${boost_algorithm_SOURCE_DIR}/include
     ${boost_assert_SOURCE_DIR}/include
     ${boost_bind_SOURCE_DIR}/include
@@ -45,6 +46,7 @@ target_include_directories(audio_test
     ${boost_numeric_conversion_SOURCE_DIR}/include
     ${boost_preprocessor_SOURCE_DIR}/include
     ${boost_range_SOURCE_DIR}/include
+    ${boost_rational_SOURCE_DIR}/include
     ${boost_smart_ptr_SOURCE_DIR}/include
     ${boost_static_assert_SOURCE_DIR}/include
     ${boost_test_SOURCE_DIR}/include
@@ -52,7 +54,37 @@ target_include_directories(audio_test
     ${boost_type_index_SOURCE_DIR}/include
     ${boost_type_traits_SOURCE_DIR}/include
     ${boost_utility_SOURCE_DIR}/include
+    ${cpp-mp4_SOURCE_DIR}/include
+    ${fmt_SOURCE_DIR}/include
+    ${spdlog_SOURCE_DIR}/include
+    ../../src
+    ../../src/third_party/openh264/codec/api/svc
+    ../../third_party/openh264
+    ../../third_party/libvpx
+    ../../third_party/libvpx/third_party/libwebm
+    ../../third_party/libvpx/third_party/libyuv/include
     )
 
-add_test(NAME audio COMMAND audio_test)
-set_tests_properties(audio PROPERTIES LABELS hisui)
+target_link_libraries(version_test
+    PRIVATE
+    dl
+    fmt
+    shiguredo-mp4
+    ${CMAKE_SOURCE_DIR}/third_party/libvpx/libvpx.a
+    )
+
+if(USE_FDK_AAC)
+    target_compile_definitions(version_test
+        PRIVATE
+        USE_FDK_AAC
+        )
+
+    target_link_libraries(version_test
+        PRIVATE
+        fdk-aac
+        m
+        )
+endif()
+
+add_test(NAME version COMMAND version_test)
+set_tests_properties(version PROPERTIES LABELS hisui)

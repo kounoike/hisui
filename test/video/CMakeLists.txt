@@ -25,7 +25,7 @@ add_executable(video_test
     ../../src/video/vpx.cpp
     )
 
-set_target_properties(video_test PROPERTIES CXX_STANDARD 20 C_STANDARD 99)
+set_target_properties(video_test PROPERTIES CXX_STANDARD 20 C_STANDARD 11)
 
 target_include_directories(video_test
     PRIVATE

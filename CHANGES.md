@@ -11,6 +11,17 @@
 
 ## develop
 
+- [ADD] [実験的機能] 画面共有合成機能を追加する
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/40
+- [ADD] [実験的機能] 合成成功/失敗時にレポートを出力する
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/30
+- [UPDATE] `cpp-mp4` を `2021.3` に
+    - @haruyama
+- [UPDATE] `boost` を `1.76.0` に
+    - @haruyama
+
 ## 2021.2.3
 
 - [FIX] PixelWidth/Height が 0 な VideoTrack を持つ WebM に対応するで混入したバグを修正する

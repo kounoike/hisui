@@ -4,7 +4,6 @@
 #include <cstdint>
 #include <filesystem>
 #include <iterator>
-#include <stdexcept>
 #include <string>
 
 #include "audio/opus.hpp"
@@ -16,6 +15,7 @@
 #include "muxer/opus_audio_producer.hpp"
 #include "muxer/video_producer.hpp"
 #include "muxer/vpx_video_producer.hpp"
+#include "report/reporter.hpp"
 #include "webm/output/context.hpp"
 
 namespace hisui::muxer {
@@ -34,11 +34,8 @@ void AsyncWebMMuxer::setUp() {
     }
   }
 
-  m_file = std::fopen(m_config.out_filename.c_str(), "wb");
-  if (!m_file) {
-    throw std::runtime_error("Unable to open: " + m_config.out_filename);
-  }
-  m_context = new hisui::webm::output::Context(m_file);
+  m_context = new hisui::webm::output::Context(m_config.out_filename);
+  m_context->init();
 
   if (m_config.audio_only) {
     m_video_producer = new NoVideoProducer();
@@ -75,11 +72,23 @@ void AsyncWebMMuxer::setUp() {
                                hisui::Constants::NANO_SECOND /
                                hisui::Constants::PCM_SAMPLE_RATE,
                            private_data.data(), std::size(private_data));
+
+  if (hisui::report::Reporter::hasInstance()) {
+    hisui::report::Reporter::getInstance().registerOutput({
+        .container = "WebM",
+        .video_codec =
+            m_config.audio_only ? "none"
+            : m_video_producer->getFourcc() == hisui::Constants::VP9_FOURCC
+                ? "vp9"
+                : "vp8",
+        .audio_codec = "opus",
+        .duration = m_metadata_set.getMaxStopTimeOffset(),
+    });
+  }
 }
 
 AsyncWebMMuxer::~AsyncWebMMuxer() {
   delete m_context;
-  std::fclose(m_file);
 
   delete m_video_producer;
   delete m_audio_producer;

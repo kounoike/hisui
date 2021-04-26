@@ -89,7 +89,7 @@ void VideoProducer::produce() {
   } catch (const std::exception& e) {
     spdlog::error("VideoProducer::produce() failed: what={}", e.what());
     m_is_finished = true;
-    throw e;
+    throw;
   }
 }
 

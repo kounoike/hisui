@@ -18,6 +18,7 @@
 #include "muxer/opus_audio_producer.hpp"
 #include "muxer/video_producer.hpp"
 #include "muxer/vpx_video_producer.hpp"
+#include "report/reporter.hpp"
 #include "shiguredo/mp4/track/opus.hpp"
 #include "shiguredo/mp4/track/soun.hpp"
 #include "shiguredo/mp4/track/vide.hpp"
@@ -109,6 +110,24 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
 
     m_timescale_ratio.assign(m_soun_track->getTimescale(),
                              m_vide_track->getTimescale());
+  }
+
+  if (hisui::report::Reporter::hasInstance()) {
+    hisui::report::Reporter::getInstance().registerOutput({
+        .container = "MP4",
+        .mux_type = config.mp4_muxer == config::MP4Muxer::Faststart
+                        ? "faststart"
+                        : "simple",
+        .video_codec =
+            config.audio_only ? "none"
+            : m_video_producer->getFourcc() == hisui::Constants::VP9_FOURCC
+                ? "vp9"
+                : "vp8",
+        .audio_codec = config.out_audio_codec == config::OutAudioCodec::FDK_AAC
+                           ? "aac"
+                           : "opus",
+        .duration = metadata_set.getMaxStopTimeOffset(),
+    });
   }
 }
 
