@@ -79,13 +79,13 @@ void set_cli_options(CLI::App* app, Config* config) {
 
   app->add_option(
          "--screen-capture-width", config->screen_capture_width,
-         "Width for screen-capture (NON NAGATIVE multiple of 4). default: 960")
+         "Width for screen-capture (NON NEGATIVE multiple of 4). default: 960")
       ->check(NonNegativeMultipleOf4)
       ->group(EXPERIMENTAL_OPTIONS);
 
   app->add_option(
          "--screen-capture-height", config->screen_capture_height,
-         "Height for screen-capture (NON NAGATIVE multiple of 4). default: 640")
+         "Height for screen-capture (NON NEGATIVE multiple of 4). default: 640")
       ->check(NonNegativeMultipleOf4)
       ->group(EXPERIMENTAL_OPTIONS);
 
@@ -144,7 +144,7 @@ void set_cli_options(CLI::App* app, Config* config) {
 
   app->add_option(
          "--libvpx-cq-level", config->libvpx_cq_level,
-         "libvpx Constrained Quality level (NON NAGATIVE INTEGER). default: 30")
+         "libvpx Constrained Quality level (NON NEGATIVE INTEGER). default: 30")
       ->check(CLI::Range(0, 63));
   app->add_option(
          "--libvpx-min-q", config->libvpx_min_q,
@@ -204,13 +204,13 @@ void set_cli_options(CLI::App* app, Config* config) {
 
   app->add_option(
          "--scaling-width", config->scaling_width,
-         "Scaling width per grid (NON NAGATIVE multiple of 4. auto mode: "
+         "Scaling width per grid (NON NEGATIVE multiple of 4. auto mode: "
          "0). default: 320")
       ->check(NonNegativeMultipleOf4)
       ->group(OPTIONS_FOR_TUNING);
 
   app->add_option("--scaling-height", config->scaling_height,
-                  "Scaling height per grid (NON NAGATIVE multiple of 4, auto "
+                  "Scaling height per grid (NON NEGATIVE multiple of 4, auto "
                   "mode: 0). default: 240")
       ->check(NonNegativeMultipleOf4)
       ->group(OPTIONS_FOR_TUNING);
