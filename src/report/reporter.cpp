@@ -1,5 +1,6 @@
 #include "report/reporter.hpp"
 
+#include <fmt/core.h>
 #include <sys/time.h>
 
 #include <string>
@@ -12,7 +13,16 @@
 #include <boost/json/value.hpp>
 #include <boost/json/value_from.hpp>
 
+#include "constants.hpp"
 #include "version/version.hpp"
+
+namespace {
+
+std::string second_to_string(double second) {
+  return fmt::format("{:.2f}s", second);
+}
+
+}  // namespace
 
 namespace hisui::report {
 
@@ -49,9 +59,8 @@ std::string Reporter::makeReport() {
 
   m_report["inputs"] = inputs;
   m_report["output"] = boost::json::value_from(m_output_info);
-  m_report["execution_time"] =
-      static_cast<double>(std::clock() - m_start_clock) / CLOCKS_PER_SEC;
-
+  m_report["execution_time"] = second_to_string(
+      static_cast<double>(std::clock() - m_start_clock) / CLOCKS_PER_SEC);
   collectVersions();
 
   return boost::json::serialize(m_report);
@@ -114,7 +123,8 @@ void tag_invoke(const boost::json::value_from_tag&,
   jv = {
       {"codec", adi.codec},
       {"channels", adi.channels},
-      {"duration", adi.duration},
+      {"duration", second_to_string(static_cast<double>(adi.duration) /
+                                    Constants::NANO_SECOND)},
   };
 }
 
@@ -123,7 +133,8 @@ void tag_invoke(const boost::json::value_from_tag&,
                 const VideoDecoderInfo& vdi) {
   jv = {
       {"codec", vdi.codec},
-      {"duration", vdi.duration},
+      {"duration", second_to_string(static_cast<double>(vdi.duration) /
+                                    Constants::NANO_SECOND)},
   };
 }
 
@@ -131,7 +142,8 @@ void tag_invoke(const boost::json::value_from_tag&,
                 boost::json::value& jv,  // NOLINT
                 const ResolutionWithTimestamp& rwt) {
   jv = {
-      {"timestamp", rwt.timestamp},
+      {"timestamp", second_to_string(static_cast<double>(rwt.timestamp) /
+                                     Constants::NANO_SECOND)},
       {"width", rwt.width},
       {"height", rwt.height},
   };
@@ -141,9 +153,11 @@ void tag_invoke(const boost::json::value_from_tag&,
                 boost::json::value& jv,  // NOLINT
                 const OutputInfo& oi) {
   jv = {
-      {"container", oi.container},     {"mux_type", oi.mux_type},
-      {"video_codec", oi.video_codec}, {"audio_codec", oi.audio_codec},
-      {"duration", oi.duration},
+      {"container", oi.container},
+      {"mux_type", oi.mux_type},
+      {"video_codec", oi.video_codec},
+      {"audio_codec", oi.audio_codec},
+      {"duration", second_to_string(oi.duration)},
   };
 }
 
