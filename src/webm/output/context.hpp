@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
+#include <string>
 
 namespace mkvmuxer {
 
@@ -15,9 +16,10 @@ namespace hisui::webm::output {
 
 class Context {
  public:
-  explicit Context(std::FILE* file);
+  explicit Context(const std::string&);
   ~Context();
 
+  void init();
   void setAudioTrack(const std::uint64_t codec_delay,
                      const std::uint8_t* private_data,
                      const std::size_t private_data_size);
@@ -34,6 +36,8 @@ class Context {
                      const std::uint64_t pts_ns);
 
  private:
+  std::string m_file_path;
+  std::FILE* m_file = nullptr;
   mkvmuxer::MkvWriter* m_writer;
   mkvmuxer::Segment* m_segment;
   const std::uint64_t m_video_track_number = 1;

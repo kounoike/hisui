@@ -4,24 +4,25 @@
 #include <cstdint>
 #include <filesystem>
 #include <iterator>
-#include <stdexcept>
 #include <string>
 
 #include "audio/opus.hpp"
 #include "constants.hpp"
 #include "frame.hpp"
 #include "muxer/audio_producer.hpp"
+#include "muxer/multi_channel_vpx_video_producer.hpp"
 #include "muxer/no_video_producer.hpp"
 #include "muxer/opus_audio_producer.hpp"
 #include "muxer/video_producer.hpp"
 #include "muxer/vpx_video_producer.hpp"
+#include "report/reporter.hpp"
 #include "webm/output/context.hpp"
 
 namespace hisui::muxer {
 
 AsyncWebMMuxer::AsyncWebMMuxer(const hisui::Config& t_config,
-                               const hisui::Metadata& t_metadata)
-    : m_config(t_config), m_metadata(t_metadata) {}
+                               const hisui::MetadataSet& t_metadata_set)
+    : m_config(t_config), m_metadata_set(t_metadata_set) {}
 
 void AsyncWebMMuxer::setUp() {
   if (m_config.out_filename == "") {
@@ -33,29 +34,34 @@ void AsyncWebMMuxer::setUp() {
     }
   }
 
-  m_file = std::fopen(m_config.out_filename.c_str(), "wb");
-  if (!m_file) {
-    throw std::runtime_error("Unable to open: " + m_config.out_filename);
-  }
-  m_context = new hisui::webm::output::Context(m_file);
+  m_context = new hisui::webm::output::Context(m_config.out_filename);
+  m_context->init();
 
   if (m_config.audio_only) {
     m_video_producer = new NoVideoProducer();
   } else {
     if (m_config.out_video_bit_rate == 0) {
       m_config.out_video_bit_rate =
-          static_cast<std::uint32_t>(std::size(m_metadata.getArchives())) *
+          static_cast<std::uint32_t>(
+              std::size(m_metadata_set.getNormalArchives())) *
           hisui::Constants::VIDEO_VPX_BIT_RATE_PER_FILE;
     }
 
-    m_video_producer = new VPXVideoProducer(m_config, m_metadata);
+    if (m_metadata_set.hasPreferred()) {
+      m_video_producer =
+          new MultiChannelVPXVideoProducer(m_config, m_metadata_set);
+    } else {
+      m_video_producer =
+          new VPXVideoProducer(m_config, m_metadata_set.getNormal());
+    }
+
     m_context->setVideoTrack(m_video_producer->getWidth(),
                              m_video_producer->getHeight(),
                              m_video_producer->getFourcc());
   }
 
   OpusAudioProducer* audio_producer =
-      new OpusAudioProducer(m_config, m_metadata);
+      new OpusAudioProducer(m_config, m_metadata_set);
   const auto skip = audio_producer->getSkip();
   m_audio_producer = audio_producer;
 
@@ -66,11 +72,23 @@ void AsyncWebMMuxer::setUp() {
                                hisui::Constants::NANO_SECOND /
                                hisui::Constants::PCM_SAMPLE_RATE,
                            private_data.data(), std::size(private_data));
+
+  if (hisui::report::Reporter::hasInstance()) {
+    hisui::report::Reporter::getInstance().registerOutput({
+        .container = "WebM",
+        .video_codec =
+            m_config.audio_only ? "none"
+            : m_video_producer->getFourcc() == hisui::Constants::VP9_FOURCC
+                ? "vp9"
+                : "vp8",
+        .audio_codec = "opus",
+        .duration = m_metadata_set.getMaxStopTimeOffset(),
+    });
+  }
 }
 
 AsyncWebMMuxer::~AsyncWebMMuxer() {
   delete m_context;
-  std::fclose(m_file);
 
   delete m_video_producer;
   delete m_audio_producer;

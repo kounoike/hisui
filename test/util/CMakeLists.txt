@@ -23,7 +23,7 @@ add_executable(util_test
     ../../src/util/interval.cpp
     )
 
-set_target_properties(util_test PROPERTIES CXX_STANDARD 20 C_STANDARD 99)
+set_target_properties(util_test PROPERTIES CXX_STANDARD 20 C_STANDARD 11)
 
 target_include_directories(util_test
     PRIVATE

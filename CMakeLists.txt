@@ -7,9 +7,9 @@ cmake_policy(SET CMP0091 NEW)
 
 include(cmake/env.cmake)
 
-set_cache_string_from_env(BOOST_VERSION 1.75.0 "Boost のバージョン")
+set_cache_string_from_env(BOOST_VERSION 1.76.0 "Boost のバージョン")
 set_cache_string_from_env(CLI11_VERSION 1.9.1 "CLI11 のバージョン")
-set_cache_string_from_env(CPP_MP4_VERSION 2021.1 "CLI11 のバージョン")
+set_cache_string_from_env(CPP_MP4_VERSION 2021.3 "cpp-mp4 のバージョン")
 set_cache_string_from_env(FMT_VERSION 7.1.3 "fmt のバージョン")
 set_cache_string_from_env(OPUS_VERSION 1.3.1 "Opus のバージョン")
 set_cache_string_from_env(SPDLOG_VERSION 1.8.2 "spdlog のバージョン")
@@ -181,6 +181,7 @@ endif()
 target_sources(hisui
     PRIVATE
     src/config.cpp
+    src/datetime.cpp
     src/hisui.cpp
     src/metadata.cpp
     src/audio/buffer_opus_encoder.cpp
@@ -192,6 +193,7 @@ target_sources(hisui
     src/muxer/async_webm_muxer.cpp
     src/muxer/audio_producer.cpp
     src/muxer/mp4_muxer.cpp
+    src/muxer/multi_channel_vpx_video_producer.cpp
     src/muxer/opus_audio_producer.cpp
     src/muxer/simple_mp4_muxer.cpp
     src/muxer/faststart_mp4_muxer.cpp
@@ -199,11 +201,14 @@ target_sources(hisui
     src/muxer/no_video_producer.cpp
     src/muxer/video_producer.cpp
     src/muxer/vpx_video_producer.cpp
+    src/report/reporter.cpp
     src/util/interval.cpp
+    src/version/version.cpp
     src/video/buffer_vpx_encoder.cpp
     src/video/composer.cpp
     src/video/decoder.cpp
     src/video/grid_composer.cpp
+    src/video/multi_channel_sequencer.cpp
     src/video/openh264.cpp
     src/video/openh264_decoder.cpp
     src/video/openh264_handler.cpp

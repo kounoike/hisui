@@ -1,6 +1,7 @@
 #include "muxer/audio_producer.hpp"
 
 #include <bits/exception.h>
+#include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 
 #include <cmath>
@@ -14,6 +15,7 @@
 #include "audio/encoder.hpp"
 #include "audio/sequencer.hpp"
 #include "constants.hpp"
+#include "frame.hpp"
 
 namespace hisui::muxer {
 
@@ -76,7 +78,7 @@ void AudioProducer::produce() {
   } catch (const std::exception& e) {
     spdlog::error("AudioProducer::produce() failed: what={}", e.what());
     m_is_finished = true;
-    throw e;
+    throw;
   }
 }
 

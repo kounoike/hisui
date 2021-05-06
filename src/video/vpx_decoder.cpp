@@ -9,8 +9,11 @@
 #include <vpx/vpx_image.h>
 
 #include <limits>
+#include <memory>
 #include <stdexcept>
 
+#include "constants.hpp"
+#include "report/reporter.hpp"
 #include "video/vpx.hpp"
 #include "video/yuv.hpp"
 #include "webm/input/video_context.hpp"
@@ -24,6 +27,20 @@ VPXDecoder::VPXDecoder(hisui::webm::input::VideoContext* t_webm)
   m_current_yuv_image = new YUVImage(m_width, m_height);
 
   m_next_vpx_image = create_black_vpx_image(m_width, m_height);
+
+  if (hisui::report::Reporter::hasInstance()) {
+    m_report_enabled = true;
+
+    hisui::report::Reporter::getInstance().registerVideoDecoder(
+        m_webm->getFilePath(),
+        {.codec = m_webm->getFourcc() == hisui::Constants::VP9_FOURCC ? "vp9"
+                                                                      : "vp8",
+         .duration = m_webm->getDuration()});
+
+    hisui::report::Reporter::getInstance().registerResolutionChange(
+        m_webm->getFilePath(),
+        {.timestamp = 0, .width = m_width, .height = m_height});
+  }
 
   updateVPXImageByTimestamp(0);
 }
@@ -74,6 +91,18 @@ void VPXDecoder::updateVPXImageByTimestamp(const std::uint64_t timestamp) {
   do {
     ::vpx_codec_iter_t codec_iter = nullptr;
     if (m_current_vpx_image) {
+      if (m_report_enabled) {
+        if (get_vpx_image_plane_width(m_current_vpx_image, 0) !=
+                get_vpx_image_plane_width(m_next_vpx_image, 0) ||
+            get_vpx_image_plane_height(m_current_vpx_image, 0) !=
+                get_vpx_image_plane_height(m_next_vpx_image, 0)) {
+          hisui::report::Reporter::getInstance().registerResolutionChange(
+              m_webm->getFilePath(),
+              {.timestamp = m_next_timestamp,
+               .width = get_vpx_image_plane_width(m_next_vpx_image, 0),
+               .height = get_vpx_image_plane_height(m_next_vpx_image, 0)});
+        }
+      }
       ::vpx_img_free(m_current_vpx_image);
     }
     m_current_vpx_image = m_next_vpx_image;

@@ -1,6 +1,7 @@
 #include "muxer/video_producer.hpp"
 
 #include <bits/exception.h>
+#include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 
 #include <cmath>
@@ -13,7 +14,7 @@
 #include <progresscpp/ProgressBar.hpp>
 
 #include "constants.hpp"
-#include "util/interval.hpp"
+#include "frame.hpp"
 #include "video/composer.hpp"
 #include "video/encoder.hpp"
 #include "video/sequencer.hpp"
@@ -88,7 +89,7 @@ void VideoProducer::produce() {
   } catch (const std::exception& e) {
     spdlog::error("VideoProducer::produce() failed: what={}", e.what());
     m_is_finished = true;
-    throw e;
+    throw;
   }
 }
 

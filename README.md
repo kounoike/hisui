@@ -7,7 +7,7 @@
 
 We will not respond to PRs or issues that have not been discussed on Discord. Also, Discord is only available in Japanese.
 
-Please read https://github.com/shiguredo/oss before use.
+Please read https://github.com/shiguredo/oss/blob/master/README.en.md before use.
 
 ## 時雨堂のオープンソースソフトウェアについて
 
@@ -20,6 +20,10 @@ Recording Composition Tool Hisui は WebRTC SFU Sora 向けの録画合成ツー
 Sora が出力した録画ファイルを合成し WebM や MP4 で出力するツールです。
 
 ## 特徴
+
+- Sora が生成する録画ファイルや録画レポートをそのまま利用できます
+- 特に設定することなくすぐに使い始められます
+- 細かいチューニングも可能です
 
 ## ファイル形式
 
@@ -110,4 +114,3 @@ https://www.openh264.org/BINARY_LICENSE.txt
 ```
 "OpenH264 Video Codec provided by Cisco Systems, Inc."
 ```
-

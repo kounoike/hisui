@@ -8,7 +8,11 @@
 #include <boost/cstdint.hpp>
 #include <boost/rational.hpp>
 
-#include "frame.hpp"
+namespace hisui {
+
+struct Frame;
+
+}
 
 namespace hisui::video {
 
@@ -29,7 +33,7 @@ class VideoProducer {
  public:
   explicit VideoProducer(const VideoProducerParameters&);
   virtual ~VideoProducer();
-  void produce();
+  virtual void produce();
   void bufferPop();
   std::optional<hisui::Frame> bufferFront();
   bool isFinished();

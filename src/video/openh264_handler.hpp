@@ -1,5 +1,7 @@
 #pragma once
 
+#include <codec/api/svc/codec_app_def.h>
+
 #include <string>
 
 class ISVCDecoder;
@@ -18,10 +20,12 @@ class OpenH264Handler {
   using DestroyDecoderFunc = void (*)(::ISVCDecoder*);
   using CreateEncoderFunc = int (*)(::ISVCEncoder**);
   using DestroyEncoderFunc = void (*)(::ISVCEncoder*);
+  using GetCodecVersoinFunc = ::OpenH264Version (*)();
   CreateDecoderFunc createDecoder = nullptr;
   DestroyDecoderFunc destroyDecoder = nullptr;
   CreateEncoderFunc createEncoder = nullptr;
   DestroyEncoderFunc destroyEncoder = nullptr;
+  GetCodecVersoinFunc getCodecVersion = nullptr;
 
   static void open(const std::string&);
   static bool hasInstance();

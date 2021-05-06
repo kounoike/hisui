@@ -1,26 +1,26 @@
 #include <bits/exception.h>
+#include <spdlog/common.h>
+#include <spdlog/fmt/bundled/format.h>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 
-#include <fstream>
-#include <initializer_list>
-#include <iterator>
-#include <map>
+#include <filesystem>
+#include <ostream>
 #include <stdexcept>
 #include <string>
-#include <vector>
 
 #include <CLI/App.hpp>
 #include <CLI/Config.hpp>
 #include <CLI/Formatter.hpp>
-#include <boost/json.hpp>
 
 #include "config.hpp"
+#include "datetime.hpp"
 #include "metadata.hpp"
 #include "muxer/async_webm_muxer.hpp"
 #include "muxer/faststart_mp4_muxer.hpp"
 #include "muxer/muxer.hpp"
 #include "muxer/simple_mp4_muxer.hpp"
+#include "report/reporter.hpp"
 #include "video/openh264_handler.hpp"
 
 int main(int argc, char** argv) {
@@ -31,11 +31,7 @@ int main(int argc, char** argv) {
 
   CLI11_PARSE(app, argc, argv);
 
-  if (config.out_container == hisui::config::OutContainer::WebM &&
-      config.out_audio_codec == hisui::config::OutAudioCodec::FDK_AAC) {
-    spdlog::error("hisui does not support AAC output in WebM");
-    return 1;
-  }
+  config.validate();
 
   if (config.verbose) {
     spdlog::set_level(spdlog::level::debug);
@@ -43,24 +39,6 @@ int main(int argc, char** argv) {
     spdlog::set_level(config.log_level);
   }
   spdlog::debug("log level={}", config.log_level);
-
-  std::ifstream i(config.in_metadata_filename);
-  if (!i.is_open()) {
-    spdlog::error("failed to open metadata json file: {}",
-                  config.in_metadata_filename);
-    return 1;
-  }
-  std::string string_json((std::istreambuf_iterator<char>(i)),
-                          std::istreambuf_iterator<char>());
-  boost::json::error_code ec;
-  boost::json::value jv = boost::json::parse(string_json, ec);
-  if (ec) {
-    spdlog::error("failed to parse metadata json file: message", ec.message());
-    return 1;
-  }
-
-  const hisui::Metadata metadata =
-      hisui::parse_metadata(config.in_metadata_filename, jv);
 
   if (!config.openh264.empty()) {
     try {
@@ -70,14 +48,28 @@ int main(int argc, char** argv) {
     }
   }
 
+  if (config.enabledReport()) {
+    hisui::report::Reporter::open();
+  }
+
+  hisui::MetadataSet metadata_set(
+      hisui::parse_metadata(config.in_metadata_filename));
+
+  if (!config.screen_capture_metadata_filename.empty()) {
+    metadata_set.setPrefered(
+        hisui::parse_metadata(config.screen_capture_metadata_filename));
+  } else if (!config.screen_capture_connection_id.empty()) {
+    metadata_set.split(config.screen_capture_connection_id);
+  }
+
   hisui::muxer::Muxer* muxer = nullptr;
   if (config.out_container == hisui::config::OutContainer::WebM) {
-    muxer = new hisui::muxer::AsyncWebMMuxer(config, metadata);
+    muxer = new hisui::muxer::AsyncWebMMuxer(config, metadata_set);
   } else if (config.out_container == hisui::config::OutContainer::MP4) {
     if (config.mp4_muxer == hisui::config::MP4Muxer::Simple) {
-      muxer = new hisui::muxer::SimpleMP4Muxer(config, metadata);
+      muxer = new hisui::muxer::SimpleMP4Muxer(config, metadata_set);
     } else if (config.mp4_muxer == hisui::config::MP4Muxer::Faststart) {
-      muxer = new hisui::muxer::FaststartMP4Muxer(config, metadata);
+      muxer = new hisui::muxer::FaststartMP4Muxer(config, metadata_set);
     } else {
       throw std::runtime_error("config.mp4_muxer is invalid");
     }
@@ -90,9 +82,26 @@ int main(int argc, char** argv) {
   } catch (const std::exception& e) {
     spdlog::error("muxing failed: {}", e.what());
     muxer->cleanUp();
+    if (config.enabledFailureReport()) {
+      std::ofstream os(std::filesystem::path(config.failure_report) /
+                       fmt::format("{}_{}_failure.json",
+                                   hisui::datetime::get_current_utc_string(),
+                                   metadata_set.getNormal().getRecordingID()));
+      os << hisui::report::Reporter::getInstance().makeFailureReport(e.what());
+      hisui::report::Reporter::close();
+    }
     return 1;
   }
   delete muxer;
+
+  if (config.enabledSuccessReport()) {
+    std::ofstream os(std::filesystem::path(config.success_report) /
+                     fmt::format("{}_{}_success.json",
+                                 hisui::datetime::get_current_utc_string(),
+                                 metadata_set.getNormal().getRecordingID()));
+    os << hisui::report::Reporter::getInstance().makeSuccessReport();
+    hisui::report::Reporter::close();
+  }
 
   if (!config.openh264.empty()) {
     hisui::video::OpenH264Handler::close();

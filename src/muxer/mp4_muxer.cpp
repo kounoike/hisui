@@ -6,16 +6,19 @@
 #include <string>
 #include <vector>
 
+#include <boost/cstdint.hpp>
 #include <boost/rational.hpp>
 
 #include "config.hpp"
 #include "constants.hpp"
 #include "metadata.hpp"
 #include "muxer/audio_producer.hpp"
+#include "muxer/multi_channel_vpx_video_producer.hpp"
 #include "muxer/no_video_producer.hpp"
 #include "muxer/opus_audio_producer.hpp"
 #include "muxer/video_producer.hpp"
 #include "muxer/vpx_video_producer.hpp"
+#include "report/reporter.hpp"
 #include "shiguredo/mp4/track/opus.hpp"
 #include "shiguredo/mp4/track/soun.hpp"
 #include "shiguredo/mp4/track/vide.hpp"
@@ -30,15 +33,15 @@
 namespace hisui::muxer {
 
 void MP4Muxer::initialize(const hisui::Config& config_orig,
-                          const hisui::Metadata& metadata,
+                          const hisui::MetadataSet& metadata_set,
                           shiguredo::mp4::writer::Writer* writer,
                           const float duration) {
   m_writer = writer;
   hisui::Config config = config_orig;
   if (config.out_video_bit_rate == 0) {
-    config.out_video_bit_rate =
-        static_cast<std::uint32_t>(std::size(metadata.getArchives())) *
-        hisui::Constants::VIDEO_VPX_BIT_RATE_PER_FILE;
+    config.out_video_bit_rate = static_cast<std::uint32_t>(std::size(
+                                    metadata_set.getNormalArchives())) *
+                                hisui::Constants::VIDEO_VPX_BIT_RATE_PER_FILE;
   } else {
     config.out_video_bit_rate = config.out_video_bit_rate;
   }
@@ -62,7 +65,7 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
 
   if (config.out_audio_codec == config::OutAudioCodec::FDK_AAC) {
 #ifdef USE_FDK_AAC
-    m_audio_producer = new FDKAACAudioProducer(config, metadata);
+    m_audio_producer = new FDKAACAudioProducer(config, metadata_set);
     m_soun_track = new shiguredo::mp4::track::AACTrack({
         .timescale = 48000,
         .duration = duration,
@@ -76,7 +79,7 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
 #endif
   } else {
     OpusAudioProducer* audio_producer =
-        new OpusAudioProducer(config, metadata, 48000);
+        new OpusAudioProducer(config, metadata_set, 48000);
     const auto skip = audio_producer->getSkip();
     m_audio_producer = audio_producer;
     m_soun_track = new shiguredo::mp4::track::OpusTrack(
@@ -90,7 +93,13 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
     m_video_producer = new NoVideoProducer();
     m_timescale_ratio.assign(1, 1);
   } else {
-    m_video_producer = new VPXVideoProducer(config, metadata, 16000);
+    if (metadata_set.hasPreferred()) {
+      m_video_producer =
+          new MultiChannelVPXVideoProducer(config, metadata_set, 16000);
+    } else {
+      m_video_producer =
+          new VPXVideoProducer(config, metadata_set.getNormal(), 16000);
+    }
     m_vide_track = new shiguredo::mp4::track::VPXTrack(
         {.timescale = 16000,
          .duration = duration,
@@ -101,6 +110,24 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
 
     m_timescale_ratio.assign(m_soun_track->getTimescale(),
                              m_vide_track->getTimescale());
+  }
+
+  if (hisui::report::Reporter::hasInstance()) {
+    hisui::report::Reporter::getInstance().registerOutput({
+        .container = "MP4",
+        .mux_type = config.mp4_muxer == config::MP4Muxer::Faststart
+                        ? "faststart"
+                        : "simple",
+        .video_codec =
+            config.audio_only ? "none"
+            : m_video_producer->getFourcc() == hisui::Constants::VP9_FOURCC
+                ? "vp9"
+                : "vp8",
+        .audio_codec = config.out_audio_codec == config::OutAudioCodec::FDK_AAC
+                           ? "aac"
+                           : "opus",
+        .duration = metadata_set.getMaxStopTimeOffset(),
+    });
   }
 }
 

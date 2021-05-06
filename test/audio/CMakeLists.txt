@@ -23,7 +23,7 @@ add_executable(audio_test
     ../../src/audio/mixer.cpp
     )
 
-set_target_properties(audio_test PROPERTIES CXX_STANDARD 20 C_STANDARD 99)
+set_target_properties(audio_test PROPERTIES CXX_STANDARD 20 C_STANDARD 11)
 
 target_include_directories(audio_test
     PRIVATE
