@@ -87,4 +87,3 @@ MakeSequenceResult make_sequence(const std::vector<hisui::Archive>& archives) {
 }
 
 }  // namespace hisui::video
-

@@ -162,4 +162,3 @@ void tag_invoke(const boost::json::value_from_tag&,
 }
 
 }  // namespace hisui::report
-
