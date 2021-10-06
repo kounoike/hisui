@@ -20,7 +20,9 @@ add_compile_options(
 add_executable(grid_test
     main.cpp
     grid_test.cpp
+    overlap_test.cpp
     ../../src/layout/grid.cpp
+    ../../src/layout/overlap.cpp
     )
 
 set_target_properties(grid_test PROPERTIES CXX_STANDARD 20 C_STANDARD 11)
