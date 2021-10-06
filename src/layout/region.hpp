@@ -22,7 +22,7 @@ struct Resolution {
 
 struct VideoSource {
   std::string name;
-  std::unique_ptr<hisui::video::Source> source;
+  std::shared_ptr<hisui::video::Source> source;
   std::uint64_t start_time;
   std::uint64_t end_time;
 };
