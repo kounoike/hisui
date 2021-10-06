@@ -92,18 +92,18 @@ std::ostream& operator<<(std::ostream& os, const GridDimension& gd) {
 
 std::uint64_t add_number_of_excluded_cells(
     const AddNumberOfExcludedCellsParameters& params) {
-  if (params.cells_excluded.empty()) {
+  if (std::empty(params.cells_excluded)) {
     return params.number_of_sources;
   }
 
-  if (!std::is_sorted(params.cells_excluded.begin(),
-                      params.cells_excluded.end())) {
+  if (!std::is_sorted(std::begin(params.cells_excluded),
+                      std::end(params.cells_excluded))) {
     throw std::invalid_argument("cells_excluded should be sorted");
   }
 
   std::size_t i = 0;
   auto ret = params.number_of_sources;
-  while (i < params.cells_excluded.size()) {
+  while (i < std::size(params.cells_excluded)) {
     if (params.cells_excluded[i] < ret) {
       ++ret;
     } else {
