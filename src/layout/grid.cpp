@@ -90,4 +90,28 @@ std::ostream& operator<<(std::ostream& os, const GridDimension& gd) {
   return os;
 }
 
+std::uint64_t add_number_of_excluded_cells(
+    const AddNumberOfExcludedCellsParameters& params) {
+  if (params.cells_excluded.empty()) {
+    return params.number_of_sources;
+  }
+
+  if (!std::is_sorted(params.cells_excluded.begin(),
+                      params.cells_excluded.end())) {
+    throw std::invalid_argument("cells_excluded should be sorted");
+  }
+
+  std::size_t i = 0;
+  auto ret = params.number_of_sources;
+  while (i < params.cells_excluded.size()) {
+    if (params.cells_excluded[i] < ret) {
+      ++ret;
+    } else {
+      return ret;
+    }
+    ++i;
+  }
+  return ret;
+}
+
 }  // namespace hisui::layout

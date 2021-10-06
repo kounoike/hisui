@@ -283,4 +283,28 @@ BOOST_AUTO_TEST_CASE(calc_grid_dimension_constrained_grid) {
   }
 }
 
+BOOST_AUTO_TEST_CASE(add_number_of_excluded_cells) {
+  BOOST_REQUIRE_THROW(hisui::layout::add_number_of_excluded_cells(
+                          {.number_of_sources = 1, .cells_excluded = {3, 1}}),
+                      std::invalid_argument);
+
+  BOOST_REQUIRE_EQUAL(0, hisui::layout::add_number_of_excluded_cells(
+                             {.number_of_sources = 0, .cells_excluded = {}}));
+  BOOST_REQUIRE_EQUAL(1, hisui::layout::add_number_of_excluded_cells(
+                             {.number_of_sources = 1, .cells_excluded = {}}));
+  BOOST_REQUIRE_EQUAL(2, hisui::layout::add_number_of_excluded_cells(
+                             {.number_of_sources = 1, .cells_excluded = {0}}));
+  BOOST_REQUIRE_EQUAL(1, hisui::layout::add_number_of_excluded_cells(
+                             {.number_of_sources = 1, .cells_excluded = {1}}));
+  BOOST_REQUIRE_EQUAL(1, hisui::layout::add_number_of_excluded_cells(
+                             {.number_of_sources = 1, .cells_excluded = {1}}));
+
+  BOOST_REQUIRE_EQUAL(3,
+                      hisui::layout::add_number_of_excluded_cells(
+                          {.number_of_sources = 2, .cells_excluded = {1, 3}}));
+  BOOST_REQUIRE_EQUAL(5,
+                      hisui::layout::add_number_of_excluded_cells(
+                          {.number_of_sources = 3, .cells_excluded = {1, 3}}));
+}
+
 BOOST_AUTO_TEST_SUITE_END()
