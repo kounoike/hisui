@@ -190,6 +190,7 @@ target_sources(hisui
     src/audio/opus.cpp
     src/audio/basic_sequencer.cpp
     src/audio/webm_source.cpp
+    src/layout/grid.cpp
     src/muxer/async_webm_muxer.cpp
     src/muxer/audio_producer.cpp
     src/muxer/mp4_muxer.cpp
