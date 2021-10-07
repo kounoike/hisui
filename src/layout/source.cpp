@@ -2,6 +2,9 @@
 
 #include <fmt/core.h>
 
+#include <algorithm>
+#include <limits>
+
 namespace hisui::layout {
 
 Source::Source(const SourceParameters& params) {
@@ -22,5 +25,13 @@ void Source::SubstructTime(const std::uint64_t t) {
 VideoSource::VideoSource(const SourceParameters& params) : Source(params) {}
 
 AudioSource::AudioSource(const SourceParameters& params) : Source(params) {}
+
+std::uint64_t minimum_start_time(const MinimumStartTimeParameters& params) {
+  auto min = std::numeric_limits<std::uint64_t>::max();
+  for (const auto& s : params.sources) {
+    min = std::min(min, s.start_time);
+  }
+  return min;
+}
 
 }  // namespace hisui::layout
