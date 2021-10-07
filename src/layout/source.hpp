@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "audio/source.hpp"
 #include "video/source.hpp"
@@ -33,5 +34,11 @@ struct AudioSource : public Source {
   explicit AudioSource(const SourceParameters&);
   std::shared_ptr<hisui::audio::Source> source;
 };
+
+struct MinimumStartTimeParameters {
+  const std::vector<Source>& sources;
+};
+
+std::uint64_t minimum_start_time(const MinimumStartTimeParameters&);
 
 }  // namespace hisui::layout
