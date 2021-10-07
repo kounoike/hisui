@@ -6,40 +6,64 @@
 
 namespace hisui::layout {
 
-std::uint64_t maximum_number_of_overlap_show(
-    const MaximumNumberOfOverlapParameters& params) {
+bool operator==(MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals const& left,
+                MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals const& right) {
+  return left.max_number_of_overlap == right.max_number_of_overlap &&
+         left.max_end_time == right.max_end_time &&
+         left.trim_intervals == right.trim_intervals;
+}
+
+std::ostream& operator<<(
+    std::ostream& os,
+    const MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals& r) {
+  os << "max_number_of_overlap: " << r.max_number_of_overlap
+     << ", max_end_time: " << r.max_end_time << ", trim_intervals: [";
+  for (const auto& i : r.trim_intervals) {
+    os << " {" << i.first << ", " << i.second << "} ";
+  }
+  os << "]";
+  return os;
+}
+
+MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap(
+    const OverlapParameters& params) {
   std::vector<std::pair<std::uint64_t, std::uint64_t>> data;
 
   for (const auto& s : params.sources) {
-    data.emplace_back(
-        s.end_time,
-        0);  // for [start_time, end_time}: data(end_time).second < data(start_time).second
+    /* for [start_time, end_time}: data(end_time).second < data(start_time).second */
+    data.emplace_back(s.end_time, 0);
     data.emplace_back(s.start_time, 1);
   }
 
   sort(std::begin(data), std::end(data));
 
+  std::vector<std::pair<std::uint64_t, std::uint64_t>> trim_intervals;
+
   std::uint64_t count = 0;
   std::uint64_t ret = 0;
+  std::uint64_t trim_start = 0;
+  std::uint64_t max_end_time = 0;
   for (const auto& d : data) {
     if (d.second == 0) {
       --count;
+      if (count == 0) {
+        trim_start = d.first;
+      }
+      max_end_time = d.first;
     }
     if (d.second == 1) {
+      if (count == 0 && trim_start != d.first) {
+        trim_intervals.emplace_back(trim_start, d.first);
+      }
       ++count;
     }
     ret = std::max(ret, count);
   }
-  return ret;
-}
 
-std::uint64_t maximum_number_of_overlap(
-    const MaximumNumberOfOverlapParameters& params) {
-  if (params.reuse == Reuse::None) {
-    return std::size(params.sources);
-  }
-
-  return maximum_number_of_overlap_show(params);
+  return {.max_number_of_overlap =
+              params.reuse == Reuse::None ? std::size(params.sources) : ret,
+          .max_end_time = max_end_time,
+          .trim_intervals = trim_intervals};
 }
 
 }  // namespace hisui::layout
