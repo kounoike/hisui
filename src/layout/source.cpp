@@ -26,7 +26,17 @@ VideoSource::VideoSource(const SourceParameters& params) : Source(params) {}
 
 AudioSource::AudioSource(const SourceParameters& params) : Source(params) {}
 
-std::uint64_t minimum_start_time(const MinimumStartTimeParameters& params) {
+std::uint64_t minimum_video_start_time(
+    const MinimumVideoStartTimeParameters& params) {
+  auto min = std::numeric_limits<std::uint64_t>::max();
+  for (const auto& s : params.sources) {
+    min = std::min(min, s.start_time);
+  }
+  return min;
+}
+
+std::uint64_t minimum_audio_start_time(
+    const MinimumAudioStartTimeParameters& params) {
   auto min = std::numeric_limits<std::uint64_t>::max();
   for (const auto& s : params.sources) {
     min = std::min(min, s.start_time);

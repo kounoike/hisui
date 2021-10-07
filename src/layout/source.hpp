@@ -35,10 +35,16 @@ struct AudioSource : public Source {
   std::shared_ptr<hisui::audio::Source> source;
 };
 
-struct MinimumStartTimeParameters {
-  const std::vector<Source>& sources;
+struct MinimumAudioStartTimeParameters {
+  const std::vector<AudioSource>& sources;
 };
 
-std::uint64_t minimum_start_time(const MinimumStartTimeParameters&);
+std::uint64_t minimum_audio_start_time(const MinimumAudioStartTimeParameters&);
+
+struct MinimumVideoStartTimeParameters {
+  const std::vector<VideoSource>& sources;
+};
+
+std::uint64_t minimum_video_start_time(const MinimumVideoStartTimeParameters&);
 
 }  // namespace hisui::layout
