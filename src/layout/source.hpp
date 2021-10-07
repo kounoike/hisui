@@ -10,6 +10,11 @@
 
 namespace hisui::layout {
 
+struct SourceInterval {
+  std::uint64_t start_time;
+  std::uint64_t end_time;
+};
+
 struct SourceParameters {
   const std::string name;
   const std::uint64_t start_time;
@@ -20,8 +25,7 @@ struct Source {
   explicit Source(const SourceParameters&);
   virtual ~Source() {}
   std::string name;
-  std::uint64_t start_time;
-  std::uint64_t end_time;
+  SourceInterval interval;
   void SubstructTime(const std::uint64_t);
 };
 

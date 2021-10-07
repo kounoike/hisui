@@ -29,8 +29,6 @@ enum Reuse {
 
 class Region {
  public:
-  std::uint64_t GetMinimumStartTime();
-
  private:
   std::string m_name;
   Position m_pos;
