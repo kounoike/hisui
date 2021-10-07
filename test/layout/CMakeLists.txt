@@ -17,17 +17,18 @@ add_compile_options(
     -Wmisleading-indentation
     -pedantic)
 
-add_executable(grid_test
+add_executable(layout_test
     main.cpp
     grid_test.cpp
     overlap_test.cpp
     ../../src/layout/grid.cpp
     ../../src/layout/overlap.cpp
+    ../../src/layout/source.cpp
     )
 
-set_target_properties(grid_test PROPERTIES CXX_STANDARD 20 C_STANDARD 11)
+set_target_properties(layout_test PROPERTIES CXX_STANDARD 20 C_STANDARD 11)
 
-target_include_directories(grid_test
+target_include_directories(layout_test
     PRIVATE
     ../../src
     ${boost_algorithm_SOURCE_DIR}/include
@@ -54,7 +55,13 @@ target_include_directories(grid_test
     ${boost_type_index_SOURCE_DIR}/include
     ${boost_type_traits_SOURCE_DIR}/include
     ${boost_utility_SOURCE_DIR}/include
+    ${fmt_SOURCE_DIR}/include
     )
 
-add_test(NAME grid COMMAND grid_test)
-set_tests_properties(grid PROPERTIES LABELS hisui)
+target_link_libraries(layout_test
+    PRIVATE
+    fmt
+    )
+
+add_test(NAME layout COMMAND layout_test)
+set_tests_properties(layout PROPERTIES LABELS hisui)

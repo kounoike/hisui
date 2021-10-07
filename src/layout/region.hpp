@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "layout/grid.hpp"
+#include "layout/source.hpp"
 #include "video/source.hpp"
 
 namespace hisui::layout {
@@ -18,13 +19,6 @@ struct Position {
 struct Resolution {
   std::uint64_t width;
   std::uint64_t height;
-};
-
-struct VideoSource {
-  std::string name;
-  std::shared_ptr<hisui::video::Source> source;
-  std::uint64_t start_time;
-  std::uint64_t end_time;
 };
 
 enum Reuse {

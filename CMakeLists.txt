@@ -192,6 +192,7 @@ target_sources(hisui
     src/audio/webm_source.cpp
     src/layout/grid.cpp
     src/layout/overlap.cpp
+    src/layout/source.cpp
     src/muxer/async_webm_muxer.cpp
     src/muxer/audio_producer.cpp
     src/muxer/mp4_muxer.cpp
