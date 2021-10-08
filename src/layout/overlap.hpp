@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <list>
 #include <utility>
 #include <vector>
 
@@ -29,4 +30,20 @@ std::ostream& operator<<(
 
 MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap(
     const OverlapParameters&);
+
+struct TrimIntervals {
+  std::vector<std::pair<std::uint64_t, std::uint64_t>> trim_intervals;
+};
+
+bool operator==(TrimIntervals const& left, TrimIntervals const& right);
+
+std::ostream& operator<<(std::ostream& os, const TrimIntervals&);
+
+struct OverlapTrimIntervalsParameters {
+  const std::list<std::vector<std::pair<std::uint64_t, std::uint64_t>>>&
+      list_of_trim_intervals;
+};
+
+TrimIntervals overlap_trim_intervals(const OverlapTrimIntervalsParameters&);
+
 }  // namespace hisui::layout
