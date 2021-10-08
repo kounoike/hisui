@@ -236,4 +236,104 @@ BOOST_AUTO_TEST_CASE(overlap) {
   }
 }
 
+BOOST_AUTO_TEST_CASE(overlap_trim_intervals) {
+  {
+    auto expected = hisui::layout::TrimIntervals{
+        .trim_intervals = {},
+    };
+    BOOST_REQUIRE_EQUAL(expected, hisui::layout::overlap_trim_intervals(
+                                      {.list_of_trim_intervals = {}}));
+  }
+  {
+    auto expected = hisui::layout::TrimIntervals{
+        .trim_intervals = {{0, 100}, {200, 300}},
+    };
+    BOOST_REQUIRE_EQUAL(
+        expected, hisui::layout::overlap_trim_intervals(
+                      {.list_of_trim_intervals = {{{0, 100}, {200, 300}}}}));
+  }
+
+  {
+    auto expected = hisui::layout::TrimIntervals{
+        .trim_intervals = {{0, 100}, {200, 300}},
+    };
+    BOOST_REQUIRE_EQUAL(expected, hisui::layout::overlap_trim_intervals(
+                                      {.list_of_trim_intervals = {
+                                           {{0, 100}, {200, 300}},
+                                           {{0, 200}, {200, 400}},
+                                       }}));
+  }
+
+  {
+    auto expected = hisui::layout::TrimIntervals{
+        .trim_intervals = {{0, 100}},
+    };
+    BOOST_REQUIRE_EQUAL(expected, hisui::layout::overlap_trim_intervals(
+                                      {.list_of_trim_intervals = {
+                                           {{0, 100}, {200, 300}},
+                                           {{0, 200}},
+                                           {{0, 400}},
+                                       }}));
+  }
+
+  {
+    auto expected = hisui::layout::TrimIntervals{
+        .trim_intervals = {},
+    };
+    BOOST_REQUIRE_EQUAL(expected, hisui::layout::overlap_trim_intervals(
+                                      {.list_of_trim_intervals = {
+                                           {{0, 100}, {200, 300}},
+                                           {{0, 200}},
+                                           {},
+                                           {{0, 400}},
+                                       }}));
+  }
+
+  {
+    auto expected = hisui::layout::TrimIntervals{
+        .trim_intervals = {{0, 100}, {250, 300}},
+    };
+    BOOST_REQUIRE_EQUAL(expected, hisui::layout::overlap_trim_intervals(
+                                      {.list_of_trim_intervals = {
+                                           {{0, 100}, {200, 300}},
+                                           {{0, 200}, {250, 300}},
+                                           {{0, 400}},
+                                       }}));
+  }
+
+  {
+    auto expected = hisui::layout::TrimIntervals{
+        .trim_intervals = {{200, 300}},
+    };
+    BOOST_REQUIRE_EQUAL(expected, hisui::layout::overlap_trim_intervals(
+                                      {.list_of_trim_intervals = {
+                                           {{0, 100}, {200, 350}},
+                                           {{200, 300}},
+                                       }}));
+  }
+
+  {
+    auto expected = hisui::layout::TrimIntervals{
+        .trim_intervals = {{200, 300}},
+    };
+    BOOST_REQUIRE_EQUAL(expected, hisui::layout::overlap_trim_intervals(
+                                      {.list_of_trim_intervals = {
+                                           {{200, 300}},
+                                           {{0, 100}, {200, 350}},
+                                       }}));
+  }
+
+  {
+    auto expected = hisui::layout::TrimIntervals{
+        .trim_intervals = {{250, 300}},
+    };
+    BOOST_REQUIRE_EQUAL(expected, hisui::layout::overlap_trim_intervals(
+                                      {.list_of_trim_intervals = {
+                                           {{0, 100}, {200, 350}},
+                                           {{200, 300}},
+                                           {{250, 400}},
+                                       }}));
+  }
+}
+
 BOOST_AUTO_TEST_SUITE_END()

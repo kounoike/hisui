@@ -66,5 +66,83 @@ MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap(
           .trim_intervals = trim_intervals};
 }
 
-}  // namespace hisui::layout
+bool operator==(TrimIntervals const& left, TrimIntervals const& right) {
+  return left.trim_intervals == right.trim_intervals;
+}
 
+std::ostream& operator<<(std::ostream& os, const TrimIntervals& r) {
+  os << "[";
+  for (const auto& i : r.trim_intervals) {
+    os << " {" << i.first << ", " << i.second << "} ";
+  }
+  os << "]";
+  return os;
+}
+
+std::vector<std::pair<std::uint64_t, std::uint64_t>> overlap_2_trim_intervals(
+    const std::vector<std::pair<std::uint64_t, std::uint64_t>>& l,
+    const std::vector<std::pair<std::uint64_t, std::uint64_t>>& r) {
+  std::vector<std::pair<std::uint64_t, std::uint64_t>> ret;
+  std::size_t li = 0;
+  std::size_t ri = 0;
+
+  while (true) {
+    if (li == std::size(l)) {
+      break;
+    }
+    if (ri == std::size(r)) {
+      break;
+    }
+    auto lp = l[li];
+    auto rp = r[ri];
+
+    if (rp.first > lp.second) {
+      ++li;
+      continue;
+    }
+
+    if (lp.first > rp.second) {
+      ++ri;
+      continue;
+    }
+
+    auto start = std::max(lp.first, rp.first);
+    auto end = std::min(lp.second, rp.second);
+
+    if (start < end) {
+      ret.emplace_back(start, end);
+    }
+
+    if (lp.second == rp.second) {
+      ++li;
+      ++ri;
+    } else if (rp.second > lp.second) {
+      ++li;
+    } else {
+      ++ri;
+    }
+  }
+
+  return ret;
+}
+
+TrimIntervals overlap_trim_intervals(
+    const OverlapTrimIntervalsParameters& params) {
+  const auto s = std::size(params.list_of_trim_intervals);
+  if (s == 0) {
+    return {.trim_intervals = {}};
+  } else if (s == 1) {
+    return {.trim_intervals = params.list_of_trim_intervals.front()};
+  }
+  auto list_of_trim_intervals = params.list_of_trim_intervals;
+  const auto l = list_of_trim_intervals.front();
+  list_of_trim_intervals.pop_front();
+  const auto r = list_of_trim_intervals.front();
+  list_of_trim_intervals.pop_front();
+
+  list_of_trim_intervals.push_front(overlap_2_trim_intervals(l, r));
+  return overlap_trim_intervals(
+      {.list_of_trim_intervals = list_of_trim_intervals});
+}
+
+}  // namespace hisui::layout
