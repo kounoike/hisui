@@ -25,8 +25,8 @@ std::ostream& operator<<(
   return os;
 }
 
-MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap(
-    const OverlapParameters& params) {
+MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_source_intervals(
+    const OverlapSourceIntervalsParameters& params) {
   std::vector<std::pair<std::uint64_t, std::uint64_t>> data;
 
   for (const auto& s : params.sources) {

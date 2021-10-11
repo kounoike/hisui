@@ -15,7 +15,7 @@ BOOST_AUTO_TEST_CASE(overlap) {
         };
 
     BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap({
+                        hisui::layout::overlap_source_intervals({
                             .sources =
                                 {
                                     hisui::layout::SourceInterval(
@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(overlap) {
                             .reuse = hisui::layout::Reuse::None,
                         }));
     BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap({
+                        hisui::layout::overlap_source_intervals({
                             .sources =
                                 {
                                     hisui::layout::SourceInterval(
@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE(overlap) {
                         }));
 
     BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap({
+                        hisui::layout::overlap_source_intervals({
                             .sources =
                                 {
                                     hisui::layout::SourceInterval(
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(overlap) {
             .trim_intervals = {},
         };
     BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap({
+                        hisui::layout::overlap_source_intervals({
                             .sources =
                                 {
                                     hisui::layout::SourceInterval(
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(overlap) {
                         }));
 
     BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap({
+                        hisui::layout::overlap_source_intervals({
                             .sources =
                                 {
                                     hisui::layout::SourceInterval(
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE(overlap) {
                         }));
 
     BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap({
+                        hisui::layout::overlap_source_intervals({
                             .sources =
                                 {
                                     hisui::layout::SourceInterval(
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(overlap) {
         };
 
     BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap({
+                        hisui::layout::overlap_source_intervals({
                             .sources =
                                 {
                                     hisui::layout::SourceInterval(
@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE(overlap) {
         };
 
     BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap({
+                        hisui::layout::overlap_source_intervals({
                             .sources =
                                 {
                                     hisui::layout::SourceInterval(
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE(overlap) {
                             .reuse = hisui::layout::Reuse::ShowOldest,
                         }));
     BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap({
+                        hisui::layout::overlap_source_intervals({
                             .sources =
                                 {
                                     hisui::layout::SourceInterval(
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE(overlap) {
         };
 
     BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap({
+                        hisui::layout::overlap_source_intervals({
                             .sources =
                                 {
                                     hisui::layout::SourceInterval(
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(overlap) {
             .trim_intervals = {},
         };
     BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap({
+                        hisui::layout::overlap_source_intervals({
                             .sources =
                                 {
                                     hisui::layout::SourceInterval(
@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE(overlap) {
             .trim_intervals = {{0, 1}, {4, 5}},
         };
     BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap({
+                        hisui::layout::overlap_source_intervals({
                             .sources =
                                 {
                                     hisui::layout::SourceInterval(
@@ -219,7 +219,7 @@ BOOST_AUTO_TEST_CASE(overlap) {
             .trim_intervals = {{0, 1}, {2, 3}, {4, 5}},
         };
     BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap({
+                        hisui::layout::overlap_source_intervals({
                             .sources =
                                 {
                                     hisui::layout::SourceInterval(
