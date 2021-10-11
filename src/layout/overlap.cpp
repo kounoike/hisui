@@ -66,19 +66,6 @@ MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_source_intervals(
           .trim_intervals = trim_intervals};
 }
 
-bool operator==(TrimIntervals const& left, TrimIntervals const& right) {
-  return left.trim_intervals == right.trim_intervals;
-}
-
-std::ostream& operator<<(std::ostream& os, const TrimIntervals& r) {
-  os << "[";
-  for (const auto& i : r.trim_intervals) {
-    os << " {" << i.first << ", " << i.second << "} ";
-  }
-  os << "]";
-  return os;
-}
-
 std::vector<std::pair<std::uint64_t, std::uint64_t>> overlap_2_trim_intervals(
     const std::vector<std::pair<std::uint64_t, std::uint64_t>>& l,
     const std::vector<std::pair<std::uint64_t, std::uint64_t>>& r) {

@@ -5,7 +5,7 @@
 
 BOOST_AUTO_TEST_SUITE(overlap)
 
-BOOST_AUTO_TEST_CASE(overlap) {
+BOOST_AUTO_TEST_CASE(overlap_source_intervals) {
   {
     auto expected =
         hisui::layout::MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals{

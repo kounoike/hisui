@@ -55,4 +55,15 @@ void Region::validate(const Resolution& parent_resolution) {
   }
 }
 
+void Region::SubstructTrimIntervals(const TrimIntervals& params) {
+  for (auto s : m_video_sources) {
+    s.SubstructTrimIntervals(params);
+  }
+
+  auto interval =
+      substruct_trim_intervals({.interval = {0, m_max_end_time},
+                                .trim_intervals = params.trim_intervals});
+  m_max_end_time = interval.end_time;
+}
+
 }  // namespace hisui::layout

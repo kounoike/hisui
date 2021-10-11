@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "audio/source.hpp"
@@ -10,13 +11,26 @@
 
 namespace hisui::layout {
 
+struct TrimIntervals {
+  std::vector<std::pair<std::uint64_t, std::uint64_t>> trim_intervals;
+};
+
+bool operator==(TrimIntervals const& left, TrimIntervals const& right);
+
+std::ostream& operator<<(std::ostream& os, const TrimIntervals&);
+
 struct SourceInterval {
   std::uint64_t start_time;
   std::uint64_t end_time;
 };
 
+bool operator==(SourceInterval const& left, SourceInterval const& right);
+
+std::ostream& operator<<(std::ostream& os, const SourceInterval&);
+
 struct SourceParameters {
   const std::string name;
+  const std::string channel_id;
   const std::uint64_t start_time;
   const std::uint64_t end_time;
 };
@@ -25,8 +39,9 @@ struct Source {
   explicit Source(const SourceParameters&);
   virtual ~Source() {}
   std::string name;
+  std::string channel_id;
   SourceInterval interval;
-  void SubstructTime(const std::uint64_t);
+  void SubstructTrimIntervals(const TrimIntervals&);
 };
 
 struct VideoSource : public Source {
@@ -39,16 +54,12 @@ struct AudioSource : public Source {
   std::shared_ptr<hisui::audio::Source> source;
 };
 
-struct MinimumAudioStartTimeParameters {
-  const std::vector<AudioSource>& sources;
+struct SubstructTrimIntervalsParameters {
+  const SourceInterval& interval;
+  const std::vector<std::pair<std::uint64_t, std::uint64_t>>& trim_intervals;
 };
 
-std::uint64_t minimum_audio_start_time(const MinimumAudioStartTimeParameters&);
-
-struct MinimumVideoStartTimeParameters {
-  const std::vector<VideoSource>& sources;
-};
-
-std::uint64_t minimum_video_start_time(const MinimumVideoStartTimeParameters&);
+SourceInterval substruct_trim_intervals(
+    const SubstructTrimIntervalsParameters&);
 
 }  // namespace hisui::layout
