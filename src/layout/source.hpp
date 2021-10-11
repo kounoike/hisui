@@ -17,6 +17,7 @@ struct SourceInterval {
 
 struct SourceParameters {
   const std::string name;
+  const std::string channel_id;
   const std::uint64_t start_time;
   const std::uint64_t end_time;
 };
@@ -25,6 +26,7 @@ struct Source {
   explicit Source(const SourceParameters&);
   virtual ~Source() {}
   std::string name;
+  std::string channel_id;
   SourceInterval interval;
   void SubstructTime(const std::uint64_t);
 };
@@ -38,17 +40,5 @@ struct AudioSource : public Source {
   explicit AudioSource(const SourceParameters&);
   std::shared_ptr<hisui::audio::Source> source;
 };
-
-struct MinimumAudioStartTimeParameters {
-  const std::vector<AudioSource>& sources;
-};
-
-std::uint64_t minimum_audio_start_time(const MinimumAudioStartTimeParameters&);
-
-struct MinimumVideoStartTimeParameters {
-  const std::vector<VideoSource>& sources;
-};
-
-std::uint64_t minimum_video_start_time(const MinimumVideoStartTimeParameters&);
 
 }  // namespace hisui::layout

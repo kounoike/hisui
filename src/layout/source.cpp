@@ -9,6 +9,7 @@ namespace hisui::layout {
 
 Source::Source(const SourceParameters& params) {
   name = params.name;
+  channel_id = params.channel_id;
   interval.start_time = params.start_time;
   interval.end_time = params.end_time;
 }
