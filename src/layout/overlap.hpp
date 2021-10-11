@@ -31,14 +31,6 @@ std::ostream& operator<<(
 MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_source_intervals(
     const OverlapSourceIntervalsParameters&);
 
-struct TrimIntervals {
-  std::vector<std::pair<std::uint64_t, std::uint64_t>> trim_intervals;
-};
-
-bool operator==(TrimIntervals const& left, TrimIntervals const& right);
-
-std::ostream& operator<<(std::ostream& os, const TrimIntervals&);
-
 struct OverlapTrimIntervalsParameters {
   const std::list<std::vector<std::pair<std::uint64_t, std::uint64_t>>>&
       list_of_trim_intervals;
