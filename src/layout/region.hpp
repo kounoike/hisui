@@ -37,6 +37,7 @@ class Region {
  public:
   RegionInformation getInfomation() const;
   void validate(const Resolution&);
+  void SubstructTrimIntervals(const TrimIntervals&);
 
  private:
   std::string m_name;
@@ -53,6 +54,7 @@ class Region {
   // computed
   GridDimension m_grid_dimension;
   std::vector<VideoSource> m_video_sources;
+  std::uint64_t m_max_end_time;
 };
 
 }  // namespace hisui::layout
