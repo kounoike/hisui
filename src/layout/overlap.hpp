@@ -10,7 +10,7 @@
 
 namespace hisui::layout {
 
-struct OverlapParameters {
+struct OverlapSourceIntervalsParameters {
   const std::vector<SourceInterval>& sources;
   Reuse reuse;
 };
@@ -28,8 +28,8 @@ std::ostream& operator<<(
     std::ostream& os,
     const MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals&);
 
-MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap(
-    const OverlapParameters&);
+MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_source_intervals(
+    const OverlapSourceIntervalsParameters&);
 
 struct TrimIntervals {
   std::vector<std::pair<std::uint64_t, std::uint64_t>> trim_intervals;
