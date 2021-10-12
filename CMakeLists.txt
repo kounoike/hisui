@@ -190,6 +190,7 @@ target_sources(hisui
     src/audio/opus.cpp
     src/audio/basic_sequencer.cpp
     src/audio/webm_source.cpp
+    src/layout/cell.cpp
     src/layout/grid.cpp
     src/layout/overlap.cpp
     src/layout/region.cpp

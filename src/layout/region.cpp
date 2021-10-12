@@ -57,7 +57,7 @@ void Region::validate(const Resolution& parent_resolution) {
 
 void Region::SubstructTrimIntervals(const TrimIntervals& params) {
   for (auto s : m_video_sources) {
-    s.SubstructTrimIntervals(params);
+    s->SubstructTrimIntervals(params);
   }
 
   auto interval =
