@@ -53,7 +53,7 @@ class Region {
 
   // computed
   GridDimension m_grid_dimension;
-  std::vector<VideoSource> m_video_sources;
+  std::vector<std::shared_ptr<VideoSource>> m_video_sources;
   std::uint64_t m_max_end_time;
 };
 
