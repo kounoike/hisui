@@ -4,6 +4,24 @@
 
 namespace hisui::layout {
 
+bool operator==(Position const& left, Position const& right) {
+  return left.x == right.x && left.y == right.y;
+}
+
+std::ostream& operator<<(std::ostream& os, const Position& p) {
+  os << "x: " << p.x << " y: " << p.y;
+  return os;
+}
+
+bool operator==(Resolution const& left, Resolution const& right) {
+  return left.width == right.width && left.height == right.height;
+}
+
+std::ostream& operator<<(std::ostream& os, const Resolution& r) {
+  os << "width: " << r.width << " height: " << r.height;
+  return os;
+}
+
 bool operator==(LengthAndPositions const& left,
                 LengthAndPositions const& right) {
   return left.length == right.length && left.positions == right.positions;
@@ -19,12 +37,28 @@ std::ostream& operator<<(std::ostream& os, const LengthAndPositions& lp) {
   return os;
 }
 
+bool operator==(ResolutionAndPositions const& left,
+                ResolutionAndPositions const& right) {
+  return left.resolution == right.resolution &&
+         left.positions == right.positions;
+}
+
+std::ostream& operator<<(std::ostream& os, const ResolutionAndPositions& rp) {
+  os << "resolution: " << rp.resolution;
+  os << " positions: [";
+  for (const auto i : rp.positions) {
+    os << " {" << i << "} ";
+  }
+  os << "]";
+  return os;
+}
+
 Cell::Cell() {
   m_status = CellStatus::Fresh;
 }
 
 LengthAndPositions calc_cell_length_and_positions(
-    const CalcCellLength& params) {
+    const CalcCellLengthAndPositions& params) {
   if (params.number_of_cells == 0) {
     throw std::invalid_argument("number_of_cells should be grater than 0");
   }
@@ -36,6 +70,27 @@ LengthAndPositions calc_cell_length_and_positions(
     positions.emplace_back(params.min_frame_length * (i + 1) + length * i);
   }
   return {.length = length, .positions = positions};
+}
+
+ResolutionAndPositions calc_cell_resolution_and_positions(
+    const CalcCellResolutionAndPositions& params) {
+  auto side = calc_cell_length_and_positions(
+      {.number_of_cells = params.grid_dimension.columns,
+       .region_length = params.region_resolution.width,
+       .min_frame_length = params.min_frame_width});
+  auto vert = calc_cell_length_and_positions(
+      {.number_of_cells = params.grid_dimension.rows,
+       .region_length = params.region_resolution.height,
+       .min_frame_length = params.min_frame_height});
+
+  std::vector<Position> positions;
+  for (auto y = 0u; y < params.grid_dimension.rows; ++y) {
+    for (auto x = 0u; x < params.grid_dimension.columns; ++x) {
+      positions.push_back({.x = side.positions[x], .y = vert.positions[y]});
+    }
+  }
+  return {.resolution = {.width = side.length, .height = vert.length},
+          .positions = positions};
 }
 
 }  // namespace hisui::layout
