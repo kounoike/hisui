@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "layout/grid.hpp"
@@ -34,16 +35,29 @@ enum CellStatus {
   Excluded,
 };
 
+struct CellParameters {
+  const std::uint64_t index;
+  const Position& pos;
+  const Resolution& resolution;
+};
+
 class Cell {
  public:
-  Cell();
+  explicit Cell(const CellParameters&);
+  bool HasVideoSourceConnectionID(const std::string& connection_id);
+  bool HasStatus(const CellStatus);
+  void SetExcludedStatus();
+  void SetSource(std::shared_ptr<VideoSource>);
+  void ResetSource(const std::uint64_t);
+  std::uint64_t GetEndTime() const;
 
  private:
   std::uint64_t m_index;
   Position m_pos;
   Resolution m_resolution;
-  std::shared_ptr<VideoSource> m_source;
   CellStatus m_status;
+  std::shared_ptr<VideoSource> m_source;
+  std::uint64_t m_end_time;
 };
 
 struct CalcCellLengthAndPositions {
@@ -84,5 +98,12 @@ std::ostream& operator<<(std::ostream& os, const ResolutionAndPositions&);
 
 ResolutionAndPositions calc_cell_resolution_and_positions(
     const CalcCellResolutionAndPositions&);
+
+struct ResetCellsSource {
+  const std::vector<std::shared_ptr<Cell>>& cells;
+  const std::uint64_t time;
+};
+
+void reset_cells_source(const ResetCellsSource&);
 
 }  // namespace hisui::layout

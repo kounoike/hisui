@@ -1,5 +1,6 @@
 #include "layout/cell.hpp"
 
+#include <limits>
 #include <stdexcept>
 
 namespace hisui::layout {
@@ -53,8 +54,12 @@ std::ostream& operator<<(std::ostream& os, const ResolutionAndPositions& rp) {
   return os;
 }
 
-Cell::Cell() {
-  m_status = CellStatus::Fresh;
+Cell::Cell(const CellParameters& params)
+    : m_index(params.index),
+      m_pos(params.pos),
+      m_resolution(params.resolution),
+      m_status(CellStatus::Fresh) {
+  m_end_time = std::numeric_limits<std::uint64_t>::max();
 }
 
 LengthAndPositions calc_cell_length_and_positions(
@@ -91,6 +96,42 @@ ResolutionAndPositions calc_cell_resolution_and_positions(
   }
   return {.resolution = {.width = side.length, .height = vert.length},
           .positions = positions};
+}
+
+bool Cell::HasVideoSourceConnectionID(const std::string& connection_id) {
+  return m_source && m_source->connection_id == connection_id;
+}
+
+bool Cell::HasStatus(const CellStatus status) {
+  return m_status == status;
+}
+
+void Cell::SetSource(std::shared_ptr<VideoSource> source) {
+  m_status = CellStatus::Used;
+  m_source = source;
+  m_end_time = source->interval.end_time;
+}
+
+void Cell::ResetSource(const std::uint64_t time) {
+  if (time >= m_end_time) {
+    m_status = CellStatus::Idle;
+    m_source = nullptr;
+    m_end_time = std::numeric_limits<std::uint64_t>::max();
+  }
+}
+
+std::uint64_t Cell::GetEndTime() const {
+  return m_end_time;
+}
+
+void Cell::SetExcludedStatus() {
+  m_status = CellStatus::Excluded;
+}
+
+void reset_cells_source(const ResetCellsSource& params) {
+  for (auto cell : params.cells) {
+    cell->ResetSource(params.time);
+  }
 }
 
 }  // namespace hisui::layout

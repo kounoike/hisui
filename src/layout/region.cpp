@@ -2,6 +2,7 @@
 
 #include <fmt/core.h>
 
+#include <algorithm>
 #include <stdexcept>
 
 #include "layout/source.hpp"
@@ -64,6 +65,55 @@ void Region::SubstructTrimIntervals(const TrimIntervals& params) {
       substruct_trim_intervals({.interval = {0, m_max_end_time},
                                 .trim_intervals = params.trim_intervals});
   m_max_end_time = interval.end_time;
+}
+
+void set_video_source_to_cells(const SetVideoSourceToCells& params) {
+  auto video_source = params.video_source;
+  auto reuse = params.reuse;
+  auto cells = params.cells;
+
+  auto it_connection_id = std::find_if(
+      std::begin(cells), std::end(cells), [video_source](const auto& cell) {
+        return cell->HasVideoSourceConnectionID(video_source->connection_id);
+      });
+  if (it_connection_id != std::end(cells)) {
+    return;
+  }
+  auto it_fresh = std::find_if(std::begin(cells), std::end(cells),
+                               [video_source](const auto& cell) {
+                                 return cell->HasStatus(CellStatus::Fresh);
+                               });
+  if (it_fresh != std::end(cells)) {
+    (*it_fresh)->SetSource(video_source);
+  }
+
+  if (reuse == Reuse::None) {
+    return;
+  }
+
+  auto it_idle = std::find_if(std::begin(cells), std::end(cells),
+                              [video_source](const auto& cell) {
+                                return cell->HasStatus(CellStatus::Idle);
+                              });
+  if (it_idle != std::end(cells)) {
+    (*it_idle)->SetSource(video_source);
+  }
+
+  if (reuse == Reuse::ShowOldest) {
+    return;
+  }
+
+  auto it_min = std::min_element(std::begin(cells), std::end(cells),
+                                 [](const auto& a, const auto& b) {
+                                   return a->GetEndTime() < b->GetEndTime();
+                                 });
+
+  if (it_min != std::end(cells)) {
+    if ((*it_min)->HasStatus(CellStatus::Used) &&
+        (*it_min)->GetEndTime() < video_source->interval.end_time) {
+      (*it_min)->SetSource(video_source);
+    }
+  }
 }
 
 }  // namespace hisui::layout
