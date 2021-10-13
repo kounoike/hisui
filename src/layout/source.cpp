@@ -33,7 +33,7 @@ std::ostream& operator<<(std::ostream& os, const SourceInterval& i) {
 
 Source::Source(const SourceParameters& params) {
   name = params.name;
-  channel_id = params.channel_id;
+  connection_id = params.connection_id;
   interval.start_time = params.start_time;
   interval.end_time = params.end_time;
 }
