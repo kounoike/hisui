@@ -22,10 +22,12 @@ add_executable(layout_test
     cell_test.cpp
     grid_test.cpp
     overlap_test.cpp
+    region_test.cpp
     source_test.cpp
     ../../src/layout/cell.cpp
     ../../src/layout/grid.cpp
     ../../src/layout/overlap.cpp
+    ../../src/layout/region.cpp
     ../../src/layout/source.cpp
     )
 

@@ -30,7 +30,7 @@ std::ostream& operator<<(std::ostream& os, const SourceInterval&);
 
 struct SourceParameters {
   const std::string name;
-  const std::string channel_id;
+  const std::string connection_id;
   const std::uint64_t start_time;
   const std::uint64_t end_time;
 };
@@ -39,7 +39,7 @@ struct Source {
   explicit Source(const SourceParameters&);
   virtual ~Source() {}
   std::string name;
-  std::string channel_id;
+  std::string connection_id;
   SourceInterval interval;
   void SubstructTrimIntervals(const TrimIntervals&);
 };

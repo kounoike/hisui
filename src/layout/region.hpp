@@ -49,4 +49,12 @@ class Region {
   std::uint64_t m_max_end_time;
 };
 
+struct SetVideoSourceToCells {
+  const std::shared_ptr<VideoSource> video_source;
+  Reuse reuse;
+  const std::vector<std::shared_ptr<Cell>>& cells;
+};
+
+void set_video_source_to_cells(const SetVideoSourceToCells&);
+
 }  // namespace hisui::layout
