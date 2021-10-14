@@ -1,0 +1,28 @@
+{
+    "audio_sources": [
+        "PAXXXX"
+    ],
+    "audio_sources_excluded": [],
+    "bitrate": 1000,
+    "format": "mp4",
+    "resolution": "640x480",
+    "trim": true,
+    "video_layout": {
+        "single": {
+            "cells_excluded": [],
+            "height": 0,
+            "max_columns": 0,
+            "max_rows": 0,
+            "reuse": "show_oldest",
+            "video_sources": [
+                "PAXXXX"
+            ],
+            "video_sources_excluded": [],
+            "width": 0,
+            "x_pos": 0,
+            "y_pos": 0,
+            "z_pos": 0
+        }
+    }
+}
+
