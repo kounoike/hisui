@@ -89,4 +89,17 @@ bool get_bool_from_json_object_with_default(boost::json::object o,
   throw std::runtime_error(fmt::format("o[{}] is not bool", key));
 }
 
+boost::json::array get_array_from_json_object_with_default(
+    boost::json::object o,
+    const std::string& key,
+    const boost::json::array& a) {
+  if (!o.contains(key) || o[key].is_null()) {
+    return a;
+  }
+  if (o[key].is_array()) {
+    return o[key].as_array();
+  }
+  throw std::runtime_error(fmt::format("o[{}] is not array", key));
+}
+
 }  // namespace hisui::util

@@ -28,4 +28,9 @@ bool get_bool_from_json_object(boost::json::object o, const std::string& key);
 bool get_bool_from_json_object_with_default(boost::json::object o,
                                             const std::string& key,
                                             const bool);
+
+boost::json::array get_array_from_json_object_with_default(
+    boost::json::object o,
+    const std::string& key,
+    const boost::json::array&);
 }  // namespace hisui::util

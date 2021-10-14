@@ -26,6 +26,8 @@ void Metadata::Dump() const {
   spdlog::debug("width: {}", m_width);
   spdlog::debug("height: {}", m_height);
   spdlog::debug("trim: {}", m_trim);
+  spdlog::debug("audio_sources: [{}]",
+                fmt::join(m_audio_source_filenames, ", "));
 }
 
 Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
@@ -67,6 +69,18 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
         fmt::format("invalid resolution: {}", resolution));
   }
   m_trim = hisui::util::get_bool_from_json_object_with_default(j, "trim", true);
+
+  auto audio_sources = hisui::util::get_array_from_json_object_with_default(
+      j, "audio_sources", boost::json::array());
+
+  for (const auto& v : audio_sources) {
+    if (v.is_string()) {
+      m_audio_source_filenames.push_back(std::string(v.as_string()));
+    } else {
+      throw std::invalid_argument(
+          fmt::format("{} contains non-string values", "audio_sources"));
+    }
+  }
 }
 
 Metadata parse_metadata(const std::string& filename) {
