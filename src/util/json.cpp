@@ -2,6 +2,7 @@
 
 #include <fmt/core.h>
 
+#include <cstdint>
 #include <stdexcept>
 #include <string>
 
@@ -17,8 +18,22 @@ namespace hisui::util {
 
 boost::json::string get_string_from_json_object(boost::json::object o,
                                                 const std::string& key) {
-  if (auto p = o[key].if_string()) {
-    return *p;
+  if (o[key].is_string()) {
+    return o[key].as_string();
+  }
+  throw std::runtime_error(fmt::format("o[{}].if_string() failed", key));
+}
+
+boost::json::string get_string_from_json_object_with_default(
+    boost::json::object o,
+    const std::string& key,
+    const std::string& s) {
+  if (!o.contains(key) || o[key].is_null()) {
+    boost::json::string js(s);
+    return js;
+  }
+  if (o[key].is_string()) {
+    return o[key].as_string();
   }
   throw std::runtime_error(fmt::format("o[{}].if_string() failed", key));
 }
@@ -35,6 +50,43 @@ double get_double_from_json_object(boost::json::object o,
     return value;
   }
   throw std::runtime_error(fmt::format("o[{}] is not number", key));
+}
+
+double get_double_from_json_object_with_default(boost::json::object o,
+                                                const std::string& key,
+                                                const double d) {
+  if (!o.contains(key) || o[key].is_null()) {
+    return d;
+  }
+  if (o[key].is_number()) {
+    boost::json::error_code ec;
+    auto value = o[key].to_number<double>(ec);
+    if (ec) {
+      throw std::runtime_error(
+          fmt::format("o[{}].to_number() failed: {}", key, ec.message()));
+    }
+    return value;
+  }
+  throw std::runtime_error(fmt::format("o[{}] is not number", key));
+}
+
+bool get_bool_from_json_object(boost::json::object o, const std::string& key) {
+  if (o[key].is_bool()) {
+    return o[key].as_bool();
+  }
+  throw std::runtime_error(fmt::format("o[{}] is not bool", key));
+}
+
+bool get_bool_from_json_object_with_default(boost::json::object o,
+                                            const std::string& key,
+                                            const bool b) {
+  if (!o.contains(key) || o[key].is_null()) {
+    return b;
+  }
+  if (o[key].is_bool()) {
+    return o[key].as_bool();
+  }
+  throw std::runtime_error(fmt::format("o[{}] is not bool", key));
 }
 
 }  // namespace hisui::util
