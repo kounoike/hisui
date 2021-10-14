@@ -15,6 +15,7 @@
 
 #include "config.hpp"
 #include "datetime.hpp"
+#include "layout/compose.hpp"
 #include "metadata.hpp"
 #include "muxer/async_webm_muxer.hpp"
 #include "muxer/faststart_mp4_muxer.hpp"
@@ -40,12 +41,21 @@ int main(int argc, char** argv) {
   }
   spdlog::debug("log level={}", config.log_level);
 
-  if (!config.openh264.empty()) {
+  if (!std::empty(config.openh264)) {
     try {
       hisui::video::OpenH264Handler::open(config.openh264);
     } catch (const std::exception& e) {
       spdlog::warn("failed to open openh264 library: {}", e.what());
     }
+  }
+
+  if (!std::empty(config.layout)) {
+    return hisui::layout::compose(config);
+  }
+
+  if (std::empty(config.in_metadata_filename)) {
+    spdlog::error("-f,--in-metadata-file is required");
+    return 1;
   }
 
   if (config.enabledReport()) {

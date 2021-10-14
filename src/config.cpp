@@ -61,8 +61,7 @@ void set_cli_options(CLI::App* app, Config* config) {
   app->formatter(std::make_shared<MyFormatter>());
   app->add_option("-f,--in-metadata-file", config->in_metadata_filename,
                   "Metadata filename (REQUIRED)")
-      ->check(CLI::ExistingFile)
-      ->required();
+      ->check(CLI::ExistingFile);
 
   auto option_screen_capture_report =
       app->add_option("--screen-capture-report",
@@ -195,6 +194,9 @@ void set_cli_options(CLI::App* app, Config* config) {
 
   app->add_option("--show-progress-bar", config->show_progress_bar,
                   "Toggle to show progress bar. default: true");
+
+  app->add_option("--layout", config->layout, "Layout Metadata File")
+      ->check(CLI::ExistingFile);
 
   app->add_option("--out-video-bit-rate", config->out_video_bit_rate,
                   "Video bit rate (kbps, POSITIVE INTEGER). default: 200 x "

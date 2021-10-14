@@ -191,7 +191,9 @@ target_sources(hisui
     src/audio/basic_sequencer.cpp
     src/audio/webm_source.cpp
     src/layout/cell.cpp
+    src/layout/compose.cpp
     src/layout/grid.cpp
+    src/layout/metadata.cpp
     src/layout/overlap.cpp
     src/layout/region.cpp
     src/layout/source.cpp
@@ -208,6 +210,7 @@ target_sources(hisui
     src/muxer/vpx_video_producer.cpp
     src/report/reporter.cpp
     src/util/interval.cpp
+    src/util/json.cpp
     src/version/version.cpp
     src/video/buffer_vpx_encoder.cpp
     src/video/composer.cpp
