@@ -32,7 +32,7 @@ class Metadata {
   std::filesystem::path m_path;
 
   std::vector<std::string> m_audio_source_filenames;
-  std::uint64_t m_bit_rate;
+  std::uint64_t m_bitrate;
   ContainerFormat m_format;
   std::uint64_t m_width;
   std::uint64_t m_height;
