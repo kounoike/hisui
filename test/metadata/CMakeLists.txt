@@ -21,6 +21,7 @@ add_executable(metadata_test
     main.cpp
     time_offset.cpp
     ../../src/metadata.cpp
+    ../../src/util/json.cpp
     )
 
 set_target_properties(metadata_test PROPERTIES CXX_STANDARD 20 C_STANDARD 11)

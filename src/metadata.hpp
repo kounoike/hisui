@@ -83,9 +83,4 @@ class MetadataSet {
   bool m_has_preferred = false;
 };
 
-boost::json::string get_string_from_json_object(boost::json::object o,
-                                                const std::string& key);
-double get_double_from_json_object(boost::json::object o,
-                                   const std::string& key);
-
 }  // namespace hisui
