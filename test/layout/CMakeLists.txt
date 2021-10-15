@@ -61,11 +61,13 @@ target_include_directories(layout_test
     ${boost_type_traits_SOURCE_DIR}/include
     ${boost_utility_SOURCE_DIR}/include
     ${fmt_SOURCE_DIR}/include
+    ${spdlog_SOURCE_DIR}/include
     )
 
 target_link_libraries(layout_test
     PRIVATE
     fmt
+    spdlog 
     )
 
 add_test(NAME layout COMMAND layout_test)

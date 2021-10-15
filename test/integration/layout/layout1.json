@@ -22,6 +22,22 @@
             "x_pos": 0,
             "y_pos": 0,
             "z_pos": 0
+        },
+        "double": {
+            "cells_excluded": [1, 3],
+            "height": 160,
+            "max_columns": 2,
+            "max_rows": 3,
+            "reuse": "show_newest",
+            "video_sources": [
+                "PAXXXX",
+                "PAYYYY"
+            ],
+            "video_sources_excluded": [],
+            "width": 480,
+            "x_pos": 100,
+            "y_pos": 200,
+            "z_pos": 1
         }
     }
 }

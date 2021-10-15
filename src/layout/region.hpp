@@ -24,8 +24,24 @@ struct RegionInformation {
   const Resolution& resolution;
 };
 
+struct RegionParameters {
+  const std::string name;
+  const Position pos;
+  const std::int64_t z_pos;
+  const Resolution resolution;
+  const std::uint64_t max_columns;
+  const std::uint64_t max_rows;
+  const std::vector<std::uint64_t>& cells_excluded = {};
+  const Reuse reuse;
+  const std::vector<std::string>& video_sources = {};
+  const std::vector<std::string>& video_sources_excluded = {};
+};
+
 class Region {
  public:
+  explicit Region(const RegionParameters&);
+
+  void Dump() const;
   RegionInformation getInfomation() const;
   void validate(const Resolution&);
   void SubstructTrimIntervals(const TrimIntervals&);

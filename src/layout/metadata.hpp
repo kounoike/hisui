@@ -23,6 +23,8 @@ enum struct ContainerFormat {
   MP4,
 };
 
+struct ParseRegionParameters {};
+
 class Metadata {
  public:
   Metadata(const std::string& file_path, const boost::json::value& jv);
@@ -39,6 +41,10 @@ class Metadata {
   bool m_trim;
 
   std::vector<std::shared_ptr<Region>> m_regions;
+
+  void ParseVideoLayout(boost::json::object j);
+  std::shared_ptr<Region> ParseRegion(const std::string& name,
+                                      boost::json::object jo);
 };
 
 Metadata parse_metadata(const std::string&);

@@ -1,6 +1,7 @@
 #include "layout/region.hpp"
 
 #include <fmt/core.h>
+#include <spdlog/spdlog.h>
 
 #include <algorithm>
 #include <stdexcept>
@@ -114,6 +115,32 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
       (*it_min)->SetSource(video_source);
     }
   }
+}
+
+Region::Region(const RegionParameters& params)
+    : m_name(params.name),
+      m_pos(params.pos),
+      m_z_pos(params.z_pos),
+      m_resolution(params.resolution),
+      m_max_columns(params.max_columns),
+      m_max_rows(params.max_rows),
+      m_cells_excluded(params.cells_excluded),
+      m_reuse(params.reuse),
+      m_raw_video_sources(params.video_sources),
+      m_raw_video_sources_excluded(params.video_sources_excluded) {}
+
+void Region::Dump() const {
+  spdlog::debug("  name: {}", m_name);
+  spdlog::debug("  position: x: {} y: {}", m_pos.x, m_pos.y);
+  spdlog::debug("  z_position: {} ", m_z_pos);
+  spdlog::debug("  cells_excluded: [{}]", fmt::join(m_cells_excluded, ", "));
+  spdlog::debug("  resolution: {}x{}", m_resolution.width, m_resolution.height);
+  spdlog::debug("  max_columns: {}", m_max_columns);
+  spdlog::debug("  max_rows: {}", m_max_rows);
+  spdlog::debug("  video_sources: [{}]", fmt::join(m_raw_video_sources, ", "));
+  spdlog::debug("  reuse: {}", m_reuse == Reuse::None         ? "none"
+                               : m_reuse == Reuse::ShowOldest ? "show_oldest"
+                                                              : "show_newest");
 }
 
 }  // namespace hisui::layout
