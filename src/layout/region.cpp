@@ -57,9 +57,9 @@ void Region::validate(const Resolution& parent_resolution) {
   }
 }
 
-void Region::SubstructTrimIntervals(const TrimIntervals& params) {
+void Region::substructTrimIntervals(const TrimIntervals& params) {
   for (auto s : m_video_sources) {
-    s->SubstructTrimIntervals(params);
+    s->substructTrimIntervals(params);
   }
 
   auto interval =
@@ -75,17 +75,17 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
 
   auto it_connection_id = std::find_if(
       std::begin(cells), std::end(cells), [video_source](const auto& cell) {
-        return cell->HasVideoSourceConnectionID(video_source->connection_id);
+        return cell->hasVideoSourceConnectionID(video_source->connection_id);
       });
   if (it_connection_id != std::end(cells)) {
     return;
   }
   auto it_fresh = std::find_if(std::begin(cells), std::end(cells),
                                [video_source](const auto& cell) {
-                                 return cell->HasStatus(CellStatus::Fresh);
+                                 return cell->hasStatus(CellStatus::Fresh);
                                });
   if (it_fresh != std::end(cells)) {
-    (*it_fresh)->SetSource(video_source);
+    (*it_fresh)->setSource(video_source);
   }
 
   if (reuse == Reuse::None) {
@@ -94,10 +94,10 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
 
   auto it_idle = std::find_if(std::begin(cells), std::end(cells),
                               [video_source](const auto& cell) {
-                                return cell->HasStatus(CellStatus::Idle);
+                                return cell->hasStatus(CellStatus::Idle);
                               });
   if (it_idle != std::end(cells)) {
-    (*it_idle)->SetSource(video_source);
+    (*it_idle)->setSource(video_source);
   }
 
   if (reuse == Reuse::ShowOldest) {
@@ -106,13 +106,13 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
 
   auto it_min = std::min_element(std::begin(cells), std::end(cells),
                                  [](const auto& a, const auto& b) {
-                                   return a->GetEndTime() < b->GetEndTime();
+                                   return a->getEndTime() < b->getEndTime();
                                  });
 
   if (it_min != std::end(cells)) {
-    if ((*it_min)->HasStatus(CellStatus::Used) &&
-        (*it_min)->GetEndTime() < video_source->interval.end_time) {
-      (*it_min)->SetSource(video_source);
+    if ((*it_min)->hasStatus(CellStatus::Used) &&
+        (*it_min)->getEndTime() < video_source->interval.end_time) {
+      (*it_min)->setSource(video_source);
     }
   }
 }
@@ -129,7 +129,7 @@ Region::Region(const RegionParameters& params)
       m_raw_video_sources(params.video_sources),
       m_raw_video_sources_excluded(params.video_sources_excluded) {}
 
-void Region::Dump() const {
+void Region::dump() const {
   spdlog::debug("  name: {}", m_name);
   spdlog::debug("  position: x: {} y: {}", m_pos.x, m_pos.y);
   spdlog::debug("  z_position: {} ", m_z_pos);

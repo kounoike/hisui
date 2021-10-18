@@ -44,12 +44,12 @@ struct CellParameters {
 class Cell {
  public:
   explicit Cell(const CellParameters&);
-  bool HasVideoSourceConnectionID(const std::string& connection_id);
-  bool HasStatus(const CellStatus);
-  void SetExcludedStatus();
-  void SetSource(std::shared_ptr<VideoSource>);
-  void ResetSource(const std::uint64_t);
-  std::uint64_t GetEndTime() const;
+  bool hasVideoSourceConnectionID(const std::string& connection_id);
+  bool hasStatus(const CellStatus);
+  void setExcludedStatus();
+  void setSource(std::shared_ptr<VideoSource>);
+  void resetSource(const std::uint64_t);
+  std::uint64_t getEndTime() const;
 
  private:
   std::uint64_t m_index;

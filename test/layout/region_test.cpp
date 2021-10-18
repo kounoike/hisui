@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(set_video_source_to_cells) {
         {.video_source = video_source0,
          .reuse = hisui::layout::Reuse::None,
          .cells = cells});
-    BOOST_REQUIRE_EQUAL(10, cells[0]->GetEndTime());
+    BOOST_REQUIRE_EQUAL(10, cells[0]->getEndTime());
 
     auto video_source1 = std::make_shared<hisui::layout::VideoSource>(
         hisui::layout::SourceParameters{.name = "test1",
@@ -40,25 +40,25 @@ BOOST_AUTO_TEST_CASE(set_video_source_to_cells) {
         {.video_source = video_source1,
          .reuse = hisui::layout::Reuse::None,
          .cells = cells});
-    BOOST_REQUIRE_EQUAL(10, cells[0]->GetEndTime());
+    BOOST_REQUIRE_EQUAL(10, cells[0]->getEndTime());
 
     hisui::layout::set_video_source_to_cells(
         {.video_source = video_source1,
          .reuse = hisui::layout::Reuse::ShowOldest,
          .cells = cells});
-    BOOST_REQUIRE_EQUAL(10, cells[0]->GetEndTime());
+    BOOST_REQUIRE_EQUAL(10, cells[0]->getEndTime());
 
     hisui::layout::set_video_source_to_cells(
         {.video_source = video_source1,
          .reuse = hisui::layout::Reuse::ShowNewest,
          .cells = cells});
-    BOOST_REQUIRE_EQUAL(20, cells[0]->GetEndTime());
+    BOOST_REQUIRE_EQUAL(20, cells[0]->getEndTime());
 
     hisui::layout::set_video_source_to_cells(
         {.video_source = video_source0,
          .reuse = hisui::layout::Reuse::ShowNewest,
          .cells = cells});
-    BOOST_REQUIRE_EQUAL(20, cells[0]->GetEndTime());
+    BOOST_REQUIRE_EQUAL(20, cells[0]->getEndTime());
 
     hisui::layout::reset_cells_source({.cells = cells, .time = 20});
 
@@ -67,13 +67,13 @@ BOOST_AUTO_TEST_CASE(set_video_source_to_cells) {
          .reuse = hisui::layout::Reuse::None,
          .cells = cells});
     BOOST_REQUIRE_EQUAL(std::numeric_limits<std::uint64_t>::max(),
-                        cells[0]->GetEndTime());
+                        cells[0]->getEndTime());
 
     hisui::layout::set_video_source_to_cells(
         {.video_source = video_source0,
          .reuse = hisui::layout::Reuse::ShowOldest,
          .cells = cells});
-    BOOST_REQUIRE_EQUAL(10, cells[0]->GetEndTime());
+    BOOST_REQUIRE_EQUAL(10, cells[0]->getEndTime());
   }
   {
     auto cells = std::vector<std::shared_ptr<hisui::layout::Cell>>{};
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(set_video_source_to_cells) {
             .pos = {.x = 1, .y = 1},
             .resolution = {.width = 240, .height = 160},
         }));
-    cells[2]->SetExcludedStatus();
+    cells[2]->setExcludedStatus();
 
     auto video_source0 = std::make_shared<hisui::layout::VideoSource>(
         hisui::layout::SourceParameters{.name = "test0",
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE(set_video_source_to_cells) {
         {.video_source = video_source0,
          .reuse = hisui::layout::Reuse::None,
          .cells = cells});
-    BOOST_REQUIRE_EQUAL(10, cells[0]->GetEndTime());
+    BOOST_REQUIRE_EQUAL(10, cells[0]->getEndTime());
 
     auto video_source1 = std::make_shared<hisui::layout::VideoSource>(
         hisui::layout::SourceParameters{.name = "test1",
@@ -123,8 +123,8 @@ BOOST_AUTO_TEST_CASE(set_video_source_to_cells) {
         {.video_source = video_source1,
          .reuse = hisui::layout::Reuse::None,
          .cells = cells});
-    BOOST_REQUIRE_EQUAL(10, cells[0]->GetEndTime());
-    BOOST_REQUIRE_EQUAL(20, cells[1]->GetEndTime());
+    BOOST_REQUIRE_EQUAL(10, cells[0]->getEndTime());
+    BOOST_REQUIRE_EQUAL(20, cells[1]->getEndTime());
 
     auto video_source2 = std::make_shared<hisui::layout::VideoSource>(
         hisui::layout::SourceParameters{.name = "test2",
@@ -135,9 +135,9 @@ BOOST_AUTO_TEST_CASE(set_video_source_to_cells) {
         {.video_source = video_source2,
          .reuse = hisui::layout::Reuse::None,
          .cells = cells});
-    BOOST_REQUIRE_EQUAL(10, cells[0]->GetEndTime());
-    BOOST_REQUIRE_EQUAL(20, cells[1]->GetEndTime());
-    BOOST_REQUIRE_EQUAL(15, cells[3]->GetEndTime());
+    BOOST_REQUIRE_EQUAL(10, cells[0]->getEndTime());
+    BOOST_REQUIRE_EQUAL(20, cells[1]->getEndTime());
+    BOOST_REQUIRE_EQUAL(15, cells[3]->getEndTime());
 
     auto video_source3 = std::make_shared<hisui::layout::VideoSource>(
         hisui::layout::SourceParameters{.name = "test3",
@@ -148,9 +148,9 @@ BOOST_AUTO_TEST_CASE(set_video_source_to_cells) {
         {.video_source = video_source3,
          .reuse = hisui::layout::Reuse::ShowNewest,
          .cells = cells});
-    BOOST_REQUIRE_EQUAL(10, cells[0]->GetEndTime());
-    BOOST_REQUIRE_EQUAL(20, cells[1]->GetEndTime());
-    BOOST_REQUIRE_EQUAL(15, cells[3]->GetEndTime());
+    BOOST_REQUIRE_EQUAL(10, cells[0]->getEndTime());
+    BOOST_REQUIRE_EQUAL(20, cells[1]->getEndTime());
+    BOOST_REQUIRE_EQUAL(15, cells[3]->getEndTime());
 
     auto video_source4 = std::make_shared<hisui::layout::VideoSource>(
         hisui::layout::SourceParameters{.name = "test4",
@@ -161,17 +161,17 @@ BOOST_AUTO_TEST_CASE(set_video_source_to_cells) {
         {.video_source = video_source4,
          .reuse = hisui::layout::Reuse::ShowNewest,
          .cells = cells});
-    BOOST_REQUIRE_EQUAL(30, cells[0]->GetEndTime());
-    BOOST_REQUIRE_EQUAL(20, cells[1]->GetEndTime());
-    BOOST_REQUIRE_EQUAL(15, cells[3]->GetEndTime());
+    BOOST_REQUIRE_EQUAL(30, cells[0]->getEndTime());
+    BOOST_REQUIRE_EQUAL(20, cells[1]->getEndTime());
+    BOOST_REQUIRE_EQUAL(15, cells[3]->getEndTime());
 
     hisui::layout::set_video_source_to_cells(
         {.video_source = video_source4,
          .reuse = hisui::layout::Reuse::ShowNewest,
          .cells = cells});
-    BOOST_REQUIRE_EQUAL(30, cells[0]->GetEndTime());
-    BOOST_REQUIRE_EQUAL(20, cells[1]->GetEndTime());
-    BOOST_REQUIRE_EQUAL(15, cells[3]->GetEndTime());
+    BOOST_REQUIRE_EQUAL(30, cells[0]->getEndTime());
+    BOOST_REQUIRE_EQUAL(20, cells[1]->getEndTime());
+    BOOST_REQUIRE_EQUAL(15, cells[3]->getEndTime());
 
     auto video_source5 = std::make_shared<hisui::layout::VideoSource>(
         hisui::layout::SourceParameters{.name = "test5",
@@ -182,9 +182,9 @@ BOOST_AUTO_TEST_CASE(set_video_source_to_cells) {
         {.video_source = video_source5,
          .reuse = hisui::layout::Reuse::ShowNewest,
          .cells = cells});
-    BOOST_REQUIRE_EQUAL(30, cells[0]->GetEndTime());
-    BOOST_REQUIRE_EQUAL(20, cells[1]->GetEndTime());
-    BOOST_REQUIRE_EQUAL(40, cells[3]->GetEndTime());
+    BOOST_REQUIRE_EQUAL(30, cells[0]->getEndTime());
+    BOOST_REQUIRE_EQUAL(20, cells[1]->getEndTime());
+    BOOST_REQUIRE_EQUAL(40, cells[3]->getEndTime());
   }
 }
 

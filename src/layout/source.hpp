@@ -41,7 +41,7 @@ struct Source {
   std::string name;
   std::string connection_id;
   SourceInterval interval;
-  void SubstructTrimIntervals(const TrimIntervals&);
+  void substructTrimIntervals(const TrimIntervals&);
 };
 
 struct VideoSource : public Source {

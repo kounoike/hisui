@@ -41,10 +41,10 @@ class Region {
  public:
   explicit Region(const RegionParameters&);
 
-  void Dump() const;
+  void dump() const;
   RegionInformation getInfomation() const;
   void validate(const Resolution&);
-  void SubstructTrimIntervals(const TrimIntervals&);
+  void substructTrimIntervals(const TrimIntervals&);
 
  private:
   std::string m_name;

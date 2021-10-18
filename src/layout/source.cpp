@@ -38,7 +38,7 @@ Source::Source(const SourceParameters& params) {
   interval.end_time = params.end_time;
 }
 
-void Source::SubstructTrimIntervals(const TrimIntervals& params) {
+void Source::substructTrimIntervals(const TrimIntervals& params) {
   interval = substruct_trim_intervals(
       {.interval = interval, .trim_intervals = params.trim_intervals});
 }

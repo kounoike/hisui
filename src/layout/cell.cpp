@@ -98,21 +98,21 @@ ResolutionAndPositions calc_cell_resolution_and_positions(
           .positions = positions};
 }
 
-bool Cell::HasVideoSourceConnectionID(const std::string& connection_id) {
+bool Cell::hasVideoSourceConnectionID(const std::string& connection_id) {
   return m_source && m_source->connection_id == connection_id;
 }
 
-bool Cell::HasStatus(const CellStatus status) {
+bool Cell::hasStatus(const CellStatus status) {
   return m_status == status;
 }
 
-void Cell::SetSource(std::shared_ptr<VideoSource> source) {
+void Cell::setSource(std::shared_ptr<VideoSource> source) {
   m_status = CellStatus::Used;
   m_source = source;
   m_end_time = source->interval.end_time;
 }
 
-void Cell::ResetSource(const std::uint64_t time) {
+void Cell::resetSource(const std::uint64_t time) {
   if (time >= m_end_time) {
     m_status = CellStatus::Idle;
     m_source = nullptr;
@@ -120,17 +120,17 @@ void Cell::ResetSource(const std::uint64_t time) {
   }
 }
 
-std::uint64_t Cell::GetEndTime() const {
+std::uint64_t Cell::getEndTime() const {
   return m_end_time;
 }
 
-void Cell::SetExcludedStatus() {
+void Cell::setExcludedStatus() {
   m_status = CellStatus::Excluded;
 }
 
 void reset_cells_source(const ResetCellsSource& params) {
   for (auto cell : params.cells) {
-    cell->ResetSource(params.time);
+    cell->resetSource(params.time);
   }
 }
 

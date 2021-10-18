@@ -19,7 +19,7 @@
 
 namespace hisui::layout {
 
-void Metadata::ParseVideoLayout(boost::json::object j) {
+void Metadata::parseVideoLayout(boost::json::object j) {
   auto key = "video_layout";
   if (!j.contains(key) || j[key].is_null()) {
     return;
@@ -28,7 +28,7 @@ void Metadata::ParseVideoLayout(boost::json::object j) {
   for (const auto& region : vl) {
     std::string name(region.key());
     if (region.value().is_object()) {
-      m_regions.push_back(ParseRegion(name, region.value().as_object()));
+      m_regions.push_back(parseRegion(name, region.value().as_object()));
     } else {
       throw std::invalid_argument(
           fmt::format("region: {} is not object", name));
@@ -36,7 +36,7 @@ void Metadata::ParseVideoLayout(boost::json::object j) {
   }
 }
 
-void Metadata::Dump() const {
+void Metadata::dump() const {
   spdlog::debug("format: {}",
                 m_format == ContainerFormat::MP4 ? "mp4" : "webm");
   spdlog::debug("bitrate: {}", m_bitrate);
@@ -47,7 +47,7 @@ void Metadata::Dump() const {
                 fmt::join(m_audio_source_filenames, ", "));
   spdlog::debug("video_layout");
   for (const auto& region : m_regions) {
-    region->Dump();
+    region->dump();
     spdlog::debug("");
   }
 }
@@ -104,7 +104,7 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
     }
   }
   // TODO(haruyama): audio_sources_excluded
-  ParseVideoLayout(j);
+  parseVideoLayout(j);
 }
 
 Metadata parse_metadata(const std::string& filename) {
@@ -124,12 +124,12 @@ Metadata parse_metadata(const std::string& filename) {
 
   Metadata metadata(filename, jv);
 
-  metadata.Dump();
+  metadata.dump();
 
   return metadata;
 }
 
-std::shared_ptr<Region> Metadata::ParseRegion(const std::string& name,
+std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
                                               boost::json::object jo) {
   auto cells_excluded_array =
       hisui::util::get_array_from_json_object_with_default(

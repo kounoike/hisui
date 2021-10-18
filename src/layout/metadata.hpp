@@ -28,7 +28,7 @@ struct ParseRegionParameters {};
 class Metadata {
  public:
   Metadata(const std::string& file_path, const boost::json::value& jv);
-  void Dump() const;
+  void dump() const;
 
  private:
   std::filesystem::path m_path;
@@ -42,8 +42,8 @@ class Metadata {
 
   std::vector<std::shared_ptr<Region>> m_regions;
 
-  void ParseVideoLayout(boost::json::object j);
-  std::shared_ptr<Region> ParseRegion(const std::string& name,
+  void parseVideoLayout(boost::json::object j);
+  std::shared_ptr<Region> parseRegion(const std::string& name,
                                       boost::json::object jo);
 };
 
