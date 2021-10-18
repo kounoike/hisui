@@ -29,6 +29,7 @@ class Metadata {
  public:
   Metadata(const std::string& file_path, const boost::json::value& jv);
   void dump() const;
+  void prepare();
 
  private:
   std::filesystem::path m_path;
@@ -36,8 +37,7 @@ class Metadata {
   std::vector<std::string> m_audio_source_filenames;
   std::uint64_t m_bitrate;
   ContainerFormat m_format;
-  std::uint64_t m_width;
-  std::uint64_t m_height;
+  Resolution m_resolution;
   bool m_trim;
 
   std::vector<std::shared_ptr<Region>> m_regions;

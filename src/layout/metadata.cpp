@@ -40,8 +40,7 @@ void Metadata::dump() const {
   spdlog::debug("format: {}",
                 m_format == ContainerFormat::MP4 ? "mp4" : "webm");
   spdlog::debug("bitrate: {}", m_bitrate);
-  spdlog::debug("width: {}", m_width);
-  spdlog::debug("height: {}", m_height);
+  spdlog::debug("resolution: {}x{}", m_resolution.width, m_resolution.height);
   spdlog::debug("trim: {}", m_trim);
   spdlog::debug("audio_sources: [{}]",
                 fmt::join(m_audio_source_filenames, ", "));
@@ -84,8 +83,8 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
 
   std::smatch m;
   if (std::regex_match(resolution, m, std::regex(R"((\d+)x(\d+))"))) {
-    m_width = std::stoull(m[1].str());
-    m_height = std::stoull(m[2].str());
+    m_resolution.width = std::stoull(m[1].str());
+    m_resolution.height = std::stoull(m[2].str());
   } else {
     throw std::invalid_argument(
         fmt::format("invalid resolution: {}", resolution));
@@ -124,9 +123,23 @@ Metadata parse_metadata(const std::string& filename) {
 
   Metadata metadata(filename, jv);
 
+  spdlog::debug("not prepared");
+
+  metadata.dump();
+
+  metadata.prepare();
+
+  spdlog::debug("prepared");
+
   metadata.dump();
 
   return metadata;
+}
+
+void Metadata::prepare() {
+  for (const auto& region : m_regions) {
+    region->prepare(m_resolution);
+  }
 }
 
 std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
