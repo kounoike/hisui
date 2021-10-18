@@ -14,7 +14,9 @@
 #include <boost/json/value.hpp>
 
 #include "config.hpp"
+#include "layout/archive.hpp"
 #include "layout/region.hpp"
+#include "layout/source.hpp"
 
 namespace hisui::layout {
 
@@ -40,6 +42,8 @@ class Metadata {
   Resolution m_resolution;
   bool m_trim;
 
+  std::vector<std::shared_ptr<Archive>> m_audio_archives;
+  std::vector<std::shared_ptr<AudioSource>> m_audio_sources;
   std::vector<std::shared_ptr<Region>> m_regions;
 
   void parseVideoLayout(boost::json::object j);

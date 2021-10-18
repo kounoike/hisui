@@ -15,6 +15,7 @@
 #include <boost/json/value.hpp>
 #include <boost/json/value_to.hpp>
 
+#include "layout/archive.hpp"
 #include "util/json.hpp"
 
 namespace hisui::layout {
@@ -48,6 +49,9 @@ void Metadata::dump() const {
   for (const auto& region : m_regions) {
     region->dump();
     spdlog::debug("");
+  }
+  for (const auto& a : m_audio_archives) {
+    a->dump();
   }
 }
 
@@ -137,6 +141,10 @@ Metadata parse_metadata(const std::string& filename) {
 }
 
 void Metadata::prepare() {
+  for (const auto& f : m_audio_source_filenames) {
+    m_audio_archives.push_back(parse_archive(f));
+  }
+
   for (const auto& region : m_regions) {
     region->prepare(m_resolution);
   }
