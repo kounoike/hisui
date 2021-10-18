@@ -43,7 +43,7 @@ class Region {
 
   void dump() const;
   RegionInformation getInfomation() const;
-  void validate(const Resolution&);
+  void prepare(const Resolution&);
   void substructTrimIntervals(const TrimIntervals&);
 
  private:
