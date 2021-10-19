@@ -5,10 +5,11 @@
 #include <string>
 #include <vector>
 
+#include "layout/archive.hpp"
 #include "layout/cell.hpp"
 #include "layout/grid.hpp"
 #include "layout/source.hpp"
-#include "video/source.hpp"
+#include "layout/video_source.hpp"
 
 namespace hisui::layout {
 
@@ -55,11 +56,12 @@ class Region {
   std::uint64_t m_max_rows;
   std::vector<std::uint64_t> m_cells_excluded;
   Reuse m_reuse;
-  std::vector<std::string> m_raw_video_sources;
-  std::vector<std::string> m_raw_video_sources_excluded;
+  std::vector<std::string> m_video_source_filenames;
+  std::vector<std::string> m_video_source_excluded_filenames;
 
   // computed
   GridDimension m_grid_dimension;
+  std::vector<std::shared_ptr<Archive>> m_video_archives;
   std::vector<std::shared_ptr<VideoSource>> m_video_sources;
   std::vector<std::shared_ptr<Cell>> m_cells;
   std::uint64_t m_max_end_time;

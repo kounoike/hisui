@@ -48,6 +48,7 @@ target_include_directories(layout_test
     ${boost_integer_SOURCE_DIR}/include
     ${boost_io_SOURCE_DIR}/include
     ${boost_iterator_SOURCE_DIR}/include
+    ${boost_json_SOURCE_DIR}/include
     ${boost_move_SOURCE_DIR}/include
     ${boost_mpl_SOURCE_DIR}/include
     ${boost_numeric_conversion_SOURCE_DIR}/include
@@ -66,6 +67,7 @@ target_include_directories(layout_test
 
 target_link_libraries(layout_test
     PRIVATE
+    Boost::json
     fmt
     spdlog 
     )

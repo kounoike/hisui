@@ -51,6 +51,13 @@ void Region::prepare(const Resolution& parent_resolution) {
   } else {
     m_resolution.height = parent_resolution.height - m_pos.y;
   }
+
+  for (const auto& f : m_video_source_filenames) {
+    auto archive = parse_archive(f);
+    m_video_archives.push_back(archive);
+    m_video_sources.push_back(
+        std::make_shared<VideoSource>(archive->getSourceParameters()));
+  }
 }
 
 void Region::substructTrimIntervals(const TrimIntervals& params) {
@@ -122,8 +129,8 @@ Region::Region(const RegionParameters& params)
       m_max_rows(params.max_rows),
       m_cells_excluded(params.cells_excluded),
       m_reuse(params.reuse),
-      m_raw_video_sources(params.video_sources),
-      m_raw_video_sources_excluded(params.video_sources_excluded) {}
+      m_video_source_filenames(params.video_sources),
+      m_video_source_excluded_filenames(params.video_sources_excluded) {}
 
 void Region::dump() const {
   spdlog::debug("  name: {}", m_name);
@@ -133,10 +140,17 @@ void Region::dump() const {
   spdlog::debug("  resolution: {}x{}", m_resolution.width, m_resolution.height);
   spdlog::debug("  max_columns: {}", m_max_columns);
   spdlog::debug("  max_rows: {}", m_max_rows);
-  spdlog::debug("  video_sources: [{}]", fmt::join(m_raw_video_sources, ", "));
+  spdlog::debug("  video_sources: [{}]",
+                fmt::join(m_video_source_filenames, ", "));
   spdlog::debug("  reuse: {}", m_reuse == Reuse::None         ? "none"
                                : m_reuse == Reuse::ShowOldest ? "show_oldest"
                                                               : "show_newest");
+  for (const auto& a : m_video_sources) {
+    spdlog::debug("    file_path: {}", a->file_path.string());
+    spdlog::debug("    connection_id: {}", a->connection_id);
+    spdlog::debug("    start_time: {}", a->interval.start_time);
+    spdlog::debug("    end_time: {}", a->interval.end_time);
+  }
 }
 
 }  // namespace hisui::layout
