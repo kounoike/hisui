@@ -6,6 +6,8 @@
 
 #include <boost/json/value.hpp>
 
+#include "layout/source.hpp"
+
 namespace hisui::layout {
 
 class Archive {
@@ -13,6 +15,7 @@ class Archive {
   Archive(const std::filesystem::path& t_path, const boost::json::value& jv);
   void dump() const;
   void prepare();
+  const SourceParameters& getSourceParameters() const;
 
  private:
   std::filesystem::path m_path;

@@ -50,8 +50,11 @@ void Metadata::dump() const {
     region->dump();
     spdlog::debug("");
   }
-  for (const auto& a : m_audio_archives) {
-    a->dump();
+  for (const auto& a : m_audio_sources) {
+    spdlog::debug("    file_path: {}", a->file_path.string());
+    spdlog::debug("    connection_id: {}", a->connection_id);
+    spdlog::debug("    start_time: {}", a->interval.start_time);
+    spdlog::debug("    end_time: {}", a->interval.end_time);
   }
 }
 
@@ -142,7 +145,10 @@ Metadata parse_metadata(const std::string& filename) {
 
 void Metadata::prepare() {
   for (const auto& f : m_audio_source_filenames) {
-    m_audio_archives.push_back(parse_archive(f));
+    auto archive = parse_archive(f);
+    m_audio_archives.push_back(archive);
+    m_audio_sources.push_back(
+        std::make_shared<AudioSource>(archive->getSourceParameters()));
   }
 
   for (const auto& region : m_regions) {

@@ -111,4 +111,13 @@ void Archive::dump() const {
 
 void Archive::prepare() {}
 
+const SourceParameters& Archive::getSourceParameters() const {
+  return SourceParameters{
+      .file_path = m_file_path,
+      .connection_id = m_connection_id,
+      .start_time = m_start_time,
+      .end_time = m_stop_time,
+  };
+}
+
 }  // namespace hisui::layout

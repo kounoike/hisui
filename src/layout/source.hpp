@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <utility>
@@ -29,8 +30,8 @@ bool operator==(SourceInterval const& left, SourceInterval const& right);
 std::ostream& operator<<(std::ostream& os, const SourceInterval&);
 
 struct SourceParameters {
-  const std::string name;
-  const std::string connection_id;
+  const std::filesystem::path& file_path;
+  const std::string& connection_id;
   const std::uint64_t start_time;
   const std::uint64_t end_time;
 };
@@ -38,7 +39,7 @@ struct SourceParameters {
 struct Source {
   explicit Source(const SourceParameters&);
   virtual ~Source() {}
-  std::string name;
+  std::filesystem::path file_path;
   std::string connection_id;
   SourceInterval interval;
   void substructTrimIntervals(const TrimIntervals&);
