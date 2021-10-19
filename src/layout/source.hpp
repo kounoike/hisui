@@ -45,11 +45,6 @@ struct Source {
   void substructTrimIntervals(const TrimIntervals&);
 };
 
-struct VideoSource : public Source {
-  explicit VideoSource(const SourceParameters&);
-  std::shared_ptr<hisui::video::Source> source;
-};
-
 struct SubstructTrimIntervalsParameters {
   const SourceInterval& interval;
   const std::vector<std::pair<std::uint64_t, std::uint64_t>>& trim_intervals;

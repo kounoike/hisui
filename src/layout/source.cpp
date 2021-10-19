@@ -65,6 +65,4 @@ SourceInterval substruct_trim_intervals(
   return interval;
 }
 
-VideoSource::VideoSource(const SourceParameters& params) : Source(params) {}
-
 }  // namespace hisui::layout

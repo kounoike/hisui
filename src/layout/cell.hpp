@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "layout/grid.hpp"
-#include "layout/source.hpp"
+#include "layout/video_source.hpp"
 
 namespace hisui::layout {
 
