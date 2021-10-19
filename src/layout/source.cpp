@@ -67,8 +67,4 @@ SourceInterval substruct_trim_intervals(
 
 VideoSource::VideoSource(const SourceParameters& params) : Source(params) {}
 
-AudioSource::AudioSource(const SourceParameters& params) : Source(params) {
-  source = std::make_shared<hisui::audio::WebMSource>(file_path.string());
-}
-
 }  // namespace hisui::layout

@@ -50,11 +50,6 @@ struct VideoSource : public Source {
   std::shared_ptr<hisui::video::Source> source;
 };
 
-struct AudioSource : public Source {
-  explicit AudioSource(const SourceParameters&);
-  std::shared_ptr<hisui::audio::Source> source;
-};
-
 struct SubstructTrimIntervalsParameters {
   const SourceInterval& interval;
   const std::vector<std::pair<std::uint64_t, std::uint64_t>>& trim_intervals;

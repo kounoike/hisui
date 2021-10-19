@@ -15,8 +15,8 @@
 
 #include "config.hpp"
 #include "layout/archive.hpp"
+#include "layout/audio_source.hpp"
 #include "layout/region.hpp"
-#include "layout/source.hpp"
 
 namespace hisui::layout {
 
