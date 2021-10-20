@@ -15,7 +15,8 @@ RegionInformation Region::getInfomation() const {
   return {.position = m_pos, .z_pos = m_z_pos, .resolution = m_resolution};
 }
 
-void Region::prepare(const RegionPrepareParameters& params) {
+const RegionPrepareResult Region::prepare(
+    const RegionPrepareParameters& params) {
   if (params.resolution.width < m_pos.x) {
     throw std::out_of_range(
         fmt::format("The x_pos({}) of region {} is out of parent width({})",
@@ -53,11 +54,18 @@ void Region::prepare(const RegionPrepareParameters& params) {
     m_resolution.height = params.resolution.height - m_pos.y;
   }
 
-  // TODO(haruyama): 4 の倍数でなく 2 の倍数でいいかもしれない
-  m_resolution.width = (m_resolution.width >> 2) << 2;
-  m_resolution.height = (m_resolution.height >> 2) << 2;
+  // TODO(haruyama): 2 の倍数でよさそうだが, 4 の倍数のほうがいいかも
+  m_resolution.width = (m_resolution.width >> 1) << 1;
+  m_resolution.height = (m_resolution.height >> 1) << 1;
 
-  // TODO(haruyama): width, height の最小チェック
+  if (m_resolution.width < 16) {
+    throw std::out_of_range(fmt::format("width({}) of region({}) is too small",
+                                        m_resolution.width, m_name));
+  }
+  if (m_resolution.height < 16) {
+    throw std::out_of_range(fmt::format("height({}) of region({}) is too small",
+                                        m_resolution.height, m_name));
+  }
 
   for (const auto& f : m_video_source_filenames) {
     auto archive = parse_archive(f);
@@ -88,6 +96,11 @@ void Region::prepare(const RegionPrepareParameters& params) {
            .number_of_sources = overlap_result.max_number_of_overlap,
            .cells_excluded = m_cells_excluded,
        })});
+  return {.trim_intervals = overlap_result.trim_intervals};
+}
+
+std::uint64_t Region::getMaxEndTime() const {
+  return m_max_end_time;
 }
 
 void Region::substructTrimIntervals(const TrimIntervals& params) {

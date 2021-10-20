@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "layout/archive.hpp"
@@ -42,14 +43,19 @@ struct RegionPrepareParameters {
   const Resolution& resolution;
 };
 
+struct RegionPrepareResult {
+  std::vector<std::pair<std::uint64_t, std::uint64_t>> trim_intervals;
+};
+
 class Region {
  public:
   explicit Region(const RegionParameters&);
 
   void dump() const;
   RegionInformation getInfomation() const;
-  void prepare(const RegionPrepareParameters&);
+  const RegionPrepareResult prepare(const RegionPrepareParameters&);
   void substructTrimIntervals(const TrimIntervals&);
+  std::uint64_t getMaxEndTime() const;
 
  private:
   std::string m_name;

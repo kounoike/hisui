@@ -2,9 +2,12 @@
 
 #include <spdlog/spdlog.h>
 
+#include <algorithm>
 #include <fstream>
+#include <list>
 #include <regex>
 #include <stdexcept>
+#include <utility>
 
 #include <boost/json/array.hpp>
 #include <boost/json/impl/array.hpp>
@@ -16,6 +19,8 @@
 #include <boost/json/value_to.hpp>
 
 #include "layout/archive.hpp"
+#include "layout/overlap.hpp"
+#include "layout/source.hpp"
 #include "util/json.hpp"
 
 namespace hisui::layout {
@@ -50,11 +55,15 @@ void Metadata::dump() const {
     region->dump();
     spdlog::debug("");
   }
-  for (const auto& a : m_audio_sources) {
-    spdlog::debug("    file_path: {}", a->file_path.string());
-    spdlog::debug("    connection_id: {}", a->connection_id);
-    spdlog::debug("    start_time: {}", a->interval.start_time);
-    spdlog::debug("    end_time: {}", a->interval.end_time);
+  if (!std::empty(m_audio_sources)) {
+    for (const auto& a : m_audio_sources) {
+      spdlog::debug("    file_path: {}", a->file_path.string());
+      spdlog::debug("    connection_id: {}", a->connection_id);
+      spdlog::debug("    start_time: {}", a->interval.start_time);
+      spdlog::debug("    end_time: {}", a->interval.end_time);
+    }
+    spdlog::debug("audio_max_end_time: {}", m_audio_max_end_time);
+    spdlog::debug("max_end_time: {}", m_max_end_time);
   }
 }
 
@@ -144,6 +153,17 @@ Metadata parse_metadata(const std::string& filename) {
 }
 
 void Metadata::prepare() {
+  // TODO(haruyama): 2 の倍数でいいかもしれない
+  m_resolution.width = (m_resolution.width >> 2) << 2;
+  m_resolution.height = (m_resolution.height >> 2) << 2;
+  if (m_resolution.width < 16) {
+    throw std::out_of_range(
+        fmt::format("width{} is too small", m_resolution.width));
+  }
+  if (m_resolution.height < 16) {
+    throw std::out_of_range(
+        fmt::format("height{} is too small", m_resolution.height));
+  }
   for (const auto& f : m_audio_source_filenames) {
     auto archive = parse_archive(f);
     m_audio_archives.push_back(archive);
@@ -151,8 +171,52 @@ void Metadata::prepare() {
         std::make_shared<AudioSource>(archive->getSourceParameters()));
   }
 
+  std::vector<SourceInterval> audio_source_intervals;
+  std::transform(std::begin(m_audio_sources), std::end(m_audio_sources),
+                 std::back_inserter(audio_source_intervals),
+                 [](const auto& s) -> SourceInterval { return s->interval; });
+  auto audio_overlap_result = overlap_source_intervals(
+      {.sources = audio_source_intervals, .reuse = Reuse::None});
+
+  std::list<std::vector<std::pair<std::uint64_t, std::uint64_t>>>
+      list_of_trim_intervals;
+  list_of_trim_intervals.push_back(audio_overlap_result.trim_intervals);
+
   for (const auto& region : m_regions) {
-    region->prepare({.resolution = m_resolution});
+    auto result = region->prepare({.resolution = m_resolution});
+    list_of_trim_intervals.push_back(result.trim_intervals);
+  }
+  auto overlap_trim_intervals_result = overlap_trim_intervals(
+      {.list_of_trim_intervals = list_of_trim_intervals});
+
+  for (const auto& i : overlap_trim_intervals_result.trim_intervals) {
+    spdlog::debug("    final trim_interval: [{}, {}]", i.first, i.second);
+  }
+
+  std::vector<std::pair<std::uint64_t, std::uint64_t>> trim_intervals{};
+  if (m_trim) {
+    trim_intervals = overlap_trim_intervals_result.trim_intervals;
+  } else {
+    if (!std::empty(overlap_trim_intervals_result.trim_intervals)) {
+      if (overlap_trim_intervals_result.trim_intervals[0].first == 0) {
+        trim_intervals.push_back(
+            overlap_trim_intervals_result.trim_intervals[0]);
+      }
+    }
+  }
+
+  for (auto& s : m_audio_sources) {
+    s->substructTrimIntervals({.trim_intervals = trim_intervals});
+  }
+  auto interval = substruct_trim_intervals(
+      {.interval = {0, audio_overlap_result.max_end_time},
+       .trim_intervals = trim_intervals});
+  m_audio_max_end_time = interval.end_time;
+  m_max_end_time = interval.end_time;
+
+  for (auto& r : m_regions) {
+    r->substructTrimIntervals({.trim_intervals = trim_intervals});
+    m_max_end_time = std::max(m_max_end_time, r->getMaxEndTime());
   }
 }
 
