@@ -111,7 +111,7 @@ void Archive::dump() const {
 
 void Archive::prepare() {}
 
-const SourceParameters& Archive::getSourceParameters() const {
+const SourceParameters Archive::getSourceParameters() const {
   return SourceParameters{
       .file_path = m_file_path,
       .connection_id = m_connection_id,
