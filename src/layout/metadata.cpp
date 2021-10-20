@@ -218,6 +218,10 @@ void Metadata::prepare() {
     r->substructTrimIntervals({.trim_intervals = trim_intervals});
     m_max_end_time = std::max(m_max_end_time, r->getMaxEndTime());
   }
+  std::sort(std::begin(m_regions), std::end(m_regions),
+            [](const auto& a, const auto& b) {
+              return a->getInfomation().z_pos < b->getInfomation().z_pos;
+            });
 }
 
 std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
