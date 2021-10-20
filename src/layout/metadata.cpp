@@ -152,7 +152,7 @@ void Metadata::prepare() {
   }
 
   for (const auto& region : m_regions) {
-    region->prepare(m_resolution);
+    region->prepare({.resolution = m_resolution});
   }
 }
 

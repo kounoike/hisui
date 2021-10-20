@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <stdexcept>
 
+#include "layout/overlap.hpp"
 #include "layout/source.hpp"
 
 namespace hisui::layout {
@@ -14,17 +15,17 @@ RegionInformation Region::getInfomation() const {
   return {.position = m_pos, .z_pos = m_z_pos, .resolution = m_resolution};
 }
 
-void Region::prepare(const Resolution& parent_resolution) {
-  if (parent_resolution.width < m_pos.x) {
+void Region::prepare(const RegionPrepareParameters& params) {
+  if (params.resolution.width < m_pos.x) {
     throw std::out_of_range(
         fmt::format("The x_pos({}) of region {} is out of parent width({})",
-                    m_pos.x, m_name, parent_resolution.width));
+                    m_pos.x, m_name, params.resolution.width));
   }
 
-  if (parent_resolution.height < m_pos.y) {
+  if (params.resolution.height < m_pos.y) {
     throw std::out_of_range(
         fmt::format("The y_pos({}) of region {} is out of parent height({})",
-                    m_pos.y, m_name, parent_resolution.height));
+                    m_pos.y, m_name, params.resolution.height));
   }
 
   if (m_z_pos > 99 || m_z_pos < -99) {
@@ -33,24 +34,30 @@ void Region::prepare(const Resolution& parent_resolution) {
   }
 
   if (m_resolution.width != 0) {
-    if (m_pos.x + m_resolution.width > parent_resolution.width) {
+    if (m_pos.x + m_resolution.width > params.resolution.width) {
       throw std::out_of_range(fmt::format(
           "The x_pos({}) & width({}) of region {} is out of parent width({})",
-          m_pos.x, m_resolution.width, m_name, parent_resolution.width));
+          m_pos.x, m_resolution.width, m_name, params.resolution.width));
     }
   } else {
-    m_resolution.width = parent_resolution.width - m_pos.x;
+    m_resolution.width = params.resolution.width - m_pos.x;
   }
 
   if (m_resolution.height != 0) {
-    if (m_pos.y + m_resolution.height > parent_resolution.height) {
+    if (m_pos.y + m_resolution.height > params.resolution.height) {
       throw std::out_of_range(fmt::format(
           "The y_pos({}) & height({}) of region {} is out of parent height({})",
-          m_pos.y, m_resolution.height, m_name, parent_resolution.height));
+          m_pos.y, m_resolution.height, m_name, params.resolution.height));
     }
   } else {
-    m_resolution.height = parent_resolution.height - m_pos.y;
+    m_resolution.height = params.resolution.height - m_pos.y;
   }
+
+  // TODO(haruyama): 4 の倍数でなく 2 の倍数でいいかもしれない
+  m_resolution.width = (m_resolution.width >> 2) << 2;
+  m_resolution.height = (m_resolution.height >> 2) << 2;
+
+  // TODO(haruyama): width, height の最小チェック
 
   for (const auto& f : m_video_source_filenames) {
     auto archive = parse_archive(f);
@@ -58,6 +65,29 @@ void Region::prepare(const Resolution& parent_resolution) {
     m_video_sources.push_back(
         std::make_shared<VideoSource>(archive->getSourceParameters()));
   }
+
+  std::vector<SourceInterval> source_intervals;
+  std::transform(std::begin(m_video_sources), std::end(m_video_sources),
+                 std::back_inserter(source_intervals),
+                 [](const auto& s) -> SourceInterval { return s->interval; });
+  auto overlap_result =
+      overlap_source_intervals({.sources = source_intervals, .reuse = m_reuse});
+
+  m_max_end_time = overlap_result.max_end_time;
+
+  for (const auto& i : overlap_result.trim_intervals) {
+    spdlog::debug("    trim_interval: [{}, {}]", i.first, i.second);
+  }
+
+  std::sort(std::begin(m_cells_excluded), std::end(m_cells_excluded));
+
+  m_grid_dimension = calc_grid_dimension(
+      {.max_columns = m_max_columns,
+       .max_rows = m_max_rows,
+       .number_of_sources = add_number_of_excluded_cells({
+           .number_of_sources = overlap_result.max_number_of_overlap,
+           .cells_excluded = m_cells_excluded,
+       })});
 }
 
 void Region::substructTrimIntervals(const TrimIntervals& params) {
@@ -145,11 +175,15 @@ void Region::dump() const {
   spdlog::debug("  reuse: {}", m_reuse == Reuse::None         ? "none"
                                : m_reuse == Reuse::ShowOldest ? "show_oldest"
                                                               : "show_newest");
-  for (const auto& a : m_video_sources) {
-    spdlog::debug("    file_path: {}", a->file_path.string());
-    spdlog::debug("    connection_id: {}", a->connection_id);
-    spdlog::debug("    start_time: {}", a->interval.start_time);
-    spdlog::debug("    end_time: {}", a->interval.end_time);
+  if (!std::empty(m_video_sources)) {
+    spdlog::debug("  grid_dimension: {}x{}", m_grid_dimension.columns,
+                  m_grid_dimension.rows);
+    for (const auto& a : m_video_sources) {
+      spdlog::debug("    file_path: {}", a->file_path.string());
+      spdlog::debug("    connection_id: {}", a->connection_id);
+      spdlog::debug("    start_time: {}", a->interval.start_time);
+      spdlog::debug("    end_time: {}", a->interval.end_time);
+    }
   }
 }
 

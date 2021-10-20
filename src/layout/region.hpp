@@ -38,13 +38,17 @@ struct RegionParameters {
   const std::vector<std::string>& video_sources_excluded = {};
 };
 
+struct RegionPrepareParameters {
+  const Resolution& resolution;
+};
+
 class Region {
  public:
   explicit Region(const RegionParameters&);
 
   void dump() const;
   RegionInformation getInfomation() const;
-  void prepare(const Resolution&);
+  void prepare(const RegionPrepareParameters&);
   void substructTrimIntervals(const TrimIntervals&);
 
  private:
