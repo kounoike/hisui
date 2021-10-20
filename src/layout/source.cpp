@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <limits>
 
+#include "audio/webm_source.hpp"
 #include "layout/overlap.hpp"
 
 namespace hisui::layout {
@@ -32,13 +33,13 @@ std::ostream& operator<<(std::ostream& os, const SourceInterval& i) {
 }
 
 Source::Source(const SourceParameters& params) {
-  name = params.name;
+  file_path = params.file_path;
   connection_id = params.connection_id;
   interval.start_time = params.start_time;
   interval.end_time = params.end_time;
 }
 
-void Source::SubstructTrimIntervals(const TrimIntervals& params) {
+void Source::substructTrimIntervals(const TrimIntervals& params) {
   interval = substruct_trim_intervals(
       {.interval = interval, .trim_intervals = params.trim_intervals});
 }
@@ -63,9 +64,5 @@ SourceInterval substruct_trim_intervals(
   }
   return interval;
 }
-
-VideoSource::VideoSource(const SourceParameters& params) : Source(params) {}
-
-AudioSource::AudioSource(const SourceParameters& params) : Source(params) {}
 
 }  // namespace hisui::layout

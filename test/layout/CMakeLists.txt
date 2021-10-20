@@ -27,7 +27,7 @@ add_executable(layout_test
     ../../src/layout/cell.cpp
     ../../src/layout/grid.cpp
     ../../src/layout/overlap.cpp
-    ../../src/layout/region.cpp
+    # ../../src/layout/region.cpp
     ../../src/layout/source.cpp
     )
 
@@ -48,6 +48,7 @@ target_include_directories(layout_test
     ${boost_integer_SOURCE_DIR}/include
     ${boost_io_SOURCE_DIR}/include
     ${boost_iterator_SOURCE_DIR}/include
+    ${boost_json_SOURCE_DIR}/include
     ${boost_move_SOURCE_DIR}/include
     ${boost_mpl_SOURCE_DIR}/include
     ${boost_numeric_conversion_SOURCE_DIR}/include
@@ -61,11 +62,14 @@ target_include_directories(layout_test
     ${boost_type_traits_SOURCE_DIR}/include
     ${boost_utility_SOURCE_DIR}/include
     ${fmt_SOURCE_DIR}/include
+    ${spdlog_SOURCE_DIR}/include
     )
 
 target_link_libraries(layout_test
     PRIVATE
+    Boost::json
     fmt
+    spdlog 
     )
 
 add_test(NAME layout COMMAND layout_test)

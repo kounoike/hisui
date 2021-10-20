@@ -22,6 +22,8 @@
 #include <boost/json/system_error.hpp>
 #include <boost/json/value.hpp>
 
+#include "util/json.hpp"
+
 namespace hisui {
 
 Archive::Archive(const std::filesystem::path& t_path,
@@ -82,12 +84,13 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
     } else {
       throw std::runtime_error("a.if_object() failed");
     }
-    auto a_file_path = get_string_from_json_object(o, "file_path");
-    auto a_connection_id = get_string_from_json_object(o, "connection_id");
+    auto a_file_path = hisui::util::get_string_from_json_object(o, "file_path");
+    auto a_connection_id =
+        hisui::util::get_string_from_json_object(o, "connection_id");
     double a_start_time_offset =
-        get_double_from_json_object(o, "start_time_offset");
+        hisui::util::get_double_from_json_object(o, "start_time_offset");
     double a_stop_time_offset =
-        get_double_from_json_object(o, "stop_time_offset");
+        hisui::util::get_double_from_json_object(o, "stop_time_offset");
     spdlog::debug("{} {} {} {}", a_file_path, a_connection_id,
                   a_start_time_offset, a_stop_time_offset);
     archives.emplace_back(a_file_path, a_connection_id, a_start_time_offset,
@@ -175,8 +178,8 @@ boost::json::array Metadata::prepare(const boost::json::value& jv) {
     throw std::runtime_error("jv.if_object() failed");
   }
 
-  m_recording_id = get_string_from_json_object(j, "recording_id");
-  m_created_at = get_double_from_json_object(j, "created_at");
+  m_recording_id = hisui::util::get_string_from_json_object(j, "recording_id");
+  m_created_at = hisui::util::get_double_from_json_object(j, "created_at");
 
   if (j["archives"] == nullptr) {
     throw std::invalid_argument("not metadata json file: {}");
@@ -197,28 +200,6 @@ boost::json::array Metadata::prepare(const boost::json::value& jv) {
 
 boost::json::string Metadata::getRecordingID() const {
   return m_recording_id;
-}
-
-boost::json::string get_string_from_json_object(boost::json::object o,
-                                                const std::string& key) {
-  if (auto p = o[key].if_string()) {
-    return *p;
-  }
-  throw std::runtime_error(fmt::format("o[{}].if_string() failed", key));
-}
-
-double get_double_from_json_object(boost::json::object o,
-                                   const std::string& key) {
-  if (o[key].is_number()) {
-    boost::json::error_code ec;
-    auto value = o[key].to_number<double>(ec);
-    if (ec) {
-      throw std::runtime_error(
-          fmt::format("o[{}].to_number() failed: {}", key, ec.message()));
-    }
-    return value;
-  }
-  throw std::runtime_error(fmt::format("o[{}] is not number", key));
 }
 
 Metadata parse_metadata(const std::string& filename) {
