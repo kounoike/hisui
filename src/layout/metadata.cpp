@@ -164,6 +164,15 @@ void Metadata::prepare() {
     throw std::out_of_range(
         fmt::format("height{} is too small", m_resolution.height));
   }
+
+  if (m_bitrate == 0) {
+    // TODO(haruyama): bitrate の初期値
+    m_bitrate = m_resolution.width * m_resolution.height / 300;
+    if (m_bitrate < 200) {
+      m_bitrate = 200;
+    }
+  }
+
   for (const auto& f : m_audio_source_filenames) {
     auto archive = parse_archive(f);
     m_audio_archives.push_back(archive);
