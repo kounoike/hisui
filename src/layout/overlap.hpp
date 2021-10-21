@@ -16,7 +16,7 @@ struct OverlapSourceIntervalsParameters {
 };
 
 struct MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals {
-  std::uint64_t max_number_of_overlap;
+  std::uint32_t max_number_of_overlap;
   std::uint64_t max_end_time;
   std::vector<std::pair<std::uint64_t, std::uint64_t>> trim_intervals;
 };

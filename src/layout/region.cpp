@@ -15,7 +15,7 @@ RegionInformation Region::getInfomation() const {
   return {.position = m_pos, .resolution = m_resolution};
 }
 
-std::int64_t Region::getZPos() const {
+std::int32_t Region::getZPos() const {
   return m_z_pos;
 }
 

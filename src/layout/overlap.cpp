@@ -39,8 +39,8 @@ MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_source_intervals(
 
   std::vector<std::pair<std::uint64_t, std::uint64_t>> trim_intervals;
 
-  std::uint64_t count = 0;
-  std::uint64_t ret = 0;
+  std::uint32_t count = 0;
+  std::uint32_t ret = 0;
   std::uint64_t trim_start = 0;
   std::uint64_t max_end_time = 0;
   for (const auto& d : data) {
@@ -61,7 +61,9 @@ MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_source_intervals(
   }
 
   return {.max_number_of_overlap =
-              params.reuse == Reuse::None ? std::size(params.sources) : ret,
+              params.reuse == Reuse::None
+                  ? static_cast<std::uint32_t>(std::size(params.sources))
+                  : ret,
           .max_end_time = max_end_time,
           .trim_intervals = trim_intervals};
 }

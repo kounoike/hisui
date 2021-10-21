@@ -99,8 +99,8 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
 
   std::smatch m;
   if (std::regex_match(resolution, m, std::regex(R"((\d+)x(\d+))"))) {
-    m_resolution.width = std::stoull(m[1].str());
-    m_resolution.height = std::stoull(m[2].str());
+    m_resolution.width = static_cast<std::uint32_t>(std::stoul(m[1].str()));
+    m_resolution.height = static_cast<std::uint32_t>(std::stoul(m[2].str()));
   } else {
     throw std::invalid_argument(
         fmt::format("invalid resolution: {}", resolution));
@@ -286,25 +286,25 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
 
   RegionParameters params{
       .name = name,
-      .pos{.x = static_cast<std::uint64_t>(
+      .pos{.x = static_cast<std::uint32_t>(
                hisui::util::get_double_from_json_object_with_default(
                    jo, "x_pos", 0)),
-           .y = static_cast<std::uint64_t>(
+           .y = static_cast<std::uint32_t>(
                hisui::util::get_double_from_json_object_with_default(
                    jo, "y_pos", 0))},
-      .z_pos = static_cast<std::int64_t>(
+      .z_pos = static_cast<std::int32_t>(
           hisui::util::get_double_from_json_object_with_default(jo, "z_pos",
                                                                 0)),
-      .resolution{.width = static_cast<std::uint64_t>(
+      .resolution{.width = static_cast<std::uint32_t>(
                       hisui::util::get_double_from_json_object_with_default(
                           jo, "width", 0)),
-                  .height = static_cast<std::uint64_t>(
+                  .height = static_cast<std::uint32_t>(
                       hisui::util::get_double_from_json_object_with_default(
                           jo, "height", 0))},
-      .max_columns = static_cast<std::uint64_t>(
+      .max_columns = static_cast<std::uint32_t>(
           hisui::util::get_double_from_json_object_with_default(
               jo, "max_columns", 0)),
-      .max_rows = static_cast<std::uint64_t>(
+      .max_rows = static_cast<std::uint32_t>(
           hisui::util::get_double_from_json_object_with_default(jo, "max_rows",
                                                                 0)),
       .cells_excluded = cells_excluded,

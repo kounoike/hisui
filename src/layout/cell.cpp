@@ -70,7 +70,7 @@ LengthAndPositions calc_cell_length_and_positions(
   auto allLength = params.region_length -
                    (params.number_of_cells + 1) * params.min_frame_length;
   auto length = ((allLength / params.number_of_cells) >> 2) << 2;
-  std::vector<std::uint64_t> positions;
+  std::vector<std::uint32_t> positions;
   for (std::uint64_t i = 0; i < params.number_of_cells; ++i) {
     positions.emplace_back(params.min_frame_length * (i + 1) + length * i);
   }

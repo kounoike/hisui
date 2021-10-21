@@ -28,10 +28,10 @@ struct RegionInformation {
 struct RegionParameters {
   const std::string name;
   const Position pos;
-  const std::int64_t z_pos;
+  const std::int32_t z_pos;
   const Resolution resolution;
-  const std::uint64_t max_columns;
-  const std::uint64_t max_rows;
+  const std::uint32_t max_columns;
+  const std::uint32_t max_rows;
   const std::vector<std::uint64_t>& cells_excluded = {};
   const Reuse reuse;
   const std::vector<std::string>& video_sources = {};
@@ -52,7 +52,7 @@ class Region {
 
   void dump() const;
   RegionInformation getInfomation() const;
-  std::int64_t getZPos() const;
+  std::int32_t getZPos() const;
   const RegionPrepareResult prepare(const RegionPrepareParameters&);
   void substructTrimIntervals(const TrimIntervals&);
   std::uint64_t getMaxEndTime() const;
@@ -60,10 +60,10 @@ class Region {
  private:
   std::string m_name;
   Position m_pos;
-  std::int64_t m_z_pos;
+  std::int32_t m_z_pos;
   Resolution m_resolution;
-  std::uint64_t m_max_columns;
-  std::uint64_t m_max_rows;
+  std::uint32_t m_max_columns;
+  std::uint32_t m_max_rows;
   std::vector<std::uint64_t> m_cells_excluded;
   Reuse m_reuse;
   std::vector<std::string> m_video_source_filenames;
