@@ -20,11 +20,6 @@
 
 namespace hisui::layout {
 
-enum struct ContainerFormat {
-  WebM,
-  MP4,
-};
-
 struct ParseRegionParameters {};
 
 class Metadata {
@@ -32,13 +27,14 @@ class Metadata {
   Metadata(const std::string& file_path, const boost::json::value& jv);
   void dump() const;
   void prepare();
+  void copyToConfig(hisui::Config*) const;
 
  private:
   std::filesystem::path m_path;
 
   std::vector<std::string> m_audio_source_filenames;
   std::uint64_t m_bitrate;
-  ContainerFormat m_format;
+  hisui::config::OutContainer m_format;
   Resolution m_resolution;
   bool m_trim;
 

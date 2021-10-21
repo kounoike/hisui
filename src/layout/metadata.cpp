@@ -44,7 +44,7 @@ void Metadata::parseVideoLayout(boost::json::object j) {
 
 void Metadata::dump() const {
   spdlog::debug("format: {}",
-                m_format == ContainerFormat::MP4 ? "mp4" : "webm");
+                m_format == hisui::config::OutContainer::MP4 ? "mp4" : "webm");
   spdlog::debug("bitrate: {}", m_bitrate);
   spdlog::debug("resolution: {}x{}", m_resolution.width, m_resolution.height);
   spdlog::debug("trim: {}", m_trim);
@@ -87,9 +87,9 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
   auto format = hisui::util::get_string_from_json_object_with_default(
       j, "format", "webm");
   if (format == "mp4") {
-    m_format = ContainerFormat::MP4;
+    m_format = hisui::config::OutContainer::MP4;
   } else if (format == "webm") {
-    m_format = ContainerFormat::WebM;
+    m_format = hisui::config::OutContainer::WebM;
   } else {
     throw std::invalid_argument(fmt::format("invalid format: {}", format));
   }
