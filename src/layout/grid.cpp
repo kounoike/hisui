@@ -9,9 +9,9 @@ namespace hisui::layout {
 
 GridDimension calc_grid_dimension_unconstrained_grid(
     const CalcGridDimensionParameters& params) {
-  auto columns = static_cast<std::uint64_t>(
+  auto columns = static_cast<std::uint32_t>(
       std::ceil(std::sqrt(params.number_of_sources)));
-  auto rows = static_cast<std::uint64_t>(
+  auto rows = static_cast<std::uint32_t>(
       std::ceil(static_cast<double>(params.number_of_sources) /
                 static_cast<double>(columns)));
   return {.columns = columns, .rows = rows};
@@ -23,7 +23,7 @@ GridDimension calc_grid_dimension_unconstrained_dimension_rows(
     return calc_grid_dimension_unconstrained_grid(params);
   }
   auto columns = params.max_columns;
-  auto rows = static_cast<std::uint64_t>(
+  auto rows = static_cast<std::uint32_t>(
       std::ceil(static_cast<double>(params.number_of_sources) /
                 static_cast<double>(columns)));
   return {.columns = columns, .rows = rows};
@@ -35,7 +35,7 @@ GridDimension calc_grid_dimension_unconstrained_dimension_columns(
     return calc_grid_dimension_unconstrained_grid(params);
   }
   auto rows = params.max_rows;
-  auto columns = static_cast<std::uint64_t>(
+  auto columns = static_cast<std::uint32_t>(
       std::ceil(static_cast<double>(params.number_of_sources) /
                 static_cast<double>(rows)));
   return {.columns = columns, .rows = rows};
@@ -49,14 +49,14 @@ GridDimension calc_grid_dimension_constrained_grid(
   if (params.max_rows >= params.max_columns) {
     auto columns = std::min(params.number_of_sources, params.max_columns);
     auto rows = std::min(params.max_rows,
-                         static_cast<std::uint64_t>(std::ceil(
+                         static_cast<std::uint32_t>(std::ceil(
                              static_cast<double>(params.number_of_sources) /
                              static_cast<double>(columns))));
     return {.columns = columns, .rows = rows};
   }
   auto rows = std::min(params.number_of_sources, params.max_rows);
   auto columns = std::min(params.max_columns,
-                          static_cast<std::uint64_t>(std::ceil(
+                          static_cast<std::uint32_t>(std::ceil(
                               static_cast<double>(params.number_of_sources) /
                               static_cast<double>(rows))));
   return {.columns = columns, .rows = rows};
@@ -90,7 +90,7 @@ std::ostream& operator<<(std::ostream& os, const GridDimension& gd) {
   return os;
 }
 
-std::uint64_t add_number_of_excluded_cells(
+std::uint32_t add_number_of_excluded_cells(
     const AddNumberOfExcludedCellsParameters& params) {
   if (std::empty(params.cells_excluded)) {
     return params.number_of_sources;

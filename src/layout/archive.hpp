@@ -22,8 +22,8 @@ class Archive {
 
   std::filesystem::path m_file_path;
   std::string m_connection_id;
-  std::uint64_t m_start_time;
-  std::uint64_t m_stop_time;
+  double m_start_time;
+  double m_stop_time;
 };
 
 std::shared_ptr<Archive> parse_archive(const std::string&);

@@ -70,7 +70,7 @@ LengthAndPositions calc_cell_length_and_positions(
   auto allLength = params.region_length -
                    (params.number_of_cells + 1) * params.min_frame_length;
   auto length = ((allLength / params.number_of_cells) >> 2) << 2;
-  std::vector<std::uint64_t> positions;
+  std::vector<std::uint32_t> positions;
   for (std::uint64_t i = 0; i < params.number_of_cells; ++i) {
     positions.emplace_back(params.min_frame_length * (i + 1) + length * i);
   }
@@ -109,7 +109,7 @@ bool Cell::hasStatus(const CellStatus status) {
 void Cell::setSource(std::shared_ptr<VideoSource> source) {
   m_status = CellStatus::Used;
   m_source = source;
-  m_end_time = source->interval.end_time;
+  m_end_time = source->encoding_interval.getUpper();
 }
 
 void Cell::resetSource(const std::uint64_t time) {

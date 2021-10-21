@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <stdexcept>
 
+#include "constants.hpp"
 #include "layout/overlap.hpp"
 #include "layout/source.hpp"
 
@@ -15,7 +16,7 @@ RegionInformation Region::getInfomation() const {
   return {.position = m_pos, .resolution = m_resolution};
 }
 
-std::int64_t Region::getZPos() const {
+std::int32_t Region::getZPos() const {
   return m_z_pos;
 }
 
@@ -79,9 +80,10 @@ const RegionPrepareResult Region::prepare(
   }
 
   std::vector<SourceInterval> source_intervals;
-  std::transform(std::begin(m_video_sources), std::end(m_video_sources),
-                 std::back_inserter(source_intervals),
-                 [](const auto& s) -> SourceInterval { return s->interval; });
+  std::transform(
+      std::begin(m_video_sources), std::end(m_video_sources),
+      std::back_inserter(source_intervals),
+      [](const auto& s) -> SourceInterval { return s->source_interval; });
   auto overlap_result =
       overlap_source_intervals({.sources = source_intervals, .reuse = m_reuse});
 
@@ -103,7 +105,7 @@ const RegionPrepareResult Region::prepare(
   return {.trim_intervals = overlap_result.trim_intervals};
 }
 
-std::uint64_t Region::getMaxEndTime() const {
+double Region::getMaxEndTime() const {
   return m_max_end_time;
 }
 
@@ -161,7 +163,7 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
 
   if (it_min != std::end(cells)) {
     if ((*it_min)->hasStatus(CellStatus::Used) &&
-        (*it_min)->getEndTime() < video_source->interval.end_time) {
+        (*it_min)->getEndTime() < video_source->encoding_interval.getUpper()) {
       (*it_min)->setSource(video_source);
     }
   }
@@ -198,9 +200,19 @@ void Region::dump() const {
     for (const auto& a : m_video_sources) {
       spdlog::debug("    file_path: {}", a->file_path.string());
       spdlog::debug("    connection_id: {}", a->connection_id);
-      spdlog::debug("    start_time: {}", a->interval.start_time);
-      spdlog::debug("    end_time: {}", a->interval.end_time);
+      spdlog::debug("    start_time: {}", a->source_interval.start_time);
+      spdlog::debug("    end_time: {}", a->source_interval.end_time);
     }
+  }
+}
+
+void Region::setEncodingInterval() {
+  for (auto& s : m_video_sources) {
+    s->encoding_interval.set(
+        static_cast<std::uint64_t>(std::floor(s->source_interval.start_time *
+                                              hisui::Constants::NANO_SECOND)),
+        static_cast<std::uint64_t>(std::ceil(s->source_interval.end_time *
+                                             hisui::Constants::NANO_SECOND)));
   }
 }
 

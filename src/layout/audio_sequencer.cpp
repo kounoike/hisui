@@ -21,8 +21,10 @@ AudioSequencer::AudioSequencer(
     m_sequence.push_back(
         {source->source,
          hisui::util::Interval(
-             source->interval.start_time * hisui::Constants::PCM_SAMPLE_RATE,
-             source->interval.end_time * hisui::Constants::PCM_SAMPLE_RATE)});
+             static_cast<std::uint64_t>(source->source_interval.start_time *
+                                        hisui::Constants::PCM_SAMPLE_RATE),
+             static_cast<std::uint64_t>(source->source_interval.end_time *
+                                        hisui::Constants::PCM_SAMPLE_RATE))});
   }
 }
 

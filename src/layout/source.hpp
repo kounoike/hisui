@@ -8,12 +8,13 @@
 #include <vector>
 
 #include "audio/source.hpp"
+#include "util/interval.hpp"
 #include "video/source.hpp"
 
 namespace hisui::layout {
 
 struct TrimIntervals {
-  std::vector<std::pair<std::uint64_t, std::uint64_t>> trim_intervals;
+  std::vector<std::pair<double, double>> trim_intervals;
 };
 
 bool operator==(TrimIntervals const& left, TrimIntervals const& right);
@@ -21,8 +22,8 @@ bool operator==(TrimIntervals const& left, TrimIntervals const& right);
 std::ostream& operator<<(std::ostream& os, const TrimIntervals&);
 
 struct SourceInterval {
-  std::uint64_t start_time;
-  std::uint64_t end_time;
+  double start_time;
+  double end_time;
 };
 
 bool operator==(SourceInterval const& left, SourceInterval const& right);
@@ -32,8 +33,8 @@ std::ostream& operator<<(std::ostream& os, const SourceInterval&);
 struct SourceParameters {
   const std::filesystem::path& file_path;
   const std::string& connection_id;
-  const std::uint64_t start_time;
-  const std::uint64_t end_time;
+  const double start_time;
+  const double end_time;
 };
 
 struct Source {
@@ -41,13 +42,14 @@ struct Source {
   virtual ~Source() {}
   std::filesystem::path file_path;
   std::string connection_id;
-  SourceInterval interval;
+  SourceInterval source_interval;
+  hisui::util::Interval encoding_interval{0, 0};
   void substructTrimIntervals(const TrimIntervals&);
 };
 
 struct SubstructTrimIntervalsParameters {
   const SourceInterval& interval;
-  const std::vector<std::pair<std::uint64_t, std::uint64_t>>& trim_intervals;
+  const std::vector<std::pair<double, double>>& trim_intervals;
 };
 
 SourceInterval substruct_trim_intervals(

@@ -11,8 +11,8 @@
 namespace hisui::layout {
 
 struct Position {
-  std::uint64_t x = 0;
-  std::uint64_t y = 0;
+  std::uint32_t x = 0;
+  std::uint32_t y = 0;
 };
 
 bool operator==(Position const& left, Position const& right);
@@ -20,8 +20,8 @@ bool operator==(Position const& left, Position const& right);
 std::ostream& operator<<(std::ostream& os, const Position&);
 
 struct Resolution {
-  std::uint64_t width = 0;
-  std::uint64_t height = 0;
+  std::uint32_t width = 0;
+  std::uint32_t height = 0;
 };
 
 bool operator==(Resolution const& left, Resolution const& right);
@@ -61,14 +61,14 @@ class Cell {
 };
 
 struct CalcCellLengthAndPositions {
-  const std::uint64_t number_of_cells;
-  const std::uint64_t region_length;
-  const std::uint64_t min_frame_length;
+  const std::uint32_t number_of_cells;
+  const std::uint32_t region_length;
+  const std::uint32_t min_frame_length;
 };
 
 struct LengthAndPositions {
-  std::uint64_t length;
-  std::vector<std::uint64_t> positions;
+  std::uint32_t length;
+  std::vector<std::uint32_t> positions;
 };
 
 bool operator==(LengthAndPositions const& left,
@@ -82,8 +82,8 @@ LengthAndPositions calc_cell_length_and_positions(
 struct CalcCellResolutionAndPositions {
   const GridDimension grid_dimension;
   const Resolution region_resolution;
-  const std::uint64_t min_frame_width = 1;
-  const std::uint64_t min_frame_height = 1;
+  const std::uint32_t min_frame_width = 1;
+  const std::uint32_t min_frame_height = 1;
 };
 
 struct ResolutionAndPositions {

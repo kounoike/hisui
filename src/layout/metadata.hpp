@@ -28,8 +28,9 @@ class Metadata {
   void dump() const;
   void prepare();
   void copyToConfig(hisui::Config*) const;
-  std::uint64_t getMaxEndTime() const;
+  double getMaxEndTime() const;
   std::vector<std::shared_ptr<AudioSource>> getAudioSources() const;
+  std::vector<std::shared_ptr<Region>> getRegions() const;
   Resolution getResolution() const;
   void resetPath() const;
 
@@ -45,8 +46,8 @@ class Metadata {
 
   std::vector<std::shared_ptr<Archive>> m_audio_archives;
   std::vector<std::shared_ptr<AudioSource>> m_audio_sources;
-  std::uint64_t m_audio_max_end_time;
-  std::uint64_t m_max_end_time;
+  double m_audio_max_end_time;
+  double m_max_end_time;
   std::vector<std::shared_ptr<Region>> m_regions;
 
   void parseVideoLayout(boost::json::object j);

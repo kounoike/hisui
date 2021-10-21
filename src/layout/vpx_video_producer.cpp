@@ -23,10 +23,14 @@ VPXVideoProducer::VPXVideoProducer(const hisui::Config& t_config,
                                    const std::uint64_t timescale)
     : VideoProducer({.show_progress_bar = t_config.show_progress_bar}) {
   auto resolution = t_metadata.getResolution();
-  hisui::video::VPXEncoderConfig vpx_config(
-      static_cast<std::uint32_t>(resolution.width),
-      static_cast<std::uint32_t>(resolution.height), t_config);
+  hisui::video::VPXEncoderConfig vpx_config(resolution.width, resolution.height,
+                                            t_config);
 
+  auto regions = t_metadata.getRegions();
+  for (auto& r : regions) {
+    r->setEncodingInterval();
+  }
+  // TODO(haruyama): Cell の設定
   // TODO(haruyama): composer の設定
 
   m_encoder =

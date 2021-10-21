@@ -28,10 +28,10 @@ struct RegionInformation {
 struct RegionParameters {
   const std::string name;
   const Position pos;
-  const std::int64_t z_pos;
+  const std::int32_t z_pos;
   const Resolution resolution;
-  const std::uint64_t max_columns;
-  const std::uint64_t max_rows;
+  const std::uint32_t max_columns;
+  const std::uint32_t max_rows;
   const std::vector<std::uint64_t>& cells_excluded = {};
   const Reuse reuse;
   const std::vector<std::string>& video_sources = {};
@@ -43,7 +43,7 @@ struct RegionPrepareParameters {
 };
 
 struct RegionPrepareResult {
-  std::vector<std::pair<std::uint64_t, std::uint64_t>> trim_intervals;
+  std::vector<std::pair<double, double>> trim_intervals;
 };
 
 class Region {
@@ -52,18 +52,19 @@ class Region {
 
   void dump() const;
   RegionInformation getInfomation() const;
-  std::int64_t getZPos() const;
+  std::int32_t getZPos() const;
   const RegionPrepareResult prepare(const RegionPrepareParameters&);
   void substructTrimIntervals(const TrimIntervals&);
-  std::uint64_t getMaxEndTime() const;
+  double getMaxEndTime() const;
+  void setEncodingInterval();
 
  private:
   std::string m_name;
   Position m_pos;
-  std::int64_t m_z_pos;
+  std::int32_t m_z_pos;
   Resolution m_resolution;
-  std::uint64_t m_max_columns;
-  std::uint64_t m_max_rows;
+  std::uint32_t m_max_columns;
+  std::uint32_t m_max_rows;
   std::vector<std::uint64_t> m_cells_excluded;
   Reuse m_reuse;
   std::vector<std::string> m_video_source_filenames;
@@ -74,7 +75,7 @@ class Region {
   std::vector<std::shared_ptr<Archive>> m_video_archives;
   std::vector<std::shared_ptr<VideoSource>> m_video_sources;
   std::vector<std::shared_ptr<Cell>> m_cells;
-  std::uint64_t m_max_end_time;
+  double m_max_end_time;
 };
 
 struct SetVideoSourceToCells {

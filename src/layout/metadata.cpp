@@ -59,8 +59,8 @@ void Metadata::dump() const {
     for (const auto& a : m_audio_sources) {
       spdlog::debug("    file_path: {}", a->file_path.string());
       spdlog::debug("    connection_id: {}", a->connection_id);
-      spdlog::debug("    start_time: {}", a->interval.start_time);
-      spdlog::debug("    end_time: {}", a->interval.end_time);
+      spdlog::debug("    start_time: {}", a->source_interval.start_time);
+      spdlog::debug("    end_time: {}", a->source_interval.end_time);
     }
     spdlog::debug("audio_max_end_time: {}", m_audio_max_end_time);
     spdlog::debug("max_end_time: {}", m_max_end_time);
@@ -99,8 +99,8 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
 
   std::smatch m;
   if (std::regex_match(resolution, m, std::regex(R"((\d+)x(\d+))"))) {
-    m_resolution.width = std::stoull(m[1].str());
-    m_resolution.height = std::stoull(m[2].str());
+    m_resolution.width = static_cast<std::uint32_t>(std::stoul(m[1].str()));
+    m_resolution.height = static_cast<std::uint32_t>(std::stoul(m[2].str()));
   } else {
     throw std::invalid_argument(
         fmt::format("invalid resolution: {}", resolution));
@@ -141,9 +141,9 @@ Metadata parse_metadata(const std::string& filename) {
 
   spdlog::debug("not prepared");
 
-  // metadata.dump();
-
   metadata.prepare();
+
+  metadata.dump();
 
   spdlog::debug("prepared");
 
@@ -185,14 +185,14 @@ void Metadata::prepare() {
   }
 
   std::vector<SourceInterval> audio_source_intervals;
-  std::transform(std::begin(m_audio_sources), std::end(m_audio_sources),
-                 std::back_inserter(audio_source_intervals),
-                 [](const auto& s) -> SourceInterval { return s->interval; });
+  std::transform(
+      std::begin(m_audio_sources), std::end(m_audio_sources),
+      std::back_inserter(audio_source_intervals),
+      [](const auto& s) -> SourceInterval { return s->source_interval; });
   auto audio_overlap_result = overlap_source_intervals(
       {.sources = audio_source_intervals, .reuse = Reuse::None});
 
-  std::list<std::vector<std::pair<std::uint64_t, std::uint64_t>>>
-      list_of_trim_intervals;
+  std::list<std::vector<std::pair<double, double>>> list_of_trim_intervals;
   list_of_trim_intervals.push_back(audio_overlap_result.trim_intervals);
 
   for (const auto& region : m_regions) {
@@ -206,7 +206,7 @@ void Metadata::prepare() {
     spdlog::debug("    final trim_interval: [{}, {}]", i.first, i.second);
   }
 
-  std::vector<std::pair<std::uint64_t, std::uint64_t>> trim_intervals{};
+  std::vector<std::pair<double, double>> trim_intervals{};
   if (m_trim) {
     trim_intervals = overlap_trim_intervals_result.trim_intervals;
   } else {
@@ -286,25 +286,25 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
 
   RegionParameters params{
       .name = name,
-      .pos{.x = static_cast<std::uint64_t>(
+      .pos{.x = static_cast<std::uint32_t>(
                hisui::util::get_double_from_json_object_with_default(
                    jo, "x_pos", 0)),
-           .y = static_cast<std::uint64_t>(
+           .y = static_cast<std::uint32_t>(
                hisui::util::get_double_from_json_object_with_default(
                    jo, "y_pos", 0))},
-      .z_pos = static_cast<std::int64_t>(
+      .z_pos = static_cast<std::int32_t>(
           hisui::util::get_double_from_json_object_with_default(jo, "z_pos",
                                                                 0)),
-      .resolution{.width = static_cast<std::uint64_t>(
+      .resolution{.width = static_cast<std::uint32_t>(
                       hisui::util::get_double_from_json_object_with_default(
                           jo, "width", 0)),
-                  .height = static_cast<std::uint64_t>(
+                  .height = static_cast<std::uint32_t>(
                       hisui::util::get_double_from_json_object_with_default(
                           jo, "height", 0))},
-      .max_columns = static_cast<std::uint64_t>(
+      .max_columns = static_cast<std::uint32_t>(
           hisui::util::get_double_from_json_object_with_default(
               jo, "max_columns", 0)),
-      .max_rows = static_cast<std::uint64_t>(
+      .max_rows = static_cast<std::uint32_t>(
           hisui::util::get_double_from_json_object_with_default(jo, "max_rows",
                                                                 0)),
       .cells_excluded = cells_excluded,
@@ -325,7 +325,7 @@ void Metadata::copyToConfig(hisui::Config* config) const {
   }
 }
 
-std::uint64_t Metadata::getMaxEndTime() const {
+double Metadata::getMaxEndTime() const {
   return m_max_end_time;
 }
 
@@ -335,6 +335,10 @@ std::vector<std::shared_ptr<AudioSource>> Metadata::getAudioSources() const {
 
 Resolution Metadata::getResolution() const {
   return m_resolution;
+}
+
+std::vector<std::shared_ptr<Region>> Metadata::getRegions() const {
+  return m_regions;
 }
 
 }  // namespace hisui::layout

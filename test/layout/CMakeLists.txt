@@ -29,6 +29,7 @@ add_executable(layout_test
     ../../src/layout/overlap.cpp
     # ../../src/layout/region.cpp
     ../../src/layout/source.cpp
+    ../../src/util/interval.cpp
     )
 
 set_target_properties(layout_test PROPERTIES CXX_STANDARD 20 C_STANDARD 11)

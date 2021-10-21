@@ -78,10 +78,8 @@ Archive::Archive(const std::filesystem::path& t_path,
 
   m_connection_id =
       hisui::util::get_string_from_json_object(j, "connection_id");
-  m_start_time = static_cast<std::uint64_t>(
-      hisui::util::get_double_from_json_object(j, "start_time"));
-  m_stop_time = static_cast<std::uint64_t>(
-      hisui::util::get_double_from_json_object(j, "stop_time"));
+  m_start_time = hisui::util::get_double_from_json_object(j, "start_time");
+  m_stop_time = hisui::util::get_double_from_json_object(j, "stop_time");
 
   auto filename = hisui::util::get_string_from_json_object(j, "filename");
   auto filename_result = find_file(std::string(filename));

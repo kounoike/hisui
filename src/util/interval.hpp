@@ -11,6 +11,9 @@ class Interval {
   bool isIn(const std::uint64_t) const;
   std::uint64_t getSubstructLower(const std::uint64_t) const;
 
+  void set(const std::uint64_t, const std::uint64_t);
+  std::uint64_t getUpper() const;
+
  private:
   std::uint64_t m_lower;
   std::uint64_t m_upper;

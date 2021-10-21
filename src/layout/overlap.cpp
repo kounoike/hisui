@@ -27,7 +27,7 @@ std::ostream& operator<<(
 
 MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_source_intervals(
     const OverlapSourceIntervalsParameters& params) {
-  std::vector<std::pair<std::uint64_t, std::uint64_t>> data;
+  std::vector<std::pair<double, std::uint64_t>> data;
 
   for (const auto& s : params.sources) {
     /* for [start_time, end_time}: data(end_time).second < data(start_time).second */
@@ -37,12 +37,12 @@ MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_source_intervals(
 
   sort(std::begin(data), std::end(data));
 
-  std::vector<std::pair<std::uint64_t, std::uint64_t>> trim_intervals;
+  std::vector<std::pair<double, double>> trim_intervals;
 
-  std::uint64_t count = 0;
-  std::uint64_t ret = 0;
-  std::uint64_t trim_start = 0;
-  std::uint64_t max_end_time = 0;
+  std::uint32_t count = 0;
+  std::uint32_t ret = 0;
+  double trim_start = 0;
+  double max_end_time = 0;
   for (const auto& d : data) {
     if (d.second == 0) {
       --count;
@@ -61,15 +61,17 @@ MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_source_intervals(
   }
 
   return {.max_number_of_overlap =
-              params.reuse == Reuse::None ? std::size(params.sources) : ret,
+              params.reuse == Reuse::None
+                  ? static_cast<std::uint32_t>(std::size(params.sources))
+                  : ret,
           .max_end_time = max_end_time,
           .trim_intervals = trim_intervals};
 }
 
-std::vector<std::pair<std::uint64_t, std::uint64_t>> overlap_2_trim_intervals(
-    const std::vector<std::pair<std::uint64_t, std::uint64_t>>& l,
-    const std::vector<std::pair<std::uint64_t, std::uint64_t>>& r) {
-  std::vector<std::pair<std::uint64_t, std::uint64_t>> ret;
+std::vector<std::pair<double, double>> overlap_2_trim_intervals(
+    const std::vector<std::pair<double, double>>& l,
+    const std::vector<std::pair<double, double>>& r) {
+  std::vector<std::pair<double, double>> ret;
   std::size_t li = 0;
   std::size_t ri = 0;
 
