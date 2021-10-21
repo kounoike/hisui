@@ -22,7 +22,6 @@ enum Reuse {
 
 struct RegionInformation {
   const Position& position;
-  const std::int64_t z_pos;
   const Resolution& resolution;
 };
 
@@ -53,6 +52,7 @@ class Region {
 
   void dump() const;
   RegionInformation getInfomation() const;
+  std::int64_t getZPos() const;
   const RegionPrepareResult prepare(const RegionPrepareParameters&);
   void substructTrimIntervals(const TrimIntervals&);
   std::uint64_t getMaxEndTime() const;

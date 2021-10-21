@@ -12,7 +12,11 @@
 namespace hisui::layout {
 
 RegionInformation Region::getInfomation() const {
-  return {.position = m_pos, .z_pos = m_z_pos, .resolution = m_resolution};
+  return {.position = m_pos, .resolution = m_resolution};
+}
+
+std::int64_t Region::getZPos() const {
+  return m_z_pos;
 }
 
 const RegionPrepareResult Region::prepare(
