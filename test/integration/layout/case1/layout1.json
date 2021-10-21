@@ -5,7 +5,7 @@
   ],
   "audio_sources_excluded": [],
   "bitrate": 1000,
-  "format": "mp4",
+  "format": "webm",
   "resolution": "640x480",
   "trim": true,
   "video_layout": {

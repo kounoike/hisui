@@ -44,7 +44,7 @@ void Metadata::parseVideoLayout(boost::json::object j) {
 
 void Metadata::dump() const {
   spdlog::debug("format: {}",
-                m_format == ContainerFormat::MP4 ? "mp4" : "webm");
+                m_format == hisui::config::OutContainer::MP4 ? "mp4" : "webm");
   spdlog::debug("bitrate: {}", m_bitrate);
   spdlog::debug("resolution: {}x{}", m_resolution.width, m_resolution.height);
   spdlog::debug("trim: {}", m_trim);
@@ -72,7 +72,7 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
   if (m_path.is_relative()) {
     m_path = std::filesystem::absolute(m_path);
   }
-  const auto current_path = std::filesystem::current_path();
+  m_working_path = std::filesystem::absolute(std::filesystem::current_path());
   std::filesystem::current_path(m_path.parent_path());
 
   boost::json::object j;
@@ -87,9 +87,9 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
   auto format = hisui::util::get_string_from_json_object_with_default(
       j, "format", "webm");
   if (format == "mp4") {
-    m_format = ContainerFormat::MP4;
+    m_format = hisui::config::OutContainer::MP4;
   } else if (format == "webm") {
-    m_format = ContainerFormat::WebM;
+    m_format = hisui::config::OutContainer::WebM;
   } else {
     throw std::invalid_argument(fmt::format("invalid format: {}", format));
   }
@@ -141,15 +141,19 @@ Metadata parse_metadata(const std::string& filename) {
 
   spdlog::debug("not prepared");
 
-  metadata.dump();
+  // metadata.dump();
 
   metadata.prepare();
 
   spdlog::debug("prepared");
 
-  metadata.dump();
+  metadata.resetPath();
 
   return metadata;
+}
+
+void Metadata::resetPath() const {
+  std::filesystem::current_path(m_working_path);
 }
 
 void Metadata::prepare() {
@@ -164,6 +168,15 @@ void Metadata::prepare() {
     throw std::out_of_range(
         fmt::format("height{} is too small", m_resolution.height));
   }
+
+  if (m_bitrate == 0) {
+    // TODO(haruyama): bitrate の初期値
+    m_bitrate = m_resolution.width * m_resolution.height / 300;
+    if (m_bitrate < 200) {
+      m_bitrate = 200;
+    }
+  }
+
   for (const auto& f : m_audio_source_filenames) {
     auto archive = parse_archive(f);
     m_audio_archives.push_back(archive);
@@ -218,10 +231,9 @@ void Metadata::prepare() {
     r->substructTrimIntervals({.trim_intervals = trim_intervals});
     m_max_end_time = std::max(m_max_end_time, r->getMaxEndTime());
   }
-  std::sort(std::begin(m_regions), std::end(m_regions),
-            [](const auto& a, const auto& b) {
-              return a->getInfomation().z_pos < b->getInfomation().z_pos;
-            });
+  std::sort(
+      std::begin(m_regions), std::end(m_regions),
+      [](const auto& a, const auto& b) { return a->getZPos() < b->getZPos(); });
 }
 
 std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
@@ -302,6 +314,27 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
   };
 
   return std::make_shared<Region>(params);
+}
+
+void Metadata::copyToConfig(hisui::Config* config) const {
+  // TODO(haruyama): audio も考慮する?
+  config->out_video_bit_rate = static_cast<std::uint32_t>(m_bitrate);
+  config->out_container = m_format;
+  if (config->out_filename == "") {
+    config->in_metadata_filename = m_path.string();
+  }
+}
+
+std::uint64_t Metadata::getMaxEndTime() const {
+  return m_max_end_time;
+}
+
+std::vector<std::shared_ptr<AudioSource>> Metadata::getAudioSources() const {
+  return m_audio_sources;
+}
+
+Resolution Metadata::getResolution() const {
+  return m_resolution;
 }
 
 }  // namespace hisui::layout
