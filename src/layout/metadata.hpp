@@ -31,6 +31,7 @@ class Metadata {
   std::uint64_t getMaxEndTime() const;
   std::vector<std::shared_ptr<AudioSource>> getAudioSources() const;
   Resolution getResolution() const;
+  void resetPath() const;
 
  private:
   std::filesystem::path m_path;
@@ -40,6 +41,7 @@ class Metadata {
   hisui::config::OutContainer m_format;
   Resolution m_resolution;
   bool m_trim;
+  std::filesystem::path m_working_path;
 
   std::vector<std::shared_ptr<Archive>> m_audio_archives;
   std::vector<std::shared_ptr<AudioSource>> m_audio_sources;

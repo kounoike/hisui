@@ -72,7 +72,7 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
   if (m_path.is_relative()) {
     m_path = std::filesystem::absolute(m_path);
   }
-  const auto current_path = std::filesystem::current_path();
+  m_working_path = std::filesystem::absolute(std::filesystem::current_path());
   std::filesystem::current_path(m_path.parent_path());
 
   boost::json::object j;
@@ -141,15 +141,19 @@ Metadata parse_metadata(const std::string& filename) {
 
   spdlog::debug("not prepared");
 
-  metadata.dump();
+  // metadata.dump();
 
   metadata.prepare();
 
   spdlog::debug("prepared");
 
-  metadata.dump();
+  metadata.resetPath();
 
   return metadata;
+}
+
+void Metadata::resetPath() const {
+  std::filesystem::current_path(m_working_path);
 }
 
 void Metadata::prepare() {
