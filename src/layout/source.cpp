@@ -35,13 +35,15 @@ std::ostream& operator<<(std::ostream& os, const SourceInterval& i) {
 Source::Source(const SourceParameters& params) {
   file_path = params.file_path;
   connection_id = params.connection_id;
-  interval.start_time = params.start_time;
-  interval.end_time = params.end_time;
+  source_interval.start_time = params.start_time;
+  source_interval.end_time = params.end_time;
+  encoding_interval.set(static_cast<std::uint64_t>(params.start_time),
+                        static_cast<std::uint64_t>(params.end_time));
 }
 
 void Source::substructTrimIntervals(const TrimIntervals& params) {
-  interval = substruct_trim_intervals(
-      {.interval = interval, .trim_intervals = params.trim_intervals});
+  source_interval = substruct_trim_intervals(
+      {.interval = source_interval, .trim_intervals = params.trim_intervals});
 }
 
 SourceInterval substruct_trim_intervals(

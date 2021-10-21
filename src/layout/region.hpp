@@ -43,7 +43,7 @@ struct RegionPrepareParameters {
 };
 
 struct RegionPrepareResult {
-  std::vector<std::pair<std::uint64_t, std::uint64_t>> trim_intervals;
+  std::vector<std::pair<double, double>> trim_intervals;
 };
 
 class Region {
@@ -55,7 +55,7 @@ class Region {
   std::int32_t getZPos() const;
   const RegionPrepareResult prepare(const RegionPrepareParameters&);
   void substructTrimIntervals(const TrimIntervals&);
-  std::uint64_t getMaxEndTime() const;
+  double getMaxEndTime() const;
 
  private:
   std::string m_name;
@@ -74,7 +74,7 @@ class Region {
   std::vector<std::shared_ptr<Archive>> m_video_archives;
   std::vector<std::shared_ptr<VideoSource>> m_video_sources;
   std::vector<std::shared_ptr<Cell>> m_cells;
-  std::uint64_t m_max_end_time;
+  double m_max_end_time;
 };
 
 struct SetVideoSourceToCells {

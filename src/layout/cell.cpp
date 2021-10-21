@@ -109,7 +109,7 @@ bool Cell::hasStatus(const CellStatus status) {
 void Cell::setSource(std::shared_ptr<VideoSource> source) {
   m_status = CellStatus::Used;
   m_source = source;
-  m_end_time = source->interval.end_time;
+  m_end_time = source->encoding_interval.getUpper();
 }
 
 void Cell::resetSource(const std::uint64_t time) {
