@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <stdexcept>
 
+#include "constants.hpp"
 #include "layout/overlap.hpp"
 #include "layout/source.hpp"
 
@@ -202,6 +203,16 @@ void Region::dump() const {
       spdlog::debug("    start_time: {}", a->source_interval.start_time);
       spdlog::debug("    end_time: {}", a->source_interval.end_time);
     }
+  }
+}
+
+void Region::setEncodingInterval() {
+  for (auto& s : m_video_sources) {
+    s->encoding_interval.set(
+        static_cast<std::uint64_t>(std::floor(s->source_interval.start_time *
+                                              hisui::Constants::NANO_SECOND)),
+        static_cast<std::uint64_t>(std::ceil(s->source_interval.end_time *
+                                             hisui::Constants::NANO_SECOND)));
   }
 }
 

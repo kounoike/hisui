@@ -337,5 +337,9 @@ Resolution Metadata::getResolution() const {
   return m_resolution;
 }
 
+std::vector<std::shared_ptr<Region>> Metadata::getRegions() const {
+  return m_regions;
+}
+
 }  // namespace hisui::layout
 

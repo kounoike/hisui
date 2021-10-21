@@ -26,6 +26,11 @@ VPXVideoProducer::VPXVideoProducer(const hisui::Config& t_config,
   hisui::video::VPXEncoderConfig vpx_config(resolution.width, resolution.height,
                                             t_config);
 
+  auto regions = t_metadata.getRegions();
+  for (auto& r : regions) {
+    r->setEncodingInterval();
+  }
+  // TODO(haruyama): Cell の設定
   // TODO(haruyama): composer の設定
 
   m_encoder =

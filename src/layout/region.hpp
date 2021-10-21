@@ -56,6 +56,7 @@ class Region {
   const RegionPrepareResult prepare(const RegionPrepareParameters&);
   void substructTrimIntervals(const TrimIntervals&);
   double getMaxEndTime() const;
+  void setEncodingInterval();
 
  private:
   std::string m_name;

@@ -30,6 +30,7 @@ class Metadata {
   void copyToConfig(hisui::Config*) const;
   double getMaxEndTime() const;
   std::vector<std::shared_ptr<AudioSource>> getAudioSources() const;
+  std::vector<std::shared_ptr<Region>> getRegions() const;
   Resolution getResolution() const;
   void resetPath() const;
 
