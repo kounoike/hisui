@@ -28,6 +28,9 @@ class Metadata {
   void dump() const;
   void prepare();
   void copyToConfig(hisui::Config*) const;
+  std::uint64_t getMaxEndTime() const;
+  std::vector<std::shared_ptr<AudioSource>> getAudioSources() const;
+  Resolution getResolution() const;
 
  private:
   std::filesystem::path m_path;

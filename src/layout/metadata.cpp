@@ -318,5 +318,17 @@ void Metadata::copyToConfig(hisui::Config* config) const {
   config->out_container = m_format;
 }
 
+std::uint64_t Metadata::getMaxEndTime() const {
+  return m_max_end_time;
+}
+
+std::vector<std::shared_ptr<AudioSource>> Metadata::getAudioSources() const {
+  return m_audio_sources;
+}
+
+Resolution Metadata::getResolution() const {
+  return m_resolution;
+}
+
 }  // namespace hisui::layout
 
