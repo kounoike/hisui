@@ -11,6 +11,7 @@
 #include "layout/grid.hpp"
 #include "layout/source.hpp"
 #include "layout/video_source.hpp"
+#include "video/yuv.hpp"
 
 namespace hisui::layout {
 
@@ -49,6 +50,7 @@ struct RegionPrepareResult {
 class Region {
  public:
   explicit Region(const RegionParameters&);
+  ~Region();
 
   void dump() const;
   RegionInformation getInfomation() const;
@@ -57,6 +59,7 @@ class Region {
   void substructTrimIntervals(const TrimIntervals&);
   double getMaxEndTime() const;
   void setEncodingInterval();
+  void compose(std::vector<unsigned char>*, const std::uint64_t);
 
  private:
   std::string m_name;
@@ -76,6 +79,10 @@ class Region {
   std::vector<std::shared_ptr<VideoSource>> m_video_sources;
   std::vector<std::shared_ptr<Cell>> m_cells;
   double m_max_end_time;
+
+  std::array<unsigned char*, 3> m_planes;
+  std::array<std::size_t, 3> m_plane_sizes;
+  std::array<unsigned char, 3> m_plane_default_values;
 };
 
 struct SetVideoSourceToCells {

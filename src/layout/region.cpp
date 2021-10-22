@@ -9,6 +9,7 @@
 #include "constants.hpp"
 #include "layout/overlap.hpp"
 #include "layout/source.hpp"
+#include "video/yuv.hpp"
 
 namespace hisui::layout {
 
@@ -94,14 +95,47 @@ const RegionPrepareResult Region::prepare(
   }
 
   std::sort(std::begin(m_cells_excluded), std::end(m_cells_excluded));
+  auto max_cells = add_number_of_excluded_cells({
+      .number_of_sources = overlap_result.max_number_of_overlap,
+      .cells_excluded = m_cells_excluded,
+  });
 
-  m_grid_dimension = calc_grid_dimension(
-      {.max_columns = m_max_columns,
-       .max_rows = m_max_rows,
-       .number_of_sources = add_number_of_excluded_cells({
-           .number_of_sources = overlap_result.max_number_of_overlap,
-           .cells_excluded = m_cells_excluded,
-       })});
+  m_grid_dimension = calc_grid_dimension({.max_columns = m_max_columns,
+                                          .max_rows = m_max_rows,
+                                          .number_of_sources = max_cells});
+  auto cell_resolution_and_posiitons = calc_cell_resolution_and_positions(
+      {.grid_dimension = m_grid_dimension,
+       .region_resolution = params.resolution});
+
+  for (std::size_t i = 0; i < m_grid_dimension.rows * m_grid_dimension.columns;
+       ++i) {
+    if (i >= max_cells) {
+      break;
+    }
+    CellStatus status = CellStatus::Fresh;
+    auto it =
+        std::find(std::begin(m_cells_excluded), std::end(m_cells_excluded), i);
+    if (it != std::end(m_cells_excluded)) {
+      status = CellStatus::Excluded;
+    }
+    m_cells.push_back(std::make_shared<Cell>(
+        CellParameters{.index = i,
+                       .pos = cell_resolution_and_posiitons.positions[i],
+                       .resolution = cell_resolution_and_posiitons.resolution,
+                       .status = status}));
+  }
+
+  m_plane_sizes[0] = m_resolution.width * m_resolution.height;
+  m_plane_sizes[1] = (m_plane_sizes[0] + 3) >> 2;
+  m_plane_sizes[2] = m_plane_sizes[1];
+  m_planes[0] = new unsigned char[m_plane_sizes[0]];
+  m_planes[1] = new unsigned char[m_plane_sizes[1]];
+  m_planes[2] = new unsigned char[m_plane_sizes[2]];
+
+  m_plane_default_values[0] = 0;
+  m_plane_default_values[1] = 128;
+  m_plane_default_values[2] = 128;
+
   return {.trim_intervals = overlap_result.trim_intervals};
 }
 
@@ -213,6 +247,53 @@ void Region::setEncodingInterval() {
                                               hisui::Constants::NANO_SECOND)),
         static_cast<std::uint64_t>(std::ceil(s->source_interval.end_time *
                                              hisui::Constants::NANO_SECOND)));
+  }
+}
+
+void Region::compose(std::vector<unsigned char>* composed,
+                     const std::uint64_t t) {
+  reset_cells_source({.cells = m_cells, .time = t});
+
+  for (auto video_source : m_video_sources) {
+    if (video_source->encoding_interval.isIn(t)) {
+      set_video_source_to_cells(
+          {.video_source = video_source, .reuse = m_reuse, .cells = m_cells});
+    }
+  }
+
+  for (std::size_t p = 0; p < 3; ++p) {
+    std::fill_n(m_planes[p], m_plane_sizes[p], m_plane_default_values[p]);
+  }
+
+  for (auto& cell : m_cells) {
+    if (cell->hasStatus(CellStatus::Used)) {
+      auto yuv_image = cell->getYUV(t);
+      auto info = cell->getInformation();
+      for (std::size_t p = 0; p < 3; ++p) {
+        if (p == 0) {
+          hisui::video::overlay_yuv_planes(
+              m_planes[p], yuv_image->yuv[p], m_resolution.width, info.pos.x,
+              info.pos.y, info.resolution.width, info.resolution.height);
+        } else {
+          hisui::video::overlay_yuv_planes(
+              m_planes[p], yuv_image->yuv[p], m_resolution.width >> 1,
+              info.pos.x >> 1, info.pos.y >> 1, info.resolution.width >> 1,
+              info.resolution.height >> 1);
+        }
+      }
+    }
+  }
+
+  auto base = 0;
+  for (std::size_t p = 0; p < 3; ++p) {
+    std::copy_n(m_planes[p], m_plane_sizes[p], composed->data() + base);
+    base += m_plane_sizes[p];
+  }
+}
+
+Region::~Region() {
+  for (std::size_t p = 0; p < 3; ++p) {
+    delete[] m_planes[p];
   }
 }
 

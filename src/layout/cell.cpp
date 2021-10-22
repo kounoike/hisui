@@ -1,5 +1,7 @@
 #include "layout/cell.hpp"
 
+#include <libyuv/scale.h>
+
 #include <limits>
 #include <stdexcept>
 
@@ -58,8 +60,18 @@ Cell::Cell(const CellParameters& params)
     : m_index(params.index),
       m_pos(params.pos),
       m_resolution(params.resolution),
-      m_status(CellStatus::Fresh) {
+      m_status(params.status) {
   m_end_time = std::numeric_limits<std::uint64_t>::max();
+  if (m_status != CellStatus::Excluded) {
+    // TODO(haruyama): filtermode の指定
+    m_scaler = std::make_shared<hisui::video::PreserveAspectRatioScaler>(
+        m_resolution.width, m_resolution.height, libyuv::kFilterBox);
+  }
+}
+
+const hisui::video::YUVImage* Cell::getYUV(const std::uint64_t t) {
+  return m_scaler->scale(m_source->source->getYUV(
+      m_source->encoding_interval.getSubstructLower(t)));
 }
 
 LengthAndPositions calc_cell_length_and_positions(
@@ -132,6 +144,10 @@ void reset_cells_source(const ResetCellsSource& params) {
   for (auto cell : params.cells) {
     cell->resetSource(params.time);
   }
+}
+
+const CellInformation Cell::getInformation() const {
+  return {.pos = m_pos, .resolution = m_resolution};
 }
 
 }  // namespace hisui::layout

@@ -7,6 +7,8 @@
 
 #include "layout/grid.hpp"
 #include "layout/video_source.hpp"
+#include "video/preserve_aspect_ratio_scaler.hpp"
+#include "video/yuv.hpp"
 
 namespace hisui::layout {
 
@@ -39,6 +41,12 @@ struct CellParameters {
   const std::uint64_t index;
   const Position& pos;
   const Resolution& resolution;
+  const CellStatus status = CellStatus::Fresh;
+};
+
+struct CellInformation {
+  const Position& pos;
+  const Resolution& resolution;
 };
 
 class Cell {
@@ -50,6 +58,8 @@ class Cell {
   void setSource(std::shared_ptr<VideoSource>);
   void resetSource(const std::uint64_t);
   std::uint64_t getEndTime() const;
+  const hisui::video::YUVImage* getYUV(const std::uint64_t);
+  const CellInformation getInformation() const;
 
  private:
   std::uint64_t m_index;
@@ -58,6 +68,9 @@ class Cell {
   CellStatus m_status;
   std::shared_ptr<VideoSource> m_source;
   std::uint64_t m_end_time;
+
+  // hisui::video::YUVImage* m_scaled_image;
+  std::shared_ptr<hisui::video::PreserveAspectRatioScaler> m_scaler;
 };
 
 struct CalcCellLengthAndPositions {

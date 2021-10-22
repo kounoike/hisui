@@ -94,4 +94,17 @@ void merge_yuv_planes_from_top_left(
   }
 }
 
+void overlay_yuv_planes(unsigned char* overlayed,
+                        const unsigned char* src,
+                        const std::uint32_t base_width,
+                        const std::uint32_t src_x,
+                        const std::uint32_t src_y,
+                        const std::uint32_t src_width,
+                        const std::uint32_t src_height) {
+  for (std::uint32_t y = 0; y < src_height; ++y) {
+    std::copy_n(src + y * src_width, src_width,
+                overlayed + (src_y + y) * base_width + src_x);
+  }
+}
+
 }  // namespace hisui::video
