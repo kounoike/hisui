@@ -1,8 +1,12 @@
 #include "layout/vpx_video_producer.hpp"
 
+#include <spdlog/spdlog.h>
+
 #include <cstdint>
+#include <vector>
 
 #include <boost/rational.hpp>
+#include <progresscpp/ProgressBar.hpp>
 
 #include "config.hpp"
 #include "layout/metadata.hpp"
@@ -22,16 +26,16 @@ VPXVideoProducer::VPXVideoProducer(const hisui::Config& t_config,
                                    const Metadata& t_metadata,
                                    const std::uint64_t timescale)
     : VideoProducer({.show_progress_bar = t_config.show_progress_bar}) {
-  auto resolution = t_metadata.getResolution();
-  hisui::video::VPXEncoderConfig vpx_config(resolution.width, resolution.height,
-                                            t_config);
+  m_resolution = t_metadata.getResolution();
+  hisui::video::VPXEncoderConfig vpx_config(m_resolution.width,
+                                            m_resolution.height, t_config);
 
   auto regions = t_metadata.getRegions();
   for (auto& r : regions) {
     r->setEncodingInterval();
   }
-  // TODO(haruyama): Cell の設定
-  // TODO(haruyama): composer の設定
+  m_layout_composer = std::make_shared<Composer>(
+      ComposerParameters{.regions = regions, .resolution = m_resolution});
 
   m_encoder =
       new hisui::video::BufferVPXEncoder(&m_buffer, vpx_config, timescale);
@@ -40,6 +44,52 @@ VPXVideoProducer::VPXVideoProducer(const hisui::Config& t_config,
   m_frame_rate = t_config.out_video_frame_rate;
 }
 
-// TODO(haruyama): produce()
+void VPXVideoProducer::produce() {
+  if (isFinished()) {
+    return;
+  }
+
+  try {
+    std::vector<unsigned char> raw_image;
+
+    raw_image.resize(m_resolution.width * m_resolution.height * 3 >> 1);
+
+    const std::uint64_t max_time = static_cast<std::uint64_t>(
+        std::ceil(m_max_stop_time_offset * hisui::Constants::NANO_SECOND));
+
+    progresscpp::ProgressBar progress_bar(max_time, 60);
+
+    for (std::uint64_t t = 0, step = hisui::Constants::NANO_SECOND *
+                                     m_frame_rate.denominator() /
+                                     m_frame_rate.numerator();
+         t < max_time; t += step) {
+      m_layout_composer->compose(&raw_image, t);
+      {
+        std::lock_guard<std::mutex> lock(m_mutex_buffer);
+        m_encoder->outputImage(raw_image);
+      }
+
+      if (m_show_progress_bar) {
+        progress_bar.setTicks(t);
+        progress_bar.display();
+      }
+    }
+
+    {
+      std::lock_guard<std::mutex> lock(m_mutex_buffer);
+      m_encoder->flush();
+      m_is_finished = true;
+    }
+
+    if (m_show_progress_bar) {
+      progress_bar.setTicks(max_time);
+      progress_bar.done();
+    }
+  } catch (const std::exception& e) {
+    spdlog::error("VideoProducer::produce() failed: what={}", e.what());
+    m_is_finished = true;
+    throw;
+  }
+}
 
 }  // namespace hisui::layout

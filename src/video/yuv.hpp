@@ -38,4 +38,12 @@ void merge_yuv_planes_from_top_left(unsigned char*,
                                     const std::uint32_t,
                                     const unsigned char);
 
+void overlay_yuv_planes(unsigned char* overlayed,
+                        const unsigned char* src,
+                        const std::uint32_t base_width,
+                        const std::uint32_t src_x,
+                        const std::uint32_t src_y,
+                        const std::uint32_t src_width,
+                        const std::uint32_t src_height);
+
 }  // namespace hisui::video

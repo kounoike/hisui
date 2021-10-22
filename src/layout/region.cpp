@@ -9,11 +9,12 @@
 #include "constants.hpp"
 #include "layout/overlap.hpp"
 #include "layout/source.hpp"
+#include "video/yuv.hpp"
 
 namespace hisui::layout {
 
-RegionInformation Region::getInfomation() const {
-  return {.position = m_pos, .resolution = m_resolution};
+RegionInformation Region::getInformation() const {
+  return {.pos = m_pos, .resolution = m_resolution};
 }
 
 std::int32_t Region::getZPos() const {
@@ -94,14 +95,56 @@ const RegionPrepareResult Region::prepare(
   }
 
   std::sort(std::begin(m_cells_excluded), std::end(m_cells_excluded));
+  auto max_cells = add_number_of_excluded_cells({
+      .number_of_sources = overlap_result.max_number_of_overlap,
+      .cells_excluded = m_cells_excluded,
+  });
 
-  m_grid_dimension = calc_grid_dimension(
-      {.max_columns = m_max_columns,
-       .max_rows = m_max_rows,
-       .number_of_sources = add_number_of_excluded_cells({
-           .number_of_sources = overlap_result.max_number_of_overlap,
-           .cells_excluded = m_cells_excluded,
-       })});
+  m_grid_dimension = calc_grid_dimension({.max_columns = m_max_columns,
+                                          .max_rows = m_max_rows,
+                                          .number_of_sources = max_cells});
+  auto cell_resolution_and_posiitons = calc_cell_resolution_and_positions({
+      .grid_dimension = m_grid_dimension,
+      .region_resolution = m_resolution,
+      .is_width_frame_on_ends =
+          !(m_resolution.width == params.resolution.width),
+      .is_height_frame_on_ends =
+          !(m_resolution.height == params.resolution.height),
+  });
+
+  for (std::size_t i = 0; i < m_grid_dimension.rows * m_grid_dimension.columns;
+       ++i) {
+    if (i >= max_cells) {
+      break;
+    }
+    CellStatus status = CellStatus::Fresh;
+    auto it =
+        std::find(std::begin(m_cells_excluded), std::end(m_cells_excluded), i);
+    if (it != std::end(m_cells_excluded)) {
+      status = CellStatus::Excluded;
+    }
+    m_cells.push_back(std::make_shared<Cell>(
+        CellParameters{.index = i,
+                       .pos = cell_resolution_and_posiitons.positions[i],
+                       .resolution = cell_resolution_and_posiitons.resolution,
+                       .status = status}));
+    auto info = m_cells[i]->getInformation();
+    spdlog::debug("    cell[{}]: x: {}, y:{}, w:{}, h:{}", i, info.pos.x,
+                  info.pos.y, info.resolution.width, info.resolution.height);
+  }
+  spdlog::debug("    cell size: {}", std::size(m_cells));
+
+  m_plane_sizes[0] = m_resolution.width * m_resolution.height;
+  m_plane_sizes[1] = (m_plane_sizes[0] + 3) >> 2;
+  m_plane_sizes[2] = m_plane_sizes[1];
+
+  m_yuv_image =
+      new hisui::video::YUVImage(m_resolution.width, m_resolution.height);
+
+  m_plane_default_values[0] = 0;
+  m_plane_default_values[1] = 128;
+  m_plane_default_values[2] = 128;
+
   return {.trim_intervals = overlap_result.trim_intervals};
 }
 
@@ -214,6 +257,48 @@ void Region::setEncodingInterval() {
         static_cast<std::uint64_t>(std::ceil(s->source_interval.end_time *
                                              hisui::Constants::NANO_SECOND)));
   }
+}
+
+const hisui::video::YUVImage* Region::getYUV(const std::uint64_t t) {
+  reset_cells_source({.cells = m_cells, .time = t});
+
+  for (auto video_source : m_video_sources) {
+    if (video_source->encoding_interval.isIn(t)) {
+      set_video_source_to_cells(
+          {.video_source = video_source, .reuse = m_reuse, .cells = m_cells});
+    }
+  }
+
+  for (std::size_t p = 0; p < 3; ++p) {
+    std::fill_n(m_yuv_image->yuv[p], m_plane_sizes[p],
+                m_plane_default_values[p]);
+  }
+
+  for (auto& cell : m_cells) {
+    if (cell->hasStatus(CellStatus::Used)) {
+      auto yuv_image = cell->getYUV(t);
+      auto info = cell->getInformation();
+      for (std::size_t p = 0; p < 3; ++p) {
+        if (p == 0) {
+          hisui::video::overlay_yuv_planes(
+              m_yuv_image->yuv[p], yuv_image->yuv[p], m_resolution.width,
+              info.pos.x, info.pos.y, info.resolution.width,
+              info.resolution.height);
+        } else {
+          hisui::video::overlay_yuv_planes(
+              m_yuv_image->yuv[p], yuv_image->yuv[p], m_resolution.width >> 1,
+              info.pos.x >> 1, info.pos.y >> 1, info.resolution.width >> 1,
+              info.resolution.height >> 1);
+        }
+      }
+    }
+  }
+
+  return m_yuv_image;
+}
+
+Region::~Region() {
+  delete m_yuv_image;
 }
 
 }  // namespace hisui::layout

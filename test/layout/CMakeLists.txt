@@ -19,12 +19,12 @@ add_compile_options(
 
 add_executable(layout_test
     main.cpp
-    cell_test.cpp
+    cell_util_test.cpp
     grid_test.cpp
     overlap_test.cpp
     region_test.cpp
     source_test.cpp
-    ../../src/layout/cell.cpp
+    ../../src/layout/cell_util.cpp
     ../../src/layout/grid.cpp
     ../../src/layout/overlap.cpp
     # ../../src/layout/region.cpp

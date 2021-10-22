@@ -193,7 +193,9 @@ target_sources(hisui
     src/layout/audio_source.cpp
     src/layout/archive.cpp
     src/layout/cell.cpp
+    src/layout/cell_util.cpp
     src/layout/compose.cpp
+    src/layout/composer.cpp
     src/layout/grid.cpp
     src/layout/metadata.cpp
     src/layout/overlap.cpp
