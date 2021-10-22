@@ -41,8 +41,8 @@ void AsyncWebMMuxer::setUp() {
   } else {
     m_video_producer = new VPXVideoProducer(m_config, m_metadata);
 
-    m_context->setVideoTrack(m_video_producer->getWidth(),
-                             m_video_producer->getHeight(),
+    auto resolution = m_metadata.getResolution();
+    m_context->setVideoTrack(resolution.width, resolution.height,
                              m_video_producer->getFourcc());
   }
 

@@ -17,7 +17,7 @@
 namespace hisui::layout {
 
 struct RegionInformation {
-  const Position& position;
+  const Position& pos;
   const Resolution& resolution;
 };
 
@@ -48,13 +48,13 @@ class Region {
   ~Region();
 
   void dump() const;
-  RegionInformation getInfomation() const;
+  RegionInformation getInformation() const;
   std::int32_t getZPos() const;
   const RegionPrepareResult prepare(const RegionPrepareParameters&);
   void substructTrimIntervals(const TrimIntervals&);
   double getMaxEndTime() const;
   void setEncodingInterval();
-  void compose(std::vector<unsigned char>*, const std::uint64_t);
+  const hisui::video::YUVImage* getYUV(const std::uint64_t);
 
  private:
   std::string m_name;
@@ -75,7 +75,7 @@ class Region {
   std::vector<std::shared_ptr<Cell>> m_cells;
   double m_max_end_time;
 
-  std::array<unsigned char*, 3> m_planes;
+  hisui::video::YUVImage* m_yuv_image;
   std::array<std::size_t, 3> m_plane_sizes;
   std::array<unsigned char, 3> m_plane_default_values;
 };
