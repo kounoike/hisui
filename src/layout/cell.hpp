@@ -5,30 +5,13 @@
 #include <string>
 #include <vector>
 
+#include "layout/cell_util.hpp"
 #include "layout/grid.hpp"
 #include "layout/video_source.hpp"
 #include "video/preserve_aspect_ratio_scaler.hpp"
 #include "video/yuv.hpp"
 
 namespace hisui::layout {
-
-struct Position {
-  std::uint32_t x = 0;
-  std::uint32_t y = 0;
-};
-
-bool operator==(Position const& left, Position const& right);
-
-std::ostream& operator<<(std::ostream& os, const Position&);
-
-struct Resolution {
-  std::uint32_t width = 0;
-  std::uint32_t height = 0;
-};
-
-bool operator==(Resolution const& left, Resolution const& right);
-
-std::ostream& operator<<(std::ostream& os, const Resolution&);
 
 enum CellStatus {
   Fresh,
@@ -72,45 +55,6 @@ class Cell {
   // hisui::video::YUVImage* m_scaled_image;
   std::shared_ptr<hisui::video::PreserveAspectRatioScaler> m_scaler;
 };
-
-struct CalcCellLengthAndPositions {
-  const std::uint32_t number_of_cells;
-  const std::uint32_t region_length;
-  const std::uint32_t min_frame_length;
-};
-
-struct LengthAndPositions {
-  std::uint32_t length;
-  std::vector<std::uint32_t> positions;
-};
-
-bool operator==(LengthAndPositions const& left,
-                LengthAndPositions const& right);
-
-std::ostream& operator<<(std::ostream& os, const LengthAndPositions&);
-
-LengthAndPositions calc_cell_length_and_positions(
-    const CalcCellLengthAndPositions&);
-
-struct CalcCellResolutionAndPositions {
-  const GridDimension grid_dimension;
-  const Resolution region_resolution;
-  const std::uint32_t min_frame_width = 1;
-  const std::uint32_t min_frame_height = 1;
-};
-
-struct ResolutionAndPositions {
-  Resolution resolution;
-  std::vector<Position> positions;
-};
-
-bool operator==(ResolutionAndPositions const& left,
-                ResolutionAndPositions const& right);
-
-std::ostream& operator<<(std::ostream& os, const ResolutionAndPositions&);
-
-ResolutionAndPositions calc_cell_resolution_and_positions(
-    const CalcCellResolutionAndPositions&);
 
 struct ResetCellsSource {
   const std::vector<std::shared_ptr<Cell>>& cells;

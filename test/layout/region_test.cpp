@@ -4,9 +4,9 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include "layout/cell.hpp"
-#include "layout/region.hpp"
-#include "layout/source.hpp"
+// #include "layout/cell.hpp"
+// #include "layout/region.hpp"
+// #include "layout/source.hpp"
 
 BOOST_AUTO_TEST_SUITE(region)
 

@@ -5,7 +5,7 @@
 #include <utility>
 #include <vector>
 
-#include "layout/region.hpp"
+#include "layout/reuse.hpp"
 #include "layout/source.hpp"
 
 namespace hisui::layout {

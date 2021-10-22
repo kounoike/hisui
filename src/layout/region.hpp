@@ -9,17 +9,12 @@
 #include "layout/archive.hpp"
 #include "layout/cell.hpp"
 #include "layout/grid.hpp"
+#include "layout/reuse.hpp"
 #include "layout/source.hpp"
 #include "layout/video_source.hpp"
 #include "video/yuv.hpp"
 
 namespace hisui::layout {
-
-enum Reuse {
-  None,
-  ShowOldest,
-  ShowNewest,
-};
 
 struct RegionInformation {
   const Position& position;
