@@ -25,7 +25,6 @@ void Composer::compose(std::vector<unsigned char>* composed,
     std::fill_n(m_planes[p], m_plane_sizes[p], m_plane_default_values[p]);
   }
 
-  spdlog::debug("size: {}", std::size(m_regions));
   for (auto region : m_regions) {
     auto yuv_image = region->getYUV(t);
     auto info = region->getInformation();
