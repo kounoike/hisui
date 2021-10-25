@@ -5,7 +5,7 @@
 
 BOOST_AUTO_TEST_SUITE(overlap)
 
-BOOST_AUTO_TEST_CASE(overlap_source_intervals) {
+BOOST_AUTO_TEST_CASE(overlap_intervals) {
   {
     auto expected =
         hisui::layout::MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals{
@@ -14,34 +14,34 @@ BOOST_AUTO_TEST_CASE(overlap_source_intervals) {
             .trim_intervals = {},
         };
 
-    BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap_source_intervals({
-                            .sources =
-                                {
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 0, .end_time = 1}),
-                                },
-                            .reuse = hisui::layout::Reuse::None,
-                        }));
-    BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap_source_intervals({
-                            .sources =
-                                {
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 0, .end_time = 1}),
-                                },
-                            .reuse = hisui::layout::Reuse::ShowOldest,
-                        }));
+    BOOST_REQUIRE_EQUAL(
+        expected,
+        hisui::layout::overlap_intervals({
+            .intervals =
+                {
+                    hisui::layout::Interval({.start_time = 0, .end_time = 1}),
+                },
+            .reuse = hisui::layout::Reuse::None,
+        }));
+    BOOST_REQUIRE_EQUAL(
+        expected,
+        hisui::layout::overlap_intervals({
+            .intervals =
+                {
+                    hisui::layout::Interval({.start_time = 0, .end_time = 1}),
+                },
+            .reuse = hisui::layout::Reuse::ShowOldest,
+        }));
 
-    BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap_source_intervals({
-                            .sources =
-                                {
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 0, .end_time = 1}),
-                                },
-                            .reuse = hisui::layout::Reuse::ShowNewest,
-                        }));
+    BOOST_REQUIRE_EQUAL(
+        expected,
+        hisui::layout::overlap_intervals({
+            .intervals =
+                {
+                    hisui::layout::Interval({.start_time = 0, .end_time = 1}),
+                },
+            .reuse = hisui::layout::Reuse::ShowNewest,
+        }));
   }
 
   {
@@ -51,41 +51,38 @@ BOOST_AUTO_TEST_CASE(overlap_source_intervals) {
             .max_end_time = 2,
             .trim_intervals = {},
         };
-    BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap_source_intervals({
-                            .sources =
-                                {
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 0, .end_time = 2}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 1, .end_time = 2}),
-                                },
-                            .reuse = hisui::layout::Reuse::None,
-                        }));
+    BOOST_REQUIRE_EQUAL(
+        expected,
+        hisui::layout::overlap_intervals({
+            .intervals =
+                {
+                    hisui::layout::Interval({.start_time = 0, .end_time = 2}),
+                    hisui::layout::Interval({.start_time = 1, .end_time = 2}),
+                },
+            .reuse = hisui::layout::Reuse::None,
+        }));
 
-    BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap_source_intervals({
-                            .sources =
-                                {
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 0, .end_time = 2}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 1, .end_time = 2}),
-                                },
-                            .reuse = hisui::layout::Reuse::ShowOldest,
-                        }));
+    BOOST_REQUIRE_EQUAL(
+        expected,
+        hisui::layout::overlap_intervals({
+            .intervals =
+                {
+                    hisui::layout::Interval({.start_time = 0, .end_time = 2}),
+                    hisui::layout::Interval({.start_time = 1, .end_time = 2}),
+                },
+            .reuse = hisui::layout::Reuse::ShowOldest,
+        }));
 
-    BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap_source_intervals({
-                            .sources =
-                                {
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 0, .end_time = 2}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 1, .end_time = 2}),
-                                },
-                            .reuse = hisui::layout::Reuse::ShowNewest,
-                        }));
+    BOOST_REQUIRE_EQUAL(
+        expected,
+        hisui::layout::overlap_intervals({
+            .intervals =
+                {
+                    hisui::layout::Interval({.start_time = 0, .end_time = 2}),
+                    hisui::layout::Interval({.start_time = 1, .end_time = 2}),
+                },
+            .reuse = hisui::layout::Reuse::ShowNewest,
+        }));
   }
 
   {
@@ -96,17 +93,16 @@ BOOST_AUTO_TEST_CASE(overlap_source_intervals) {
             .trim_intervals = {},
         };
 
-    BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap_source_intervals({
-                            .sources =
-                                {
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 0, .end_time = 2}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 2, .end_time = 3}),
-                                },
-                            .reuse = hisui::layout::Reuse::None,
-                        }));
+    BOOST_REQUIRE_EQUAL(
+        expected,
+        hisui::layout::overlap_intervals({
+            .intervals =
+                {
+                    hisui::layout::Interval({.start_time = 0, .end_time = 2}),
+                    hisui::layout::Interval({.start_time = 2, .end_time = 3}),
+                },
+            .reuse = hisui::layout::Reuse::None,
+        }));
   }
   {
     auto expected =
@@ -116,28 +112,26 @@ BOOST_AUTO_TEST_CASE(overlap_source_intervals) {
             .trim_intervals = {},
         };
 
-    BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap_source_intervals({
-                            .sources =
-                                {
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 0, .end_time = 2}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 2, .end_time = 3}),
-                                },
-                            .reuse = hisui::layout::Reuse::ShowOldest,
-                        }));
-    BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap_source_intervals({
-                            .sources =
-                                {
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 0, .end_time = 2}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 2, .end_time = 3}),
-                                },
-                            .reuse = hisui::layout::Reuse::ShowNewest,
-                        }));
+    BOOST_REQUIRE_EQUAL(
+        expected,
+        hisui::layout::overlap_intervals({
+            .intervals =
+                {
+                    hisui::layout::Interval({.start_time = 0, .end_time = 2}),
+                    hisui::layout::Interval({.start_time = 2, .end_time = 3}),
+                },
+            .reuse = hisui::layout::Reuse::ShowOldest,
+        }));
+    BOOST_REQUIRE_EQUAL(
+        expected,
+        hisui::layout::overlap_intervals({
+            .intervals =
+                {
+                    hisui::layout::Interval({.start_time = 0, .end_time = 2}),
+                    hisui::layout::Interval({.start_time = 2, .end_time = 3}),
+                },
+            .reuse = hisui::layout::Reuse::ShowNewest,
+        }));
   }
 
   {
@@ -148,19 +142,17 @@ BOOST_AUTO_TEST_CASE(overlap_source_intervals) {
             .trim_intervals = {},
         };
 
-    BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap_source_intervals({
-                            .sources =
-                                {
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 0, .end_time = 2}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 2, .end_time = 4}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 3, .end_time = 6}),
-                                },
-                            .reuse = hisui::layout::Reuse::ShowOldest,
-                        }));
+    BOOST_REQUIRE_EQUAL(
+        expected,
+        hisui::layout::overlap_intervals({
+            .intervals =
+                {
+                    hisui::layout::Interval({.start_time = 0, .end_time = 2}),
+                    hisui::layout::Interval({.start_time = 2, .end_time = 4}),
+                    hisui::layout::Interval({.start_time = 3, .end_time = 6}),
+                },
+            .reuse = hisui::layout::Reuse::ShowOldest,
+        }));
   }
 
   {
@@ -170,21 +162,18 @@ BOOST_AUTO_TEST_CASE(overlap_source_intervals) {
             .max_end_time = 8,
             .trim_intervals = {},
         };
-    BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap_source_intervals({
-                            .sources =
-                                {
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 0, .end_time = 8}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 2, .end_time = 5}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 5, .end_time = 6}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 3, .end_time = 7}),
-                                },
-                            .reuse = hisui::layout::Reuse::ShowOldest,
-                        }));
+    BOOST_REQUIRE_EQUAL(
+        expected,
+        hisui::layout::overlap_intervals({
+            .intervals =
+                {
+                    hisui::layout::Interval({.start_time = 0, .end_time = 8}),
+                    hisui::layout::Interval({.start_time = 2, .end_time = 5}),
+                    hisui::layout::Interval({.start_time = 5, .end_time = 6}),
+                    hisui::layout::Interval({.start_time = 3, .end_time = 7}),
+                },
+            .reuse = hisui::layout::Reuse::ShowOldest,
+        }));
   }
 
   {
@@ -194,21 +183,18 @@ BOOST_AUTO_TEST_CASE(overlap_source_intervals) {
             .max_end_time = 7,
             .trim_intervals = {{0, 1}, {4, 5}},
         };
-    BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap_source_intervals({
-                            .sources =
-                                {
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 1, .end_time = 2}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 2, .end_time = 4}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 5, .end_time = 6}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 6, .end_time = 7}),
-                                },
-                            .reuse = hisui::layout::Reuse::ShowOldest,
-                        }));
+    BOOST_REQUIRE_EQUAL(
+        expected,
+        hisui::layout::overlap_intervals({
+            .intervals =
+                {
+                    hisui::layout::Interval({.start_time = 1, .end_time = 2}),
+                    hisui::layout::Interval({.start_time = 2, .end_time = 4}),
+                    hisui::layout::Interval({.start_time = 5, .end_time = 6}),
+                    hisui::layout::Interval({.start_time = 6, .end_time = 7}),
+                },
+            .reuse = hisui::layout::Reuse::ShowOldest,
+        }));
   }
 
   {
@@ -218,21 +204,18 @@ BOOST_AUTO_TEST_CASE(overlap_source_intervals) {
             .max_end_time = 7,
             .trim_intervals = {{0, 1}, {2, 3}, {4, 5}},
         };
-    BOOST_REQUIRE_EQUAL(expected,
-                        hisui::layout::overlap_source_intervals({
-                            .sources =
-                                {
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 1, .end_time = 2}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 3, .end_time = 4}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 5, .end_time = 7}),
-                                    hisui::layout::SourceInterval(
-                                        {.start_time = 6, .end_time = 7}),
-                                },
-                            .reuse = hisui::layout::Reuse::ShowOldest,
-                        }));
+    BOOST_REQUIRE_EQUAL(
+        expected,
+        hisui::layout::overlap_intervals({
+            .intervals =
+                {
+                    hisui::layout::Interval({.start_time = 1, .end_time = 2}),
+                    hisui::layout::Interval({.start_time = 3, .end_time = 4}),
+                    hisui::layout::Interval({.start_time = 5, .end_time = 7}),
+                    hisui::layout::Interval({.start_time = 6, .end_time = 7}),
+                },
+            .reuse = hisui::layout::Reuse::ShowOldest,
+        }));
   }
 }
 

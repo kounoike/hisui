@@ -197,6 +197,7 @@ target_sources(hisui
     src/layout/compose.cpp
     src/layout/composer.cpp
     src/layout/grid.cpp
+    src/layout/interval.cpp
     src/layout/metadata.cpp
     src/layout/overlap.cpp
     src/layout/region.cpp

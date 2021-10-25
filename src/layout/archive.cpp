@@ -109,9 +109,11 @@ void Archive::dump() const {
 
 void Archive::prepare() {}
 
-const SourceParameters Archive::getSourceParameters() const {
+const SourceParameters Archive::getSourceParameters(
+    const std::size_t index) const {
   return SourceParameters{
       .file_path = m_file_path,
+      .index = index,
       .connection_id = m_connection_id,
       .start_time = m_start_time,
       .end_time = m_stop_time,

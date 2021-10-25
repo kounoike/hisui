@@ -177,22 +177,22 @@ void Metadata::prepare() {
     }
   }
 
+  std::size_t index = 0;
   for (const auto& f : m_audio_source_filenames) {
     auto archive = parse_archive(f);
     m_audio_archives.push_back(archive);
     m_audio_sources.push_back(
-        std::make_shared<AudioSource>(archive->getSourceParameters()));
+        std::make_shared<AudioSource>(archive->getSourceParameters(index++)));
   }
 
-  std::vector<SourceInterval> audio_source_intervals;
-  std::transform(
-      std::begin(m_audio_sources), std::end(m_audio_sources),
-      std::back_inserter(audio_source_intervals),
-      [](const auto& s) -> SourceInterval { return s->source_interval; });
-  auto audio_overlap_result = overlap_source_intervals(
-      {.sources = audio_source_intervals, .reuse = Reuse::None});
+  std::vector<Interval> audio_source_intervals;
+  std::transform(std::begin(m_audio_sources), std::end(m_audio_sources),
+                 std::back_inserter(audio_source_intervals),
+                 [](const auto& s) -> Interval { return s->source_interval; });
+  auto audio_overlap_result = overlap_intervals(
+      {.intervals = audio_source_intervals, .reuse = Reuse::None});
 
-  std::list<std::vector<std::pair<double, double>>> list_of_trim_intervals;
+  std::list<std::vector<Interval>> list_of_trim_intervals;
   list_of_trim_intervals.push_back(audio_overlap_result.trim_intervals);
 
   for (const auto& region : m_regions) {
@@ -203,15 +203,16 @@ void Metadata::prepare() {
       {.list_of_trim_intervals = list_of_trim_intervals});
 
   for (const auto& i : overlap_trim_intervals_result.trim_intervals) {
-    spdlog::debug("    final trim_interval: [{}, {}]", i.first, i.second);
+    spdlog::debug("    final trim_interval: [{}, {}]", i.start_time,
+                  i.end_time);
   }
 
-  std::vector<std::pair<double, double>> trim_intervals{};
+  std::vector<Interval> trim_intervals{};
   if (m_trim) {
     trim_intervals = overlap_trim_intervals_result.trim_intervals;
   } else {
     if (!std::empty(overlap_trim_intervals_result.trim_intervals)) {
-      if (overlap_trim_intervals_result.trim_intervals[0].first == 0) {
+      if (overlap_trim_intervals_result.trim_intervals[0].start_time == 0) {
         trim_intervals.push_back(
             overlap_trim_intervals_result.trim_intervals[0]);
       }

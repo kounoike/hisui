@@ -6,6 +6,7 @@
 #include <limits>
 
 #include "audio/webm_source.hpp"
+#include "layout/interval.hpp"
 #include "layout/overlap.hpp"
 
 namespace hisui::layout {
@@ -17,18 +18,9 @@ bool operator==(TrimIntervals const& left, TrimIntervals const& right) {
 std::ostream& operator<<(std::ostream& os, const TrimIntervals& r) {
   os << "[";
   for (const auto& i : r.trim_intervals) {
-    os << " {" << i.first << ", " << i.second << "} ";
+    os << " {" << i.start_time << ", " << i.end_time << "} ";
   }
   os << "]";
-  return os;
-}
-
-bool operator==(SourceInterval const& left, SourceInterval const& right) {
-  return left.start_time == right.start_time && left.end_time == right.end_time;
-}
-
-std::ostream& operator<<(std::ostream& os, const SourceInterval& i) {
-  os << "start: " << i.start_time << " end: " << i.end_time;
   return os;
 }
 
@@ -46,7 +38,7 @@ void Source::substructTrimIntervals(const TrimIntervals& params) {
       {.interval = source_interval, .trim_intervals = params.trim_intervals});
 }
 
-SourceInterval substruct_trim_intervals(
+Interval substruct_trim_intervals(
     const SubstructTrimIntervalsParameters& params) {
   auto interval = params.interval;
   auto trims = params.trim_intervals;
@@ -57,10 +49,10 @@ SourceInterval substruct_trim_intervals(
        --i) {
     auto s = static_cast<std::size_t>(i);
 
-    if (trims[s].first >= interval.end_time) {
+    if (trims[s].start_time >= interval.end_time) {
       continue;
     }
-    auto t = trims[s].second - trims[s].first;
+    auto t = trims[s].end_time - trims[s].start_time;
     interval.start_time -= t;
     interval.end_time -= t;
   }

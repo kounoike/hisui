@@ -39,7 +39,7 @@ struct RegionPrepareParameters {
 };
 
 struct RegionPrepareResult {
-  std::vector<std::pair<double, double>> trim_intervals;
+  std::vector<Interval> trim_intervals;
 };
 
 class Region {

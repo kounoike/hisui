@@ -73,25 +73,25 @@ const RegionPrepareResult Region::prepare(
                                         m_resolution.height, m_name));
   }
 
+  std::size_t index = 0;
   for (const auto& f : m_video_source_filenames) {
     auto archive = parse_archive(f);
     m_video_archives.push_back(archive);
     m_video_sources.push_back(
-        std::make_shared<VideoSource>(archive->getSourceParameters()));
+        std::make_shared<VideoSource>(archive->getSourceParameters(index++)));
   }
 
-  std::vector<SourceInterval> source_intervals;
-  std::transform(
-      std::begin(m_video_sources), std::end(m_video_sources),
-      std::back_inserter(source_intervals),
-      [](const auto& s) -> SourceInterval { return s->source_interval; });
+  std::vector<Interval> source_intervals;
+  std::transform(std::begin(m_video_sources), std::end(m_video_sources),
+                 std::back_inserter(source_intervals),
+                 [](const auto& s) -> Interval { return s->source_interval; });
   auto overlap_result =
-      overlap_source_intervals({.sources = source_intervals, .reuse = m_reuse});
+      overlap_intervals({.intervals = source_intervals, .reuse = m_reuse});
 
   m_max_end_time = overlap_result.max_end_time;
 
   for (const auto& i : overlap_result.trim_intervals) {
-    spdlog::debug("    trim_interval: [{}, {}]", i.first, i.second);
+    spdlog::debug("    trim_interval: [{}, {}]", i.start_time, i.end_time);
   }
 
   std::sort(std::begin(m_cells_excluded), std::end(m_cells_excluded));
@@ -169,8 +169,9 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
   auto cells = params.cells;
 
   auto it_connection_id = std::find_if(
-      std::begin(cells), std::end(cells), [video_source](const auto& cell) {
-        return cell->hasVideoSourceConnectionID(video_source->connection_id);
+      std::begin(cells), std::end(cells), [&video_source](const auto& cell) {
+        // return cell->hasVideoSourceConnectionID(video_source->connection_id);
+        return cell->hasVideoSourceIndex(video_source->index);
       });
   if (it_connection_id != std::end(cells)) {
     return;
