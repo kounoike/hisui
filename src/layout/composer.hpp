@@ -8,7 +8,7 @@
 namespace hisui::layout {
 
 struct ComposerParameters {
-  std::vector<std::shared_ptr<Region>> regions;
+  const std::vector<std::shared_ptr<Region>>& regions;
   const Resolution& resolution;
 };
 
