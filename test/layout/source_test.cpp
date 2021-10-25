@@ -7,7 +7,7 @@ BOOST_AUTO_TEST_SUITE(source)
 BOOST_AUTO_TEST_CASE(substruct_trim_intervals) {
   {
     auto expected =
-        hisui::layout::SourceInterval{.start_time = 0, .end_time = 10};
+        hisui::layout::Interval{.start_time = 0, .end_time = 10};
     BOOST_REQUIRE_EQUAL(expected,
                         hisui::layout::substruct_trim_intervals(
                             {.interval = {.start_time = 0, .end_time = 10},
@@ -15,7 +15,7 @@ BOOST_AUTO_TEST_CASE(substruct_trim_intervals) {
   }
   {
     auto expected =
-        hisui::layout::SourceInterval{.start_time = 0, .end_time = 10};
+        hisui::layout::Interval{.start_time = 0, .end_time = 10};
     BOOST_REQUIRE_EQUAL(expected,
                         hisui::layout::substruct_trim_intervals(
                             {.interval = {.start_time = 0, .end_time = 10},
@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(substruct_trim_intervals) {
   }
   {
     auto expected =
-        hisui::layout::SourceInterval{.start_time = 5, .end_time = 10};
+        hisui::layout::Interval{.start_time = 5, .end_time = 10};
     BOOST_REQUIRE_EQUAL(expected,
                         hisui::layout::substruct_trim_intervals(
                             {.interval = {.start_time = 10, .end_time = 15},
@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(substruct_trim_intervals) {
   }
   {
     auto expected =
-        hisui::layout::SourceInterval{.start_time = 5, .end_time = 10};
+        hisui::layout::Interval{.start_time = 5, .end_time = 10};
     BOOST_REQUIRE_EQUAL(expected,
                         hisui::layout::substruct_trim_intervals(
                             {.interval = {.start_time = 10, .end_time = 15},
@@ -39,7 +39,7 @@ BOOST_AUTO_TEST_CASE(substruct_trim_intervals) {
   }
   {
     auto expected =
-        hisui::layout::SourceInterval{.start_time = 5, .end_time = 10};
+        hisui::layout::Interval{.start_time = 5, .end_time = 10};
     BOOST_REQUIRE_EQUAL(expected,
                         hisui::layout::substruct_trim_intervals(
                             {.interval = {.start_time = 10, .end_time = 15},
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(substruct_trim_intervals) {
   }
   {
     auto expected =
-        hisui::layout::SourceInterval{.start_time = 5, .end_time = 10};
+        hisui::layout::Interval{.start_time = 5, .end_time = 10};
     BOOST_REQUIRE_EQUAL(expected,
                         hisui::layout::substruct_trim_intervals(
                             {.interval = {.start_time = 10, .end_time = 15},

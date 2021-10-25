@@ -26,6 +26,7 @@ add_executable(layout_test
     source_test.cpp
     ../../src/layout/cell_util.cpp
     ../../src/layout/grid.cpp
+    ../../src/layout/interval.cpp
     ../../src/layout/overlap.cpp
     # ../../src/layout/region.cpp
     ../../src/layout/source.cpp

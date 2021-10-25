@@ -25,11 +25,11 @@ std::ostream& operator<<(
   return os;
 }
 
-MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_source_intervals(
-    const OverlapSourceIntervalsParameters& params) {
+MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_intervals(
+    const OverlapIntervalsParameters& params) {
   std::vector<std::pair<double, std::uint64_t>> data;
 
-  for (const auto& s : params.sources) {
+  for (const auto& s : params.intervals) {
     /* for [start_time, end_time}: data(end_time).second < data(start_time).second */
     data.emplace_back(s.end_time, 0);
     data.emplace_back(s.start_time, 1);
@@ -62,7 +62,7 @@ MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_source_intervals(
 
   return {.max_number_of_overlap =
               params.reuse == Reuse::None
-                  ? static_cast<std::uint32_t>(std::size(params.sources))
+                  ? static_cast<std::uint32_t>(std::size(params.intervals))
                   : ret,
           .max_end_time = max_end_time,
           .trim_intervals = trim_intervals};

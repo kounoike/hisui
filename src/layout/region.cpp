@@ -80,13 +80,12 @@ const RegionPrepareResult Region::prepare(
         std::make_shared<VideoSource>(archive->getSourceParameters()));
   }
 
-  std::vector<SourceInterval> source_intervals;
-  std::transform(
-      std::begin(m_video_sources), std::end(m_video_sources),
-      std::back_inserter(source_intervals),
-      [](const auto& s) -> SourceInterval { return s->source_interval; });
+  std::vector<Interval> source_intervals;
+  std::transform(std::begin(m_video_sources), std::end(m_video_sources),
+                 std::back_inserter(source_intervals),
+                 [](const auto& s) -> Interval { return s->source_interval; });
   auto overlap_result =
-      overlap_source_intervals({.sources = source_intervals, .reuse = m_reuse});
+      overlap_intervals({.intervals = source_intervals, .reuse = m_reuse});
 
   m_max_end_time = overlap_result.max_end_time;
 

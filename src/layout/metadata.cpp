@@ -184,13 +184,12 @@ void Metadata::prepare() {
         std::make_shared<AudioSource>(archive->getSourceParameters()));
   }
 
-  std::vector<SourceInterval> audio_source_intervals;
-  std::transform(
-      std::begin(m_audio_sources), std::end(m_audio_sources),
-      std::back_inserter(audio_source_intervals),
-      [](const auto& s) -> SourceInterval { return s->source_interval; });
-  auto audio_overlap_result = overlap_source_intervals(
-      {.sources = audio_source_intervals, .reuse = Reuse::None});
+  std::vector<Interval> audio_source_intervals;
+  std::transform(std::begin(m_audio_sources), std::end(m_audio_sources),
+                 std::back_inserter(audio_source_intervals),
+                 [](const auto& s) -> Interval { return s->source_interval; });
+  auto audio_overlap_result = overlap_intervals(
+      {.intervals = audio_source_intervals, .reuse = Reuse::None});
 
   std::list<std::vector<std::pair<double, double>>> list_of_trim_intervals;
   list_of_trim_intervals.push_back(audio_overlap_result.trim_intervals);

@@ -5,13 +5,14 @@
 #include <utility>
 #include <vector>
 
+#include "layout/interval.hpp"
 #include "layout/reuse.hpp"
 #include "layout/source.hpp"
 
 namespace hisui::layout {
 
-struct OverlapSourceIntervalsParameters {
-  const std::vector<SourceInterval>& sources;
+struct OverlapIntervalsParameters {
+  const std::vector<Interval>& intervals;
   Reuse reuse;
 };
 
@@ -28,8 +29,8 @@ std::ostream& operator<<(
     std::ostream& os,
     const MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals&);
 
-MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_source_intervals(
-    const OverlapSourceIntervalsParameters&);
+MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_intervals(
+    const OverlapIntervalsParameters&);
 
 struct OverlapTrimIntervalsParameters {
   const std::list<std::vector<std::pair<double, double>>>&
