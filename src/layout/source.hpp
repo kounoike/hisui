@@ -15,7 +15,7 @@
 namespace hisui::layout {
 
 struct TrimIntervals {
-  std::vector<std::pair<double, double>> trim_intervals;
+  std::vector<Interval> trim_intervals;
 };
 
 bool operator==(TrimIntervals const& left, TrimIntervals const& right);
@@ -41,7 +41,7 @@ struct Source {
 
 struct SubstructTrimIntervalsParameters {
   const Interval& interval;
-  const std::vector<std::pair<double, double>>& trim_intervals;
+  const std::vector<Interval>& trim_intervals;
 };
 
 Interval substruct_trim_intervals(const SubstructTrimIntervalsParameters&);

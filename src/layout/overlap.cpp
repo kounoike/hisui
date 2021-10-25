@@ -19,7 +19,7 @@ std::ostream& operator<<(
   os << "max_number_of_overlap: " << r.max_number_of_overlap
      << ", max_end_time: " << r.max_end_time << ", trim_intervals: [";
   for (const auto& i : r.trim_intervals) {
-    os << " {" << i.first << ", " << i.second << "} ";
+    os << " {" << i.start_time << ", " << i.end_time << "} ";
   }
   os << "]";
   return os;
@@ -37,7 +37,7 @@ MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_intervals(
 
   sort(std::begin(data), std::end(data));
 
-  std::vector<std::pair<double, double>> trim_intervals;
+  std::vector<Interval> trim_intervals;
 
   std::uint32_t count = 0;
   std::uint32_t ret = 0;
@@ -53,7 +53,8 @@ MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_intervals(
     }
     if (d.second == 1) {
       if (count == 0 && trim_start != d.first) {
-        trim_intervals.emplace_back(trim_start, d.first);
+        trim_intervals.push_back(
+            {.start_time = trim_start, .end_time = d.first});
       }
       ++count;
     }
@@ -68,10 +69,9 @@ MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_intervals(
           .trim_intervals = trim_intervals};
 }
 
-std::vector<std::pair<double, double>> overlap_2_trim_intervals(
-    const std::vector<std::pair<double, double>>& l,
-    const std::vector<std::pair<double, double>>& r) {
-  std::vector<std::pair<double, double>> ret;
+std::vector<Interval> overlap_2_trim_intervals(const std::vector<Interval>& l,
+                                               const std::vector<Interval>& r) {
+  std::vector<Interval> ret;
   std::size_t li = 0;
   std::size_t ri = 0;
 
@@ -85,27 +85,27 @@ std::vector<std::pair<double, double>> overlap_2_trim_intervals(
     auto lp = l[li];
     auto rp = r[ri];
 
-    if (rp.first > lp.second) {
+    if (rp.start_time > lp.end_time) {
       ++li;
       continue;
     }
 
-    if (lp.first > rp.second) {
+    if (lp.start_time > rp.end_time) {
       ++ri;
       continue;
     }
 
-    auto start = std::max(lp.first, rp.first);
-    auto end = std::min(lp.second, rp.second);
+    auto start = std::max(lp.start_time, rp.start_time);
+    auto end = std::min(lp.end_time, rp.end_time);
 
     if (start < end) {
-      ret.emplace_back(start, end);
+      ret.push_back({.start_time = start, .end_time = end});
     }
 
-    if (lp.second == rp.second) {
+    if (lp.end_time == rp.end_time) {
       ++li;
       ++ri;
-    } else if (rp.second > lp.second) {
+    } else if (rp.end_time > lp.end_time) {
       ++li;
     } else {
       ++ri;

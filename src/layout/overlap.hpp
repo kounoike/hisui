@@ -19,7 +19,7 @@ struct OverlapIntervalsParameters {
 struct MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals {
   std::uint32_t max_number_of_overlap;
   double max_end_time;
-  std::vector<std::pair<double, double>> trim_intervals;
+  std::vector<Interval> trim_intervals;
 };
 
 bool operator==(MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals const& left,
@@ -33,8 +33,7 @@ MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_intervals(
     const OverlapIntervalsParameters&);
 
 struct OverlapTrimIntervalsParameters {
-  const std::list<std::vector<std::pair<double, double>>>&
-      list_of_trim_intervals;
+  const std::list<std::vector<Interval>>& list_of_trim_intervals;
 };
 
 TrimIntervals overlap_trim_intervals(const OverlapTrimIntervalsParameters&);

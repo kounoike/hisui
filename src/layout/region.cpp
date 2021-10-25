@@ -90,7 +90,7 @@ const RegionPrepareResult Region::prepare(
   m_max_end_time = overlap_result.max_end_time;
 
   for (const auto& i : overlap_result.trim_intervals) {
-    spdlog::debug("    trim_interval: [{}, {}]", i.first, i.second);
+    spdlog::debug("    trim_interval: [{}, {}]", i.start_time, i.end_time);
   }
 
   std::sort(std::begin(m_cells_excluded), std::end(m_cells_excluded));

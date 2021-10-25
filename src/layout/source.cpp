@@ -18,7 +18,7 @@ bool operator==(TrimIntervals const& left, TrimIntervals const& right) {
 std::ostream& operator<<(std::ostream& os, const TrimIntervals& r) {
   os << "[";
   for (const auto& i : r.trim_intervals) {
-    os << " {" << i.first << ", " << i.second << "} ";
+    os << " {" << i.start_time << ", " << i.end_time << "} ";
   }
   os << "]";
   return os;
@@ -49,10 +49,10 @@ Interval substruct_trim_intervals(
        --i) {
     auto s = static_cast<std::size_t>(i);
 
-    if (trims[s].first >= interval.end_time) {
+    if (trims[s].start_time >= interval.end_time) {
       continue;
     }
-    auto t = trims[s].second - trims[s].first;
+    auto t = trims[s].end_time - trims[s].start_time;
     interval.start_time -= t;
     interval.end_time -= t;
   }
