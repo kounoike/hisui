@@ -177,11 +177,12 @@ void Metadata::prepare() {
     }
   }
 
+  std::size_t index = 0;
   for (const auto& f : m_audio_source_filenames) {
     auto archive = parse_archive(f);
     m_audio_archives.push_back(archive);
     m_audio_sources.push_back(
-        std::make_shared<AudioSource>(archive->getSourceParameters()));
+        std::make_shared<AudioSource>(archive->getSourceParameters(index++)));
   }
 
   std::vector<Interval> audio_source_intervals;

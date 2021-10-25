@@ -73,11 +73,12 @@ const RegionPrepareResult Region::prepare(
                                         m_resolution.height, m_name));
   }
 
+  std::size_t index = 0;
   for (const auto& f : m_video_source_filenames) {
     auto archive = parse_archive(f);
     m_video_archives.push_back(archive);
     m_video_sources.push_back(
-        std::make_shared<VideoSource>(archive->getSourceParameters()));
+        std::make_shared<VideoSource>(archive->getSourceParameters(index++)));
   }
 
   std::vector<Interval> source_intervals;
@@ -169,7 +170,8 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
 
   auto it_connection_id = std::find_if(
       std::begin(cells), std::end(cells), [video_source](const auto& cell) {
-        return cell->hasVideoSourceConnectionID(video_source->connection_id);
+        // return cell->hasVideoSourceConnectionID(video_source->connection_id);
+        return cell->hasVideoSourceIndex(video_source->index);
       });
   if (it_connection_id != std::end(cells)) {
     return;

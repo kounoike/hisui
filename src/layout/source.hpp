@@ -24,6 +24,7 @@ std::ostream& operator<<(std::ostream& os, const TrimIntervals&);
 
 struct SourceParameters {
   const std::filesystem::path& file_path;
+  const std::size_t index;
   const std::string& connection_id;
   const double start_time;
   const double end_time;
@@ -33,6 +34,7 @@ struct Source {
   explicit Source(const SourceParameters&);
   virtual ~Source() {}
   std::filesystem::path file_path;
+  std::size_t index;
   std::string connection_id;
   Interval source_interval;
   hisui::util::Interval encoding_interval{0, 0};

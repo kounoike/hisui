@@ -35,7 +35,8 @@ struct CellInformation {
 class Cell {
  public:
   explicit Cell(const CellParameters&);
-  bool hasVideoSourceConnectionID(const std::string& connection_id);
+  bool hasVideoSourceIndex(const std::size_t);
+  bool hasVideoSourceConnectionID(const std::string&);
   bool hasStatus(const CellStatus);
   void setExcludedStatus();
   void setSource(std::shared_ptr<VideoSource>);

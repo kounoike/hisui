@@ -29,6 +29,10 @@ bool Cell::hasVideoSourceConnectionID(const std::string& connection_id) {
   return m_source && m_source->connection_id == connection_id;
 }
 
+bool Cell::hasVideoSourceIndex(const size_t index) {
+  return m_source && m_source->index == index;
+}
+
 bool Cell::hasStatus(const CellStatus status) {
   return m_status == status;
 }

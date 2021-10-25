@@ -15,7 +15,7 @@ class Archive {
   Archive(const std::filesystem::path& t_path, const boost::json::value& jv);
   void dump() const;
   void prepare();
-  const SourceParameters getSourceParameters() const;
+  const SourceParameters getSourceParameters(const std::size_t) const;
 
  private:
   std::filesystem::path m_path;
