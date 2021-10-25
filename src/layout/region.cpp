@@ -169,7 +169,7 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
   auto cells = params.cells;
 
   auto it_connection_id = std::find_if(
-      std::begin(cells), std::end(cells), [video_source](const auto& cell) {
+      std::begin(cells), std::end(cells), [&video_source](const auto& cell) {
         // return cell->hasVideoSourceConnectionID(video_source->connection_id);
         return cell->hasVideoSourceIndex(video_source->index);
       });
