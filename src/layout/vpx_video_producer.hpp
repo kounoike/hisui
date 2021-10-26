@@ -24,6 +24,8 @@ class VPXVideoProducer : public hisui::muxer::VideoProducer {
       const Metadata&,
       const std::uint64_t timescale = hisui::Constants::NANO_SECOND);
   void produce();
+  virtual std::uint32_t getWidth() const;
+  virtual std::uint32_t getHeight() const;
 
  private:
   Resolution m_resolution;

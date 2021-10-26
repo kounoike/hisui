@@ -203,7 +203,6 @@ target_sources(hisui
     src/layout/region.cpp
     src/layout/source.cpp
     src/layout/video_source.cpp
-    src/layout/async_webm_muxer.cpp
     src/layout/vpx_video_producer.cpp
     src/muxer/async_webm_muxer.cpp
     src/muxer/audio_producer.cpp

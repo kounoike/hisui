@@ -38,8 +38,8 @@ class VideoProducer {
   std::optional<hisui::Frame> bufferFront();
   bool isFinished();
 
-  std::uint32_t getWidth() const;
-  std::uint32_t getHeight() const;
+  virtual std::uint32_t getWidth() const;
+  virtual std::uint32_t getHeight() const;
   std::uint32_t getFourcc() const;
 
  protected:

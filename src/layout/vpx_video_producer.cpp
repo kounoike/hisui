@@ -92,4 +92,12 @@ void VPXVideoProducer::produce() {
   }
 }
 
+std::uint32_t VPXVideoProducer::getWidth() const {
+  return m_resolution.width;
+}
+
+std::uint32_t VPXVideoProducer::getHeight() const {
+  return m_resolution.height;
+}
+
 }  // namespace hisui::layout
