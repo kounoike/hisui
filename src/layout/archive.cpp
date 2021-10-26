@@ -17,6 +17,7 @@
 #include <boost/json/system_error.hpp>
 #include <boost/json/value.hpp>
 
+#include "layout/interval.hpp"
 #include "util/json.hpp"
 
 namespace hisui::layout {
@@ -118,6 +119,22 @@ const SourceParameters Archive::getSourceParameters(
       .start_time = m_start_time,
       .end_time = m_stop_time,
   };
+}
+
+void Archive::substructTrimIntervals(const TrimIntervals& params) {
+  auto interval = substruct_trim_intervals(
+      {.interval = getInterval(), .trim_intervals = params.trim_intervals});
+  m_start_time = interval.start_time;
+  m_stop_time = interval.end_time;
+}
+
+Interval Archive::getInterval() const {
+  return {.start_time = m_start_time, .end_time = m_stop_time};
+}
+
+hisui::Archive Archive::getArchive() const {
+  return hisui::Archive(m_file_path, m_connection_id, m_start_time,
+                        m_stop_time);
 }
 
 }  // namespace hisui::layout
