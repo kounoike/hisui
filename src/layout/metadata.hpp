@@ -13,6 +13,7 @@
 #include <boost/json/system_error.hpp>
 #include <boost/json/value.hpp>
 
+#include <metadata.hpp>
 #include "config.hpp"
 #include "layout/archive.hpp"
 #include "layout/audio_source.hpp"
@@ -20,11 +21,10 @@
 
 namespace hisui::layout {
 
-struct ParseRegionParameters {};
-
-class Metadata {
+class Metadata : public hisui::AbstructMetadataSet {
  public:
   Metadata(const std::string& file_path, const boost::json::value& jv);
+  virtual ~Metadata() {}
   void dump() const;
   void prepare();
   void copyToConfig(hisui::Config*) const;
@@ -33,6 +33,9 @@ class Metadata {
   std::vector<std::shared_ptr<Region>> getRegions() const;
   Resolution getResolution() const;
   void resetPath() const;
+
+  virtual std::vector<hisui::Archive> getArchives() const;
+  virtual double getMaxStopTimeOffset() const;
 
  private:
   std::filesystem::path m_path;

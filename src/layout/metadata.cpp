@@ -330,8 +330,24 @@ double Metadata::getMaxEndTime() const {
   return m_max_end_time;
 }
 
+double Metadata::getMaxStopTimeOffset() const {
+  return m_max_end_time;
+}
+
 std::vector<std::shared_ptr<AudioSource>> Metadata::getAudioSources() const {
   return m_audio_sources;
+}
+
+std::vector<hisui::Archive> Metadata::getArchives() const {
+  std::vector<hisui::Archive> res;
+  std::transform(std::begin(m_audio_sources), std::end(m_audio_sources),
+                 std::back_inserter(res), [](const auto& s) -> hisui::Archive {
+                   return hisui::Archive(s->file_path, s->connection_id,
+                                         s->source_interval.start_time,
+                                         s->source_interval.end_time);
+                 });
+
+  return res;
 }
 
 Resolution Metadata::getResolution() const {

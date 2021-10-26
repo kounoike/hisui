@@ -11,9 +11,10 @@
 
 namespace hisui::muxer {
 
-OpusAudioProducer::OpusAudioProducer(const hisui::Config& t_config,
-                                     const hisui::MetadataSet& t_metadata_set,
-                                     const std::uint64_t timescale)
+OpusAudioProducer::OpusAudioProducer(
+    const hisui::Config& t_config,
+    const hisui::AbstructMetadataSet& t_metadata_set,
+    const std::uint64_t timescale)
     : AudioProducer({.show_progress_bar =
                          t_config.show_progress_bar && t_config.audio_only}) {
   switch (t_config.audio_mixer) {

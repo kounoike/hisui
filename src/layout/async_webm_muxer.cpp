@@ -9,10 +9,10 @@
 #include "audio/opus.hpp"
 #include "constants.hpp"
 #include "frame.hpp"
-#include "layout/opus_audio_producer.hpp"
 #include "layout/vpx_video_producer.hpp"
 #include "muxer/audio_producer.hpp"
 #include "muxer/no_video_producer.hpp"
+#include "muxer/opus_audio_producer.hpp"
 #include "muxer/video_producer.hpp"
 #include "report/reporter.hpp"
 #include "webm/output/context.hpp"
@@ -46,8 +46,8 @@ void AsyncWebMMuxer::setUp() {
                              m_video_producer->getFourcc());
   }
 
-  OpusAudioProducer* audio_producer =
-      new OpusAudioProducer(m_config, m_metadata);
+  hisui::muxer::OpusAudioProducer* audio_producer =
+      new hisui::muxer::OpusAudioProducer(m_config, m_metadata);
   const auto skip = audio_producer->getSkip();
   m_audio_producer = audio_producer;
 

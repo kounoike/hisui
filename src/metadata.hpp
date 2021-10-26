@@ -65,7 +65,14 @@ class Metadata {
 
 Metadata parse_metadata(const std::string&);
 
-class MetadataSet {
+class AbstructMetadataSet {
+ public:
+  virtual ~AbstructMetadataSet() {}
+  virtual double getMaxStopTimeOffset() const = 0;
+  virtual std::vector<Archive> getArchives() const = 0;
+};
+
+class MetadataSet : public AbstructMetadataSet {
  public:
   explicit MetadataSet(const Metadata&);
   void setPrefered(const Metadata&);
@@ -73,9 +80,10 @@ class MetadataSet {
   Metadata getNormal() const;
   Metadata getPreferred() const;
   bool hasPreferred() const;
-  std::vector<Archive> getArchives() const;
   std::vector<Archive> getNormalArchives() const;
-  double getMaxStopTimeOffset() const;
+
+  virtual std::vector<Archive> getArchives() const;
+  virtual double getMaxStopTimeOffset() const;
 
  private:
   Metadata m_normal;
