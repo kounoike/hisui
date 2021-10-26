@@ -201,7 +201,7 @@ void Metadata::prepare() {
                   i.end_time);
   }
 
-  std::vector<Interval> trim_intervals{};
+  std::vector<Interval> trim_intervals;
   if (m_trim) {
     trim_intervals = overlap_trim_intervals_result.trim_intervals;
   } else {
@@ -328,7 +328,7 @@ double Metadata::getMaxStopTimeOffset() const {
   return m_max_end_time;
 }
 
-std::vector<hisui::Archive> Metadata::getArchives() const {
+std::vector<hisui::Archive> Metadata::getAudioArchives() const {
   std::vector<hisui::Archive> res;
   std::transform(std::begin(m_audio_archives), std::end(m_audio_archives),
                  std::back_inserter(res), [](const auto& a) -> hisui::Archive {

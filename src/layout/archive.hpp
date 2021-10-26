@@ -6,7 +6,7 @@
 
 #include <boost/json/value.hpp>
 
-#include <metadata.hpp>
+#include <archive.hpp>
 #include "layout/interval.hpp"
 #include "layout/source.hpp"
 

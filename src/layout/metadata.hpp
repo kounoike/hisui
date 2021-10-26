@@ -13,7 +13,7 @@
 #include <boost/json/system_error.hpp>
 #include <boost/json/value.hpp>
 
-#include <metadata.hpp>
+#include "audio_metadata.hpp"
 #include "config.hpp"
 #include "layout/archive.hpp"
 #include "layout/cell_util.hpp"
@@ -21,7 +21,7 @@
 
 namespace hisui::layout {
 
-class Metadata : public hisui::AbstructMetadataSet {
+class Metadata : public hisui::AudioMetadata {
  public:
   Metadata(const std::string& file_path, const boost::json::value& jv);
   virtual ~Metadata() {}
@@ -33,7 +33,7 @@ class Metadata : public hisui::AbstructMetadataSet {
   Resolution getResolution() const;
   void resetPath() const;
 
-  virtual std::vector<hisui::Archive> getArchives() const;
+  virtual std::vector<hisui::Archive> getAudioArchives() const;
   virtual double getMaxStopTimeOffset() const;
 
  private:
