@@ -35,5 +35,5 @@ struct FindFileResult {
 };
 
 FindFileResult find_file(const std::string&);
-}  // namespace hisui::layout
 
+}  // namespace hisui::layout
