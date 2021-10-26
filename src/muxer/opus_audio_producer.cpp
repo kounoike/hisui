@@ -11,9 +11,11 @@
 
 namespace hisui::muxer {
 
-OpusAudioProducer::OpusAudioProducer(const hisui::Config& t_config,
-                                     const hisui::AudioMetadata& t_metadata,
-                                     const std::uint64_t timescale)
+OpusAudioProducer::OpusAudioProducer(
+    const hisui::Config& t_config,
+    const std::vector<hisui::Archive> t_archives,
+    const double t_duration,
+    const std::uint64_t timescale)
     : AudioProducer({.show_progress_bar =
                          t_config.show_progress_bar && t_config.audio_only}) {
   switch (t_config.audio_mixer) {
@@ -25,9 +27,9 @@ OpusAudioProducer::OpusAudioProducer(const hisui::Config& t_config,
       break;
   }
 
-  m_sequencer = new hisui::audio::BasicSequencer(t_metadata.getAudioArchives());
+  m_sequencer = new hisui::audio::BasicSequencer(t_archives);
 
-  m_max_stop_time_offset = t_metadata.getMaxStopTimeOffset();
+  m_max_stop_time_offset = t_duration;
 
   hisui::audio::BufferOpusEncoder* encoder =
       new hisui::audio::BufferOpusEncoder(
@@ -36,6 +38,14 @@ OpusAudioProducer::OpusAudioProducer(const hisui::Config& t_config,
   m_skip = encoder->getSkip();
   m_encoder = encoder;
 }
+
+OpusAudioProducer::OpusAudioProducer(const hisui::Config& t_config,
+                                     const hisui::AudioMetadata& t_metadata,
+                                     const std::uint64_t timescale)
+    : OpusAudioProducer(t_config,
+                        t_metadata.getAudioArchives(),
+                        t_metadata.getMaxStopTimeOffset(),
+                        timescale) {}
 
 ::opus_int32 OpusAudioProducer::getSkip() const {
   return m_skip;

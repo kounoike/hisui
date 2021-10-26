@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "config.hpp"
 #include "metadata.hpp"
 #include "muxer/muxer.hpp"
@@ -20,10 +22,13 @@ namespace hisui::muxer {
 
 class AsyncWebMMuxer : public Muxer {
  public:
-  AsyncWebMMuxer(const hisui::Config&, const hisui::MetadataSet&);
+  AsyncWebMMuxer(const hisui::Config&, const double);
+  AsyncWebMMuxer(const hisui::Config&, hisui::MetadataSet*);
   ~AsyncWebMMuxer();
 
   void setUp() override;
+  void setVideoProducer(VideoProducer*);
+  void setAudioArchives(const std::vector<hisui::Archive>&);
   void run() override;
   void cleanUp() override;
 
@@ -35,7 +40,10 @@ class AsyncWebMMuxer : public Muxer {
   hisui::webm::output::Context* m_context;
 
   hisui::Config m_config;
-  hisui::MetadataSet m_metadata_set;
+  hisui::MetadataSet* m_metadata_set;
+  std::vector<hisui::Archive> m_audio_archives;
+  double m_duration;
+  std::size_t m_normal_archive_size;
 };
 
 }  // namespace hisui::muxer

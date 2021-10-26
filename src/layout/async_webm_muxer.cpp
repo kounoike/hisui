@@ -47,7 +47,9 @@ void AsyncWebMMuxer::setUp() {
   }
 
   hisui::muxer::OpusAudioProducer* audio_producer =
-      new hisui::muxer::OpusAudioProducer(m_config, m_metadata);
+      new hisui::muxer::OpusAudioProducer(m_config,
+                                          m_metadata.getAudioArchives(),
+                                          m_metadata.getMaxStopTimeOffset());
   const auto skip = audio_producer->getSkip();
   m_audio_producer = audio_producer;
 

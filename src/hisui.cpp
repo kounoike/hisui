@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
 
   hisui::muxer::Muxer* muxer = nullptr;
   if (config.out_container == hisui::config::OutContainer::WebM) {
-    muxer = new hisui::muxer::AsyncWebMMuxer(config, metadata_set);
+    muxer = new hisui::muxer::AsyncWebMMuxer(config, &metadata_set);
   } else if (config.out_container == hisui::config::OutContainer::MP4) {
     if (config.mp4_muxer == hisui::config::MP4Muxer::Simple) {
       muxer = new hisui::muxer::SimpleMP4Muxer(config, metadata_set);
