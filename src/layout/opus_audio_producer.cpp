@@ -28,7 +28,7 @@ OpusAudioProducer::OpusAudioProducer(const hisui::Config& t_config,
 
   m_sequencer = new hisui::layout::AudioSequencer(t_metadata.getAudioSources());
 
-  m_max_stop_time_offset = static_cast<double>(t_metadata.getMaxEndTime());
+  m_max_stop_time_offset = t_metadata.getMaxEndTime();
 
   hisui::audio::BufferOpusEncoder* encoder =
       new hisui::audio::BufferOpusEncoder(

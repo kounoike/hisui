@@ -40,7 +40,7 @@ VPXVideoProducer::VPXVideoProducer(const hisui::Config& t_config,
   m_encoder =
       new hisui::video::BufferVPXEncoder(&m_buffer, vpx_config, timescale);
 
-  m_max_stop_time_offset = static_cast<double>(t_metadata.getMaxEndTime());
+  m_max_stop_time_offset = t_metadata.getMaxEndTime();
   m_frame_rate = t_config.out_video_frame_rate;
 }
 
