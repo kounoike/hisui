@@ -23,25 +23,24 @@
 namespace hisui::layout {
 
 VPXVideoProducer::VPXVideoProducer(const hisui::Config& t_config,
-                                   const Metadata& t_metadata,
-                                   const std::uint64_t timescale)
-    : VideoProducer({.show_progress_bar = t_config.show_progress_bar}) {
-  m_resolution = t_metadata.getResolution();
+                                   const VPXVideoProducerParameters& params)
+    : VideoProducer({.show_progress_bar = t_config.show_progress_bar}),
+      m_resolution(params.resolution) {
+  m_frame_rate = t_config.out_video_frame_rate;
+  m_max_stop_time_offset = params.max_stop_time_offset;
+
   hisui::video::VPXEncoderConfig vpx_config(m_resolution.width,
                                             m_resolution.height, t_config);
 
-  auto regions = t_metadata.getRegions();
-  for (auto& r : regions) {
+  for (auto& r : params.regions) {
     r->setEncodingInterval();
   }
-  m_layout_composer = std::make_shared<Composer>(
-      ComposerParameters{.regions = regions, .resolution = m_resolution});
 
-  m_encoder =
-      new hisui::video::BufferVPXEncoder(&m_buffer, vpx_config, timescale);
+  m_layout_composer = std::make_shared<Composer>(ComposerParameters{
+      .regions = params.regions, .resolution = m_resolution});
 
-  m_max_stop_time_offset = t_metadata.getMaxEndTime();
-  m_frame_rate = t_config.out_video_frame_rate;
+  m_encoder = new hisui::video::BufferVPXEncoder(&m_buffer, vpx_config,
+                                                 params.timescale);
 }
 
 void VPXVideoProducer::produce() {

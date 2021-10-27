@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <vector>
 
 #include "constants.hpp"
 #include "layout/cell_util.hpp"
@@ -17,13 +18,17 @@ class Config;
 
 namespace hisui::layout {
 
+struct VPXVideoProducerParameters {
+  const std::vector<std::shared_ptr<Region>>& regions;
+  const Resolution& resolution;
+  const double max_stop_time_offset;
+  const std::uint64_t timescale = hisui::Constants::NANO_SECOND;
+};
+
 class VPXVideoProducer : public hisui::muxer::VideoProducer {
  public:
-  VPXVideoProducer(
-      const hisui::Config&,
-      const Metadata&,
-      const std::uint64_t timescale = hisui::Constants::NANO_SECOND);
-  void produce();
+  VPXVideoProducer(const hisui::Config&, const VPXVideoProducerParameters&);
+  virtual void produce();
   virtual std::uint32_t getWidth() const;
   virtual std::uint32_t getHeight() const;
 

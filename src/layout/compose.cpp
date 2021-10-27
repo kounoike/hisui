@@ -22,7 +22,10 @@ int compose(const hisui::Config& t_config) {
   if (config.audio_only) {
     video_producer = new muxer::NoVideoProducer();
   } else {
-    video_producer = new VPXVideoProducer(config, metadata);
+    video_producer = new VPXVideoProducer(
+        config, {.regions = metadata.getRegions(),
+                 .resolution = metadata.getResolution(),
+                 .max_stop_time_offset = metadata.getMaxStopTimeOffset()});
   }
 
   if (config.out_container == hisui::config::OutContainer::WebM) {
