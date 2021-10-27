@@ -78,8 +78,10 @@ void AsyncWebMMuxer::setUp() {
                 .max_stop_time_offset = m_metadata_set->getMaxStopTimeOffset(),
             });
       } else {
-        m_video_producer =
-            new VPXVideoProducer(m_config, m_metadata_set->getNormal());
+        m_video_producer = new VPXVideoProducer(
+            m_config,
+            {.archives = m_metadata_set->getNormal().getArchives(),
+             .max_stop_time_offset = m_metadata_set->getMaxStopTimeOffset()});
       }
     }
   }

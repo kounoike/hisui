@@ -18,10 +18,9 @@
 namespace hisui::muxer {
 
 VPXVideoProducer::VPXVideoProducer(const hisui::Config& t_config,
-                                   const hisui::Metadata& t_metadata,
-                                   const std::uint64_t timescale)
+                                   const VPXVideoProducerParameters& params)
     : VideoProducer({.show_progress_bar = t_config.show_progress_bar}) {
-  m_sequencer = new hisui::video::BasicSequencer(t_metadata.getArchives());
+  m_sequencer = new hisui::video::BasicSequencer(params.archives);
 
   const auto scaling_width = t_config.scaling_width != 0
                                  ? t_config.scaling_width
@@ -48,10 +47,10 @@ VPXVideoProducer::VPXVideoProducer(const hisui::Config& t_config,
   hisui::video::VPXEncoderConfig vpx_config(m_composer->getWidth(),
                                             m_composer->getHeight(), t_config);
 
-  m_encoder =
-      new hisui::video::BufferVPXEncoder(&m_buffer, vpx_config, timescale);
+  m_encoder = new hisui::video::BufferVPXEncoder(&m_buffer, vpx_config,
+                                                 params.timescale);
 
-  m_max_stop_time_offset = t_metadata.getMaxStopTimeOffset();
+  m_max_stop_time_offset = params.max_stop_time_offset;
   m_frame_rate = t_config.out_video_frame_rate;
 }
 

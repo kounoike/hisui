@@ -104,8 +104,10 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
               .timescale = 16000,
           });
     } else {
-      m_video_producer =
-          new VPXVideoProducer(config, metadata_set.getNormal(), 16000);
+      m_video_producer = new VPXVideoProducer(
+          config, {.archives = metadata_set.getNormal().getArchives(),
+                   .max_stop_time_offset = metadata_set.getMaxStopTimeOffset(),
+                   .timescale = 16000});
     }
     m_vide_track = new shiguredo::mp4::track::VPXTrack(
         {.timescale = 16000,
