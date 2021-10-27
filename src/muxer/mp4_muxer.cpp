@@ -79,7 +79,8 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
 #endif
   } else {
     OpusAudioProducer* audio_producer =
-        new OpusAudioProducer(config, metadata_set, 48000);
+        new OpusAudioProducer(config, metadata_set.getArchives(),
+                              metadata_set.getMaxStopTimeOffset(), 48000);
     const auto skip = audio_producer->getSkip();
     m_audio_producer = audio_producer;
     m_soun_track = new shiguredo::mp4::track::OpusTrack(

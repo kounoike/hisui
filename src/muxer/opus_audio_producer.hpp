@@ -25,10 +25,6 @@ class OpusAudioProducer : public AudioProducer {
       const std::vector<hisui::Archive>,
       const double t_duration,
       const std::uint64_t timescale = hisui::Constants::NANO_SECOND);
-  OpusAudioProducer(
-      const hisui::Config&,
-      const hisui::AudioMetadata&,
-      const std::uint64_t timescale = hisui::Constants::NANO_SECOND);
   ::opus_int32 getSkip() const;
 
  private:

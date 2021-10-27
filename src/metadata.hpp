@@ -11,7 +11,6 @@
 #include <boost/json/value.hpp>
 
 #include "archive.hpp"
-#include "audio_metadata.hpp"
 
 namespace hisui {
 
@@ -46,7 +45,7 @@ class Metadata {
 
 Metadata parse_metadata(const std::string&);
 
-class MetadataSet : public AudioMetadata {
+class MetadataSet {
  public:
   explicit MetadataSet(const Metadata&);
   void setPrefered(const Metadata&);
@@ -56,9 +55,7 @@ class MetadataSet : public AudioMetadata {
   bool hasPreferred() const;
   std::vector<Archive> getNormalArchives() const;
   std::vector<Archive> getArchives() const;
-
-  virtual std::vector<Archive> getAudioArchives() const;
-  virtual double getMaxStopTimeOffset() const;
+  double getMaxStopTimeOffset() const;
 
  private:
   Metadata m_normal;

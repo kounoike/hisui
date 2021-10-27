@@ -39,14 +39,6 @@ OpusAudioProducer::OpusAudioProducer(
   m_encoder = encoder;
 }
 
-OpusAudioProducer::OpusAudioProducer(const hisui::Config& t_config,
-                                     const hisui::AudioMetadata& t_metadata,
-                                     const std::uint64_t timescale)
-    : OpusAudioProducer(t_config,
-                        t_metadata.getAudioArchives(),
-                        t_metadata.getMaxStopTimeOffset(),
-                        timescale) {}
-
 ::opus_int32 OpusAudioProducer::getSkip() const {
   return m_skip;
 }

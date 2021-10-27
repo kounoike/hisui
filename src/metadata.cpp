@@ -227,10 +227,6 @@ std::vector<Archive> MetadataSet::getArchives() const {
   return m_normal.getArchives();
 }
 
-std::vector<Archive> MetadataSet::getAudioArchives() const {
-  return getArchives();
-}
-
 std::vector<Archive> MetadataSet::getNormalArchives() const {
   return m_normal.getArchives();
 }
