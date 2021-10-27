@@ -1,7 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 
+#include "archive.hpp"
 #include "constants.hpp"
 #include "muxer/video_producer.hpp"
 
@@ -20,12 +22,17 @@ class Composer;
 
 namespace hisui::muxer {
 
+struct MultiChannelVPXVideoProducerParameters {
+  const std::vector<hisui::Archive>& normal_archives = {};
+  const std::vector<hisui::Archive>& preferred_archives = {};
+  const double max_stop_time_offset;
+  const std::uint64_t timescale = hisui::Constants::NANO_SECOND;
+};
+
 class MultiChannelVPXVideoProducer : public VideoProducer {
  public:
-  MultiChannelVPXVideoProducer(
-      const hisui::Config&,
-      const hisui::MetadataSet&,
-      const std::uint64_t timescale = hisui::Constants::NANO_SECOND);
+  MultiChannelVPXVideoProducer(const hisui::Config&,
+                               const MultiChannelVPXVideoProducerParameters&);
   ~MultiChannelVPXVideoProducer();
   void produce() override;
 

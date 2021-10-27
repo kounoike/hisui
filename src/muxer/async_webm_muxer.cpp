@@ -69,8 +69,14 @@ void AsyncWebMMuxer::setUp() {
       }
 
       if (m_metadata_set->hasPreferred()) {
-        m_video_producer =
-            new MultiChannelVPXVideoProducer(m_config, *m_metadata_set);
+        m_video_producer = new MultiChannelVPXVideoProducer(
+            m_config,
+            {
+                .normal_archives = m_metadata_set->getNormal().getArchives(),
+                .preferred_archives =
+                    m_metadata_set->getPreferred().getArchives(),
+                .max_stop_time_offset = m_metadata_set->getMaxStopTimeOffset(),
+            });
       } else {
         m_video_producer =
             new VPXVideoProducer(m_config, m_metadata_set->getNormal());

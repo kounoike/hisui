@@ -35,14 +35,12 @@ namespace hisui::muxer {
 
 MultiChannelVPXVideoProducer::MultiChannelVPXVideoProducer(
     const hisui::Config& t_config,
-    const hisui::MetadataSet& t_metadata_set,
-    const std::uint64_t timescale)
+    const MultiChannelVPXVideoProducerParameters& params)
     : VideoProducer({.show_progress_bar = t_config.show_progress_bar}),
       m_normal_bit_rate(t_config.out_video_bit_rate),
       m_preferred_bit_rate(t_config.screen_capture_bit_rate) {
   m_sequencer = new hisui::video::MultiChannelSequencer(
-      t_metadata_set.getNormal().getArchives(),
-      t_metadata_set.getPreferred().getArchives());
+      params.normal_archives, params.preferred_archives);
 
   const auto scaling_width = t_config.scaling_width != 0
                                  ? t_config.scaling_width
@@ -81,10 +79,10 @@ MultiChannelVPXVideoProducer::MultiChannelVPXVideoProducer(
                m_preferred_channel_composer->getHeight()),
       t_config);
 
-  m_encoder =
-      new hisui::video::BufferVPXEncoder(&m_buffer, vpx_config, timescale);
+  m_encoder = new hisui::video::BufferVPXEncoder(&m_buffer, vpx_config,
+                                                 params.timescale);
 
-  m_max_stop_time_offset = t_metadata_set.getMaxStopTimeOffset();
+  m_max_stop_time_offset = params.max_stop_time_offset;
   m_frame_rate = t_config.out_video_frame_rate;
 }
 

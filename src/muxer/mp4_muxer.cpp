@@ -95,8 +95,14 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
     m_timescale_ratio.assign(1, 1);
   } else {
     if (metadata_set.hasPreferred()) {
-      m_video_producer =
-          new MultiChannelVPXVideoProducer(config, metadata_set, 16000);
+      m_video_producer = new MultiChannelVPXVideoProducer(
+          config,
+          {
+              .normal_archives = metadata_set.getNormal().getArchives(),
+              .preferred_archives = metadata_set.getPreferred().getArchives(),
+              .max_stop_time_offset = metadata_set.getMaxStopTimeOffset(),
+              .timescale = 16000,
+          });
     } else {
       m_video_producer =
           new VPXVideoProducer(config, metadata_set.getNormal(), 16000);
