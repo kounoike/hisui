@@ -6,15 +6,16 @@
 
 #include <cmath>
 #include <cstdint>
+#include <memory>
 #include <mutex>
 #include <utility>
 #include <vector>
 
 #include <progresscpp/ProgressBar.hpp>
 
+#include "audio/basic_sequencer.hpp"
 #include "audio/encoder.hpp"
 #include "audio/mixer.hpp"
-#include "audio/sequencer.hpp"
 #include "config.hpp"
 #include "constants.hpp"
 #include "frame.hpp"
@@ -32,15 +33,7 @@ AudioProducer::AudioProducer(const AudioProducerParameters& params)
       m_mix_sample = hisui::audio::mix_sample_vttoth;
       break;
   }
-}
-
-AudioProducer::~AudioProducer() {
-  if (m_sequencer) {
-    delete m_sequencer;
-  }
-  if (m_encoder) {
-    delete m_encoder;
-  }
+  m_sequencer = std::make_unique<hisui::audio::BasicSequencer>(params.archives);
 }
 
 void AudioProducer::produce() {

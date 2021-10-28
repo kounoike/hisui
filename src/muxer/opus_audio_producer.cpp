@@ -1,6 +1,7 @@
 #include "muxer/opus_audio_producer.hpp"
 
 #include <opus_types.h>
+#include <memory>
 
 #include "audio/basic_sequencer.hpp"
 #include "audio/buffer_opus_encoder.hpp"
@@ -16,16 +17,15 @@ OpusAudioProducer::OpusAudioProducer(
     const std::vector<hisui::Archive> t_archives,
     const double t_duration,
     const std::uint64_t timescale)
-    : AudioProducer({.mixer = t_config.audio_mixer,
+    : AudioProducer({.archives = t_archives,
+                     .mixer = t_config.audio_mixer,
                      .max_stop_time_offset = t_duration,
                      .show_progress_bar =
                          t_config.show_progress_bar && t_config.audio_only}) {
-  m_sequencer = new hisui::audio::BasicSequencer(t_archives);
-
-  hisui::audio::BufferOpusEncoder* encoder =
-      new hisui::audio::BufferOpusEncoder(
-          &m_buffer,
-          {.bit_rate = t_config.out_opus_bit_rate, .timescale = timescale});
+  auto encoder = std::make_shared<hisui::audio::BufferOpusEncoder>(
+      &m_buffer,
+      hisui::audio::BufferOpusEncoderParameters{
+          .bit_rate = t_config.out_opus_bit_rate, .timescale = timescale});
   m_skip = encoder->getSkip();
   m_encoder = encoder;
 }
