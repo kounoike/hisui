@@ -13,7 +13,9 @@
 #include <progresscpp/ProgressBar.hpp>
 
 #include "audio/encoder.hpp"
+#include "audio/mixer.hpp"
 #include "audio/sequencer.hpp"
+#include "config.hpp"
 #include "constants.hpp"
 #include "frame.hpp"
 
@@ -21,7 +23,16 @@ namespace hisui::muxer {
 
 AudioProducer::AudioProducer(const AudioProducerParameters& params)
     : m_max_stop_time_offset(params.max_stop_time_offset),
-      m_show_progress_bar(params.show_progress_bar) {}
+      m_show_progress_bar(params.show_progress_bar) {
+  switch (params.mixer) {
+    case hisui::config::AudioMixer::Simple:
+      m_mix_sample = hisui::audio::mix_sample_simple;
+      break;
+    case hisui::config::AudioMixer::Vttoth:
+      m_mix_sample = hisui::audio::mix_sample_vttoth;
+      break;
+  }
+}
 
 AudioProducer::~AudioProducer() {
   if (m_sequencer) {

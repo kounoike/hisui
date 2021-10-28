@@ -5,6 +5,8 @@
 #include <optional>
 #include <queue>
 
+#include "config.hpp"
+
 namespace hisui {
 
 struct Frame;
@@ -21,6 +23,7 @@ class Sequencer;
 namespace hisui::muxer {
 
 struct AudioProducerParameters {
+  const hisui::config::AudioMixer mixer;
   const double max_stop_time_offset;
   const bool show_progress_bar = true;
 };
