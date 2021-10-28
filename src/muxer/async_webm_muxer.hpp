@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include "config.hpp"
@@ -27,7 +28,7 @@ class AsyncWebMMuxer : public Muxer {
   ~AsyncWebMMuxer();
 
   void setUp() override;
-  void setVideoProducer(VideoProducer*);
+  void setVideoProducer(std::shared_ptr<VideoProducer>);
   void setAudioArchives(const std::vector<hisui::Archive>&);
   void run() override;
   void cleanUp() override;

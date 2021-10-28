@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <iterator>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -65,7 +66,8 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
 
   if (config.out_audio_codec == config::OutAudioCodec::FDK_AAC) {
 #ifdef USE_FDK_AAC
-    m_audio_producer = new FDKAACAudioProducer(config, metadata_set);
+    m_audio_producer =
+        std::make_shared<FDKAACAudioProducer>(config, metadata_set);
     m_soun_track = new shiguredo::mp4::track::AACTrack({
         .timescale = 48000,
         .duration = duration,
@@ -78,9 +80,9 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
     throw std::logic_error("AAC: inconsistent setting");
 #endif
   } else {
-    OpusAudioProducer* audio_producer =
-        new OpusAudioProducer(config, metadata_set.getArchives(),
-                              metadata_set.getMaxStopTimeOffset(), 48000);
+    auto audio_producer = std::make_shared<OpusAudioProducer>(
+        config, metadata_set.getArchives(), metadata_set.getMaxStopTimeOffset(),
+        48000);
     const auto skip = audio_producer->getSkip();
     m_audio_producer = audio_producer;
     m_soun_track = new shiguredo::mp4::track::OpusTrack(
@@ -91,23 +93,25 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
   }
 
   if (config.audio_only) {
-    m_video_producer = new NoVideoProducer();
+    m_video_producer = std::make_shared<NoVideoProducer>();
     m_timescale_ratio.assign(1, 1);
   } else {
     if (metadata_set.hasPreferred()) {
-      m_video_producer = new MultiChannelVPXVideoProducer(
+      m_video_producer = std::make_shared<MultiChannelVPXVideoProducer>(
           config,
-          {
+          MultiChannelVPXVideoProducerParameters{
               .normal_archives = metadata_set.getNormal().getArchives(),
               .preferred_archives = metadata_set.getPreferred().getArchives(),
               .max_stop_time_offset = metadata_set.getMaxStopTimeOffset(),
               .timescale = 16000,
           });
     } else {
-      m_video_producer = new VPXVideoProducer(
-          config, {.archives = metadata_set.getNormal().getArchives(),
-                   .max_stop_time_offset = metadata_set.getMaxStopTimeOffset(),
-                   .timescale = 16000});
+      m_video_producer = std::make_shared<VPXVideoProducer>(
+          config,
+          VPXVideoProducerParameters{
+              .archives = metadata_set.getNormal().getArchives(),
+              .max_stop_time_offset = metadata_set.getMaxStopTimeOffset(),
+              .timescale = 16000});
     }
     m_vide_track = new shiguredo::mp4::track::VPXTrack(
         {.timescale = 16000,
@@ -147,8 +151,6 @@ MP4Muxer::~MP4Muxer() {
     delete m_vide_track;
   }
   delete m_soun_track;
-  delete m_video_producer;
-  delete m_audio_producer;
 }
 
 void MP4Muxer::appendAudio(hisui::Frame frame) {

@@ -16,7 +16,8 @@ OpusAudioProducer::OpusAudioProducer(
     const std::vector<hisui::Archive> t_archives,
     const double t_duration,
     const std::uint64_t timescale)
-    : AudioProducer({.show_progress_bar =
+    : AudioProducer({.max_stop_time_offset = t_duration,
+                     .show_progress_bar =
                          t_config.show_progress_bar && t_config.audio_only}) {
   switch (t_config.audio_mixer) {
     case hisui::config::AudioMixer::Simple:
@@ -28,8 +29,6 @@ OpusAudioProducer::OpusAudioProducer(
   }
 
   m_sequencer = new hisui::audio::BasicSequencer(t_archives);
-
-  m_max_stop_time_offset = t_duration;
 
   hisui::audio::BufferOpusEncoder* encoder =
       new hisui::audio::BufferOpusEncoder(

@@ -2,6 +2,8 @@
 
 #include <spdlog/spdlog.h>
 
+#include <memory>
+
 #include "config.hpp"
 #include "layout/metadata.hpp"
 #include "layout/vpx_video_producer.hpp"
@@ -18,14 +20,15 @@ int compose(const hisui::Config& t_config) {
 
   // hisui::muxer::Muxer* muxer = nullptr;
   hisui::muxer::AsyncWebMMuxer* muxer = nullptr;
-  hisui::muxer::VideoProducer* video_producer = nullptr;
+  std::shared_ptr<muxer::VideoProducer> video_producer;
   if (config.audio_only) {
-    video_producer = new muxer::NoVideoProducer();
+    video_producer = std::make_shared<muxer::NoVideoProducer>();
   } else {
-    video_producer = new VPXVideoProducer(
-        config, {.regions = metadata.getRegions(),
-                 .resolution = metadata.getResolution(),
-                 .max_stop_time_offset = metadata.getMaxStopTimeOffset()});
+    video_producer = std::make_shared<VPXVideoProducer>(
+        config, VPXVideoProducerParameters{
+                    .regions = metadata.getRegions(),
+                    .resolution = metadata.getResolution(),
+                    .max_stop_time_offset = metadata.getMaxStopTimeOffset()});
   }
 
   if (config.out_container == hisui::config::OutContainer::WebM) {

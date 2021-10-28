@@ -20,7 +20,8 @@
 namespace hisui::muxer {
 
 AudioProducer::AudioProducer(const AudioProducerParameters& params)
-    : m_show_progress_bar(params.show_progress_bar) {}
+    : m_max_stop_time_offset(params.max_stop_time_offset),
+      m_show_progress_bar(params.show_progress_bar) {}
 
 AudioProducer::~AudioProducer() {
   if (m_sequencer) {

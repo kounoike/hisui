@@ -21,6 +21,7 @@ class Sequencer;
 namespace hisui::muxer {
 
 struct AudioProducerParameters {
+  const double max_stop_time_offset;
   const bool show_progress_bar = true;
 };
 
