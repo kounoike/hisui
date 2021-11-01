@@ -89,9 +89,11 @@ void AsyncWebMMuxer::setUp() {
     }
   }
 
-  m_context->setVideoTrack(m_video_producer->getWidth(),
-                           m_video_producer->getHeight(),
-                           m_video_producer->getFourcc());
+  if (!m_config.audio_only) {
+    m_context->setVideoTrack(m_video_producer->getWidth(),
+                             m_video_producer->getHeight(),
+                             m_video_producer->getFourcc());
+  }
 
   auto audio_producer = std::make_shared<OpusAudioProducer>(
       m_config, m_audio_archives, m_duration);
