@@ -34,15 +34,15 @@
 namespace hisui::muxer {
 
 void MP4Muxer::initialize(const hisui::Config& config_orig,
-                          const hisui::MetadataSet& metadata_set,
+                          const MP4MuxerInitializeParameters& params,
                           shiguredo::mp4::writer::Writer* writer,
                           const float duration) {
   m_writer = writer;
   hisui::Config config = config_orig;
   if (config.out_video_bit_rate == 0) {
-    config.out_video_bit_rate = static_cast<std::uint32_t>(std::size(
-                                    metadata_set.getNormalArchives())) *
-                                hisui::Constants::VIDEO_VPX_BIT_RATE_PER_FILE;
+    config.out_video_bit_rate =
+        static_cast<std::uint32_t>(std::size(params.normal_archives)) *
+        hisui::Constants::VIDEO_VPX_BIT_RATE_PER_FILE;
   } else {
     config.out_video_bit_rate = config.out_video_bit_rate;
   }
@@ -67,10 +67,9 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
   if (config.out_audio_codec == config::OutAudioCodec::FDK_AAC) {
 #ifdef USE_FDK_AAC
     m_audio_producer = std::make_shared<FDKAACAudioProducer>(
-        config,
-        FDKAACAudioProducerParameters{
-            .archives = metadata_set.getArchives(),
-            .max_stop_time_offset = metadata_set.getMaxStopTimeOffset()});
+        config, FDKAACAudioProducerParameters{
+                    .archives = params.audio_archives,
+                    .max_stop_time_offset = params.max_stop_time_offset});
     m_soun_track = new shiguredo::mp4::track::AACTrack({
         .timescale = 48000,
         .duration = duration,
@@ -84,8 +83,7 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
 #endif
   } else {
     auto audio_producer = std::make_shared<OpusAudioProducer>(
-        config, metadata_set.getArchives(), metadata_set.getMaxStopTimeOffset(),
-        48000);
+        config, params.audio_archives, params.max_stop_time_offset, 48000);
     const auto skip = audio_producer->getSkip();
     m_audio_producer = audio_producer;
     m_soun_track = new shiguredo::mp4::track::OpusTrack(
@@ -99,22 +97,20 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
     m_video_producer = std::make_shared<NoVideoProducer>();
     m_timescale_ratio.assign(1, 1);
   } else {
-    if (metadata_set.hasPreferred()) {
+    if (!std::empty(params.preferred_archives)) {
       m_video_producer = std::make_shared<MultiChannelVPXVideoProducer>(
-          config,
-          MultiChannelVPXVideoProducerParameters{
-              .normal_archives = metadata_set.getNormal().getArchives(),
-              .preferred_archives = metadata_set.getPreferred().getArchives(),
-              .max_stop_time_offset = metadata_set.getMaxStopTimeOffset(),
-              .timescale = 16000,
-          });
+          config, MultiChannelVPXVideoProducerParameters{
+                      .normal_archives = params.normal_archives,
+                      .preferred_archives = params.preferred_archives,
+                      .max_stop_time_offset = params.max_stop_time_offset,
+                      .timescale = 16000,
+                  });
     } else {
       m_video_producer = std::make_shared<VPXVideoProducer>(
-          config,
-          VPXVideoProducerParameters{
-              .archives = metadata_set.getNormal().getArchives(),
-              .max_stop_time_offset = metadata_set.getMaxStopTimeOffset(),
-              .timescale = 16000});
+          config, VPXVideoProducerParameters{
+                      .archives = params.normal_archives,
+                      .max_stop_time_offset = params.max_stop_time_offset,
+                      .timescale = 16000});
     }
     m_vide_track = new shiguredo::mp4::track::VPXTrack(
         {.timescale = 16000,
@@ -142,7 +138,7 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
         .audio_codec = config.out_audio_codec == config::OutAudioCodec::FDK_AAC
                            ? "aac"
                            : "opus",
-        .duration = metadata_set.getMaxStopTimeOffset(),
+        .duration = params.max_stop_time_offset,
     });
   }
 }

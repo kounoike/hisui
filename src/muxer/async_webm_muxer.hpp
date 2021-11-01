@@ -22,14 +22,14 @@ class Context;
 namespace hisui::muxer {
 
 struct AsyncWebMMuxerParameters {
-  const std::vector<hisui::Archive>& audio_arhicves;
-  const std::vector<hisui::Archive>& normal_arhicves;
-  const std::vector<hisui::Archive>& preferred_arhicves;
+  const std::vector<hisui::Archive>& audio_archives;
+  const std::vector<hisui::Archive>& normal_archives;
+  const std::vector<hisui::Archive>& preferred_archives;
   const double max_stop_time_offset;
 };
 
 struct AsyncWebMMuxerParametersForLayout {
-  const std::vector<hisui::Archive>& audio_arhicves;
+  const std::vector<hisui::Archive>& audio_archives;
   const std::shared_ptr<VideoProducer>& video_producer;
   const double max_stop_time_offset;
 };

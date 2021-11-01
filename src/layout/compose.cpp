@@ -34,7 +34,7 @@ int compose(const hisui::Config& t_config) {
   if (config.out_container == hisui::config::OutContainer::WebM) {
     muxer = new hisui::muxer::AsyncWebMMuxer(
         config, hisui::muxer::AsyncWebMMuxerParametersForLayout{
-                    .audio_arhicves = metadata.getAudioArchives(),
+                    .audio_archives = metadata.getAudioArchives(),
                     .video_producer = video_producer,
                     .max_stop_time_offset = metadata.getMaxStopTimeOffset()});
 

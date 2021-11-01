@@ -9,6 +9,7 @@
 #include <iosfwd>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 #include "config.hpp"
 #include "metadata.hpp"
@@ -57,7 +58,17 @@ void FaststartMP4Muxer::setUp() {
               .mdat_path_templete =
                   directory_for_faststart_intermediate_file.string() +
                   std::filesystem::path::preferred_separator + "mdatXXXXXX"});
-  initialize(m_config, m_metadata_set, m_faststart_writer, duration);
+  initialize(m_config,
+             {
+                 .audio_archives = m_metadata_set.getArchives(),
+                 .normal_archives = m_metadata_set.getNormalArchives(),
+                 .preferred_archives =
+                     m_metadata_set.hasPreferred()
+                         ? m_metadata_set.getPreferred().getArchives()
+                         : std::vector<hisui::Archive>{},
+                 .max_stop_time_offset = m_metadata_set.getMaxStopTimeOffset(),
+             },
+             m_faststart_writer, duration);
 }
 
 FaststartMP4Muxer::~FaststartMP4Muxer() {

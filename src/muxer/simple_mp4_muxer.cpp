@@ -1,6 +1,7 @@
 #include "muxer/simple_mp4_muxer.hpp"
 
 #include <iosfwd>
+#include <vector>
 
 #include "metadata.hpp"
 #include "shiguredo/mp4/track/soun.hpp"
@@ -24,7 +25,17 @@ void SimpleMP4Muxer::setUp() {
       static_cast<float>(m_metadata_set.getMaxStopTimeOffset());
   m_simple_writer = new shiguredo::mp4::writer::SimpleWriter(
       m_ofs, {.mvhd_timescale = 1000, .duration = duration});
-  initialize(m_config, m_metadata_set, m_simple_writer, duration);
+  initialize(m_config,
+             {
+                 .audio_archives = m_metadata_set.getArchives(),
+                 .normal_archives = m_metadata_set.getNormalArchives(),
+                 .preferred_archives =
+                     m_metadata_set.hasPreferred()
+                         ? m_metadata_set.getPreferred().getArchives()
+                         : std::vector<hisui::Archive>{},
+                 .max_stop_time_offset = m_metadata_set.getMaxStopTimeOffset(),
+             },
+             m_simple_writer, duration);
 }
 
 SimpleMP4Muxer::~SimpleMP4Muxer() {

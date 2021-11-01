@@ -25,15 +25,15 @@ namespace hisui::muxer {
 AsyncWebMMuxer::AsyncWebMMuxer(const hisui::Config& t_config,
                                const AsyncWebMMuxerParameters& params)
     : m_config(t_config),
-      m_audio_archives(params.normal_arhicves),
-      m_normal_archives(params.normal_arhicves),
-      m_preferred_archives(params.preferred_arhicves),
+      m_audio_archives(params.normal_archives),
+      m_normal_archives(params.normal_archives),
+      m_preferred_archives(params.preferred_archives),
       m_max_stop_time_offset(params.max_stop_time_offset) {}
 
 AsyncWebMMuxer::AsyncWebMMuxer(const hisui::Config& t_config,
                                const AsyncWebMMuxerParametersForLayout& params)
     : m_config(t_config),
-      m_audio_archives(params.audio_arhicves),
+      m_audio_archives(params.audio_archives),
       m_max_stop_time_offset(params.max_stop_time_offset) {
   m_video_producer = params.video_producer;
 }

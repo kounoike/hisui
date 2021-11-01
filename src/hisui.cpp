@@ -76,9 +76,9 @@ int main(int argc, char** argv) {
   if (config.out_container == hisui::config::OutContainer::WebM) {
     muxer = new hisui::muxer::AsyncWebMMuxer(
         config, hisui::muxer::AsyncWebMMuxerParameters{
-                    .audio_arhicves = metadata_set.getArchives(),
-                    .normal_arhicves = metadata_set.getNormal().getArchives(),
-                    .preferred_arhicves =
+                    .audio_archives = metadata_set.getArchives(),
+                    .normal_archives = metadata_set.getNormal().getArchives(),
+                    .preferred_archives =
                         metadata_set.hasPreferred()
                             ? metadata_set.getPreferred().getArchives()
                             : std::vector<hisui::Archive>{},
