@@ -17,25 +17,15 @@ class Track;
 namespace hisui::muxer {
 
 SimpleMP4Muxer::SimpleMP4Muxer(const hisui::Config& t_config,
-                               const hisui::MetadataSet& t_metadata_set)
-    : m_config(t_config), m_metadata_set(t_metadata_set) {}
+                               const MP4MuxerParameters& params)
+    : MP4Muxer(params), m_config(t_config) {
+  m_duration = static_cast<float>(params.max_stop_time_offset);
+  m_simple_writer = new shiguredo::mp4::writer::SimpleWriter(
+      m_ofs, {.mvhd_timescale = 1000, .duration = m_duration});
+}
 
 void SimpleMP4Muxer::setUp() {
-  const float duration =
-      static_cast<float>(m_metadata_set.getMaxStopTimeOffset());
-  m_simple_writer = new shiguredo::mp4::writer::SimpleWriter(
-      m_ofs, {.mvhd_timescale = 1000, .duration = duration});
-  initialize(m_config,
-             {
-                 .audio_archives = m_metadata_set.getArchives(),
-                 .normal_archives = m_metadata_set.getNormalArchives(),
-                 .preferred_archives =
-                     m_metadata_set.hasPreferred()
-                         ? m_metadata_set.getPreferred().getArchives()
-                         : std::vector<hisui::Archive>{},
-                 .max_stop_time_offset = m_metadata_set.getMaxStopTimeOffset(),
-             },
-             m_simple_writer, duration);
+  initialize(m_config, m_simple_writer, m_duration);
 }
 
 SimpleMP4Muxer::~SimpleMP4Muxer() {

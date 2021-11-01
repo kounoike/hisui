@@ -30,7 +30,7 @@ class Writer;
 
 namespace hisui::muxer {
 
-struct MP4MuxerInitializeParameters {
+struct MP4MuxerParameters {
   const std::vector<hisui::Archive>& audio_archives;
   const std::vector<hisui::Archive>& normal_archives;
   const std::vector<hisui::Archive>& preferred_archives;
@@ -39,7 +39,8 @@ struct MP4MuxerInitializeParameters {
 
 class MP4Muxer : public Muxer {
  public:
-  ~MP4Muxer();
+  explicit MP4Muxer(const MP4MuxerParameters&);
+  virtual ~MP4Muxer();
 
  protected:
   std::ofstream m_ofs;
@@ -58,9 +59,14 @@ class MP4Muxer : public Muxer {
 
   void writeTrackData();
   void initialize(const hisui::Config&,
-                  const MP4MuxerInitializeParameters& params,
                   shiguredo::mp4::writer::Writer*,
                   const float);
+
+ private:
+  std::vector<hisui::Archive> m_audio_archives;
+  std::vector<hisui::Archive> m_normal_archives;
+  std::vector<hisui::Archive> m_preferred_archives;
+  double m_max_stop_time_offset;
 };
 
 }  // namespace hisui::muxer

@@ -33,15 +33,20 @@
 
 namespace hisui::muxer {
 
+MP4Muxer::MP4Muxer(const MP4MuxerParameters& params)
+    : m_audio_archives(params.audio_archives),
+      m_normal_archives(params.normal_archives),
+      m_preferred_archives(params.preferred_archives),
+      m_max_stop_time_offset(params.max_stop_time_offset) {}
+
 void MP4Muxer::initialize(const hisui::Config& config_orig,
-                          const MP4MuxerInitializeParameters& params,
                           shiguredo::mp4::writer::Writer* writer,
                           const float duration) {
   m_writer = writer;
   hisui::Config config = config_orig;
   if (config.out_video_bit_rate == 0) {
     config.out_video_bit_rate =
-        static_cast<std::uint32_t>(std::size(params.normal_archives)) *
+        static_cast<std::uint32_t>(std::size(m_normal_archives)) *
         hisui::Constants::VIDEO_VPX_BIT_RATE_PER_FILE;
   } else {
     config.out_video_bit_rate = config.out_video_bit_rate;
@@ -68,8 +73,8 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
 #ifdef USE_FDK_AAC
     m_audio_producer = std::make_shared<FDKAACAudioProducer>(
         config, FDKAACAudioProducerParameters{
-                    .archives = params.audio_archives,
-                    .max_stop_time_offset = params.max_stop_time_offset});
+                    .archives = m_audio_archives,
+                    .max_stop_time_offset = m_max_stop_time_offset});
     m_soun_track = new shiguredo::mp4::track::AACTrack({
         .timescale = 48000,
         .duration = duration,
@@ -83,7 +88,7 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
 #endif
   } else {
     auto audio_producer = std::make_shared<OpusAudioProducer>(
-        config, params.audio_archives, params.max_stop_time_offset, 48000);
+        config, m_audio_archives, m_max_stop_time_offset, 48000);
     const auto skip = audio_producer->getSkip();
     m_audio_producer = audio_producer;
     m_soun_track = new shiguredo::mp4::track::OpusTrack(
@@ -97,19 +102,19 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
     m_video_producer = std::make_shared<NoVideoProducer>();
     m_timescale_ratio.assign(1, 1);
   } else {
-    if (!std::empty(params.preferred_archives)) {
+    if (!std::empty(m_preferred_archives)) {
       m_video_producer = std::make_shared<MultiChannelVPXVideoProducer>(
           config, MultiChannelVPXVideoProducerParameters{
-                      .normal_archives = params.normal_archives,
-                      .preferred_archives = params.preferred_archives,
-                      .max_stop_time_offset = params.max_stop_time_offset,
+                      .normal_archives = m_normal_archives,
+                      .preferred_archives = m_preferred_archives,
+                      .max_stop_time_offset = m_max_stop_time_offset,
                       .timescale = 16000,
                   });
     } else {
       m_video_producer = std::make_shared<VPXVideoProducer>(
           config, VPXVideoProducerParameters{
-                      .archives = params.normal_archives,
-                      .max_stop_time_offset = params.max_stop_time_offset,
+                      .archives = m_normal_archives,
+                      .max_stop_time_offset = m_max_stop_time_offset,
                       .timescale = 16000});
     }
     m_vide_track = new shiguredo::mp4::track::VPXTrack(
@@ -138,7 +143,7 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
         .audio_codec = config.out_audio_codec == config::OutAudioCodec::FDK_AAC
                            ? "aac"
                            : "opus",
-        .duration = params.max_stop_time_offset,
+        .duration = m_max_stop_time_offset,
     });
   }
 }

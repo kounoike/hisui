@@ -26,10 +26,8 @@ class Track;
 namespace hisui::muxer {
 
 FaststartMP4Muxer::FaststartMP4Muxer(const hisui::Config& t_config,
-                                     const hisui::MetadataSet& t_metadata_set)
-    : m_config(t_config), m_metadata_set(t_metadata_set) {}
-
-void FaststartMP4Muxer::setUp() {
+                                     const MP4MuxerParameters& params)
+    : MP4Muxer(params), m_config(t_config) {
   std::filesystem::path directory_for_faststart_intermediate_file;
   if (m_config.directory_for_faststart_intermediate_file != "") {
     directory_for_faststart_intermediate_file =
@@ -50,25 +48,17 @@ void FaststartMP4Muxer::setUp() {
   spdlog::debug("directory_for_faststart_intermediate_file: {}",
                 directory_for_faststart_intermediate_file.string());
 
-  const float duration =
-      static_cast<float>(m_metadata_set.getMaxStopTimeOffset());
+  m_duration = static_cast<float>(params.max_stop_time_offset);
   m_faststart_writer = new shiguredo::mp4::writer::FaststartWriter(
       m_ofs, {.mvhd_timescale = 1000,
-              .duration = duration,
+              .duration = m_duration,
               .mdat_path_templete =
                   directory_for_faststart_intermediate_file.string() +
                   std::filesystem::path::preferred_separator + "mdatXXXXXX"});
-  initialize(m_config,
-             {
-                 .audio_archives = m_metadata_set.getArchives(),
-                 .normal_archives = m_metadata_set.getNormalArchives(),
-                 .preferred_archives =
-                     m_metadata_set.hasPreferred()
-                         ? m_metadata_set.getPreferred().getArchives()
-                         : std::vector<hisui::Archive>{},
-                 .max_stop_time_offset = m_metadata_set.getMaxStopTimeOffset(),
-             },
-             m_faststart_writer, duration);
+}
+
+void FaststartMP4Muxer::setUp() {
+  initialize(m_config, m_faststart_writer, m_duration);
 }
 
 FaststartMP4Muxer::~FaststartMP4Muxer() {
