@@ -11,13 +11,12 @@ namespace hisui::muxer {
 
 FDKAACAudioProducer::FDKAACAudioProducer(
     const hisui::Config& t_config,
-    const hisui::MetadataSet& t_metadata_set)
-    : AudioProducer(
-          {.archives = t_metadata_set.getArchives(),
-           .mixer = t_config.audio_mixer,
-           .max_stop_time_offset = t_metadata_set.getMaxStopTimeOffset(),
-           .show_progress_bar =
-               t_config.show_progress_bar && t_config.audio_only}) {
+    const FDKAACAudioProducerParameters& params)
+    : AudioProducer({.archives = params.archives,
+                     .mixer = t_config.audio_mixer,
+                     .max_stop_time_offset = params.max_stop_time_offset,
+                     .show_progress_bar =
+                         t_config.show_progress_bar && t_config.audio_only}) {
   m_encoder = std::make_shared<hisui::audio::BufferFDKAACEncoder>(
       &m_buffer, hisui::audio::BufferFDKAACEncoderParameters{
                      .bit_rate = t_config.out_aac_bit_rate});

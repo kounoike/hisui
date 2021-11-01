@@ -66,8 +66,11 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
 
   if (config.out_audio_codec == config::OutAudioCodec::FDK_AAC) {
 #ifdef USE_FDK_AAC
-    m_audio_producer =
-        std::make_shared<FDKAACAudioProducer>(config, metadata_set);
+    m_audio_producer = std::make_shared<FDKAACAudioProducer>(
+        config,
+        FDKAACAudioProducerParameters{
+            .archives = metadata_set.getArchives(),
+            .max_stop_time_offset = metadata_set.getMaxStopTimeOffset()});
     m_soun_track = new shiguredo::mp4::track::AACTrack({
         .timescale = 48000,
         .duration = duration,
