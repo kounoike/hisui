@@ -23,25 +23,19 @@
 namespace hisui::muxer {
 
 AsyncWebMMuxer::AsyncWebMMuxer(const hisui::Config& t_config,
-                               const double t_duration)
-    : m_config(t_config), m_duration(t_duration) {}
+                               const AsyncWebMMuxerParameters& params)
+    : m_config(t_config),
+      m_audio_archives(params.normal_arhicves),
+      m_normal_archives(params.normal_arhicves),
+      m_preferred_archives(params.preferred_arhicves),
+      m_max_stop_time_offset(params.max_stop_time_offset) {}
 
 AsyncWebMMuxer::AsyncWebMMuxer(const hisui::Config& t_config,
-                               hisui::MetadataSet* t_metadata_set)
-    : m_config(t_config), m_metadata_set(t_metadata_set) {
-  m_duration = m_metadata_set->getMaxStopTimeOffset();
-  m_audio_archives = m_metadata_set->getArchives();
-  m_normal_archive_size = std::size(m_metadata_set->getNormalArchives());
-}
-
-void AsyncWebMMuxer::setVideoProducer(
-    std::shared_ptr<VideoProducer> t_video_producer) {
-  m_video_producer = t_video_producer;
-}
-
-void AsyncWebMMuxer::setAudioArchives(
-    const std::vector<hisui::Archive>& t_audio_archives) {
-  m_audio_archives = t_audio_archives;
+                               const AsyncWebMMuxerParametersForLayout& params)
+    : m_config(t_config),
+      m_audio_archives(params.audio_arhicves),
+      m_max_stop_time_offset(params.max_stop_time_offset) {
+  m_video_producer = params.video_producer;
 }
 
 void AsyncWebMMuxer::setUp() {
@@ -58,33 +52,27 @@ void AsyncWebMMuxer::setUp() {
   m_context->init();
 
   if (!m_video_producer) {
-    if (!m_metadata_set) {
-      throw std::runtime_error("m_metadata_set is null");
-    }
     if (m_config.audio_only) {
       m_video_producer = std::make_shared<NoVideoProducer>();
     } else {
       if (m_config.out_video_bit_rate == 0) {
         m_config.out_video_bit_rate =
-            static_cast<std::uint32_t>(m_normal_archive_size) *
+            static_cast<std::uint32_t>(std::size(m_normal_archives)) *
             hisui::Constants::VIDEO_VPX_BIT_RATE_PER_FILE;
       }
 
-      if (m_metadata_set->hasPreferred()) {
+      if (!std::empty(m_preferred_archives)) {
         m_video_producer = std::make_shared<MultiChannelVPXVideoProducer>(
-            m_config,
-            MultiChannelVPXVideoProducerParameters{
-                .normal_archives = m_metadata_set->getNormal().getArchives(),
-                .preferred_archives =
-                    m_metadata_set->getPreferred().getArchives(),
-                .max_stop_time_offset = m_metadata_set->getMaxStopTimeOffset(),
-            });
+            m_config, MultiChannelVPXVideoProducerParameters{
+                          .normal_archives = m_normal_archives,
+                          .preferred_archives = m_preferred_archives,
+                          .max_stop_time_offset = m_max_stop_time_offset,
+                      });
       } else {
         m_video_producer = std::make_shared<VPXVideoProducer>(
             m_config, VPXVideoProducerParameters{
-                          .archives = m_metadata_set->getNormal().getArchives(),
-                          .max_stop_time_offset =
-                              m_metadata_set->getMaxStopTimeOffset()});
+                          .archives = m_normal_archives,
+                          .max_stop_time_offset = m_max_stop_time_offset});
       }
     }
   }
@@ -96,7 +84,7 @@ void AsyncWebMMuxer::setUp() {
   }
 
   auto audio_producer = std::make_shared<OpusAudioProducer>(
-      m_config, m_audio_archives, m_duration);
+      m_config, m_audio_archives, m_max_stop_time_offset);
   const auto skip = audio_producer->getSkip();
   m_audio_producer = audio_producer;
 
@@ -117,7 +105,7 @@ void AsyncWebMMuxer::setUp() {
                 ? "vp9"
                 : "vp8",
         .audio_codec = "opus",
-        .duration = m_metadata_set->getMaxStopTimeOffset(),
+        .duration = m_max_stop_time_offset,
     });
   }
 }

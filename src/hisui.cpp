@@ -74,7 +74,16 @@ int main(int argc, char** argv) {
 
   hisui::muxer::Muxer* muxer = nullptr;
   if (config.out_container == hisui::config::OutContainer::WebM) {
-    muxer = new hisui::muxer::AsyncWebMMuxer(config, &metadata_set);
+    muxer = new hisui::muxer::AsyncWebMMuxer(
+        config, hisui::muxer::AsyncWebMMuxerParameters{
+                    .audio_arhicves = metadata_set.getArchives(),
+                    .normal_arhicves = metadata_set.getNormal().getArchives(),
+                    .preferred_arhicves =
+                        metadata_set.hasPreferred()
+                            ? metadata_set.getPreferred().getArchives()
+                            : std::vector<hisui::Archive>{},
+                    .max_stop_time_offset = metadata_set.getMaxStopTimeOffset(),
+                });
   } else if (config.out_container == hisui::config::OutContainer::MP4) {
     if (config.mp4_muxer == hisui::config::MP4Muxer::Simple) {
       muxer = new hisui::muxer::SimpleMP4Muxer(config, metadata_set);

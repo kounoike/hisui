@@ -32,10 +32,11 @@ int compose(const hisui::Config& t_config) {
   }
 
   if (config.out_container == hisui::config::OutContainer::WebM) {
-    muxer = new hisui::muxer::AsyncWebMMuxer(config,
-                                             metadata.getMaxStopTimeOffset());
-    muxer->setVideoProducer(video_producer);
-    muxer->setAudioArchives(metadata.getAudioArchives());
+    muxer = new hisui::muxer::AsyncWebMMuxer(
+        config, hisui::muxer::AsyncWebMMuxerParametersForLayout{
+                    .audio_arhicves = metadata.getAudioArchives(),
+                    .video_producer = video_producer,
+                    .max_stop_time_offset = metadata.getMaxStopTimeOffset()});
 
     // } else if (config.out_container == hisui::config::OutContainer::MP4) {
     //   if (config.mp4_muxer == hisui::config::MP4Muxer::Simple) {

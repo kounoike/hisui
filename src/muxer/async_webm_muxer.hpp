@@ -21,15 +21,27 @@ class Context;
 
 namespace hisui::muxer {
 
+struct AsyncWebMMuxerParameters {
+  const std::vector<hisui::Archive>& audio_arhicves;
+  const std::vector<hisui::Archive>& normal_arhicves;
+  const std::vector<hisui::Archive>& preferred_arhicves;
+  const double max_stop_time_offset;
+};
+
+struct AsyncWebMMuxerParametersForLayout {
+  const std::vector<hisui::Archive>& audio_arhicves;
+  const std::shared_ptr<VideoProducer>& video_producer;
+  const double max_stop_time_offset;
+};
+
 class AsyncWebMMuxer : public Muxer {
  public:
-  AsyncWebMMuxer(const hisui::Config&, const double);
-  AsyncWebMMuxer(const hisui::Config&, hisui::MetadataSet*);
+  AsyncWebMMuxer(const hisui::Config&, const AsyncWebMMuxerParameters&);
+  AsyncWebMMuxer(const hisui::Config&,
+                 const AsyncWebMMuxerParametersForLayout&);
   ~AsyncWebMMuxer();
 
   void setUp() override;
-  void setVideoProducer(std::shared_ptr<VideoProducer>);
-  void setAudioArchives(const std::vector<hisui::Archive>&);
   void run() override;
   void cleanUp() override;
 
@@ -40,10 +52,12 @@ class AsyncWebMMuxer : public Muxer {
 
   hisui::webm::output::Context* m_context;
 
+  bool has_preferred;
   hisui::Config m_config;
-  hisui::MetadataSet* m_metadata_set;
   std::vector<hisui::Archive> m_audio_archives;
-  double m_duration;
+  std::vector<hisui::Archive> m_normal_archives;
+  std::vector<hisui::Archive> m_preferred_archives;
+  double m_max_stop_time_offset;
   std::size_t m_normal_archive_size;
 };
 
