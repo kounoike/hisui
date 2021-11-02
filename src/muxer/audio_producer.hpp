@@ -25,7 +25,7 @@ struct AudioProducerParameters {
 class AudioProducer {
  public:
   explicit AudioProducer(const AudioProducerParameters&);
-  virtual ~AudioProducer() {}
+  virtual ~AudioProducer() = default;
   void produce();
   void bufferPop();
   std::optional<hisui::Frame> bufferFront();

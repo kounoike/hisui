@@ -23,7 +23,6 @@ namespace hisui::layout {
 class Metadata {
  public:
   Metadata(const std::string& file_path, const boost::json::value& jv);
-  virtual ~Metadata() {}
   void dump() const;
   void prepare();
   void copyToConfig(hisui::Config*) const;

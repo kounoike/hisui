@@ -19,7 +19,7 @@ class VideoProducer;
 
 class Muxer {
  public:
-  virtual ~Muxer() {}
+  virtual ~Muxer() = default;
   virtual void setUp() = 0;
   virtual void run() = 0;
   virtual void cleanUp() = 0;
