@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 #include "video/sequencer.hpp"
@@ -18,13 +19,12 @@ class YUVImage;
 class BasicSequencer : public Sequencer {
  public:
   explicit BasicSequencer(const std::vector<hisui::Archive>&);
-  ~BasicSequencer();
 
-  SequencerGetYUVsResult getYUVs(std::vector<const YUVImage*>*,
+  SequencerGetYUVsResult getYUVs(std::vector<std::shared_ptr<YUVImage>>*,
                                  const std::uint64_t);
 
  private:
-  const YUVImage* m_black_yuv_image;
+  std::shared_ptr<YUVImage> m_black_yuv_image;
 };
 
 }  // namespace hisui::video

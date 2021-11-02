@@ -31,8 +31,9 @@ class Sequencer {
  public:
   virtual ~Sequencer() = default;
 
-  virtual SequencerGetYUVsResult getYUVs(std::vector<const YUVImage*>*,
-                                         const std::uint64_t) = 0;
+  virtual SequencerGetYUVsResult getYUVs(
+      std::vector<std::shared_ptr<YUVImage>>*,
+      const std::uint64_t) = 0;
 
   std::uint32_t getMaxWidth() const;
   std::uint32_t getMaxHeight() const;

@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <memory>
 #include <mutex>
 #include <vector>
 
@@ -100,7 +101,7 @@ void MultiChannelVPXVideoProducer::produce() {
   }
 
   try {
-    std::vector<const video::YUVImage*> yuvs;
+    std::vector<std::shared_ptr<video::YUVImage>> yuvs;
     std::vector<unsigned char> raw_image;
     yuvs.resize(m_sequencer->getSize());
 

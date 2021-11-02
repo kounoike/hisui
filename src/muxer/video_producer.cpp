@@ -6,6 +6,7 @@
 
 #include <cmath>
 #include <cstdint>
+#include <memory>
 #include <mutex>
 #include <optional>
 #include <vector>
@@ -49,7 +50,7 @@ void VideoProducer::produce() {
   }
 
   try {
-    std::vector<const video::YUVImage*> yuvs;
+    std::vector<std::shared_ptr<video::YUVImage>> yuvs;
     std::vector<unsigned char> raw_image;
     yuvs.resize(m_sequencer->getSize());
     raw_image.resize(m_composer->getWidth() * m_composer->getHeight() * 3 >> 1);

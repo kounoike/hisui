@@ -3,6 +3,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 namespace hisui::video {
@@ -27,7 +28,8 @@ class YUVImage {
   std::uint32_t m_height;
 };
 
-YUVImage* create_black_yuv_image(const std::uint32_t, const std::uint32_t);
+std::shared_ptr<YUVImage> create_black_yuv_image(const std::uint32_t,
+                                                 const std::uint32_t);
 
 void merge_yuv_planes_from_top_left(unsigned char*,
                                     const std::size_t,

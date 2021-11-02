@@ -42,7 +42,7 @@ class Cell {
   void setSource(std::shared_ptr<VideoSource>);
   void resetSource(const std::uint64_t);
   std::uint64_t getEndTime() const;
-  const hisui::video::YUVImage* getYUV(const std::uint64_t);
+  const std::shared_ptr<hisui::video::YUVImage> getYUV(const std::uint64_t);
   const CellInformation getInformation() const;
 
  private:
@@ -53,7 +53,7 @@ class Cell {
   std::shared_ptr<VideoSource> m_source;
   std::uint64_t m_end_time;
 
-  // hisui::video::YUVImage* m_scaled_image;
+  // std::shared_ptr<hisui::video::YUVImage> m_scaled_image;
   std::shared_ptr<hisui::video::PreserveAspectRatioScaler> m_scaler;
 };
 
