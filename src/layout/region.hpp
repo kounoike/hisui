@@ -45,7 +45,6 @@ struct RegionPrepareResult {
 class Region {
  public:
   explicit Region(const RegionParameters&);
-  ~Region();
 
   void dump() const;
   RegionInformation getInformation() const;
@@ -54,7 +53,7 @@ class Region {
   void substructTrimIntervals(const TrimIntervals&);
   double getMaxEndTime() const;
   void setEncodingInterval();
-  const hisui::video::YUVImage* getYUV(const std::uint64_t);
+  const std::shared_ptr<hisui::video::YUVImage> getYUV(const std::uint64_t);
 
  private:
   std::string m_name;
@@ -75,7 +74,7 @@ class Region {
   std::vector<std::shared_ptr<Cell>> m_cells;
   double m_max_end_time;
 
-  hisui::video::YUVImage* m_yuv_image;
+  std::shared_ptr<hisui::video::YUVImage> m_yuv_image;
   std::array<std::size_t, 3> m_plane_sizes;
   std::array<unsigned char, 3> m_plane_default_values;
 };

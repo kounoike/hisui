@@ -48,7 +48,8 @@ void AsyncWebMMuxer::setUp() {
     }
   }
 
-  m_context = new hisui::webm::output::Context(m_config.out_filename);
+  m_context =
+      std::make_unique<hisui::webm::output::Context>(m_config.out_filename);
   m_context->init();
 
   if (!m_video_producer) {
@@ -108,10 +109,6 @@ void AsyncWebMMuxer::setUp() {
         .duration = m_max_stop_time_offset,
     });
   }
-}
-
-AsyncWebMMuxer::~AsyncWebMMuxer() {
-  delete m_context;
 }
 
 void AsyncWebMMuxer::appendAudio(hisui::Frame frame) {

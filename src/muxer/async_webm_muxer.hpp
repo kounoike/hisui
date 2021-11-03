@@ -6,18 +6,13 @@
 #include "config.hpp"
 #include "metadata.hpp"
 #include "muxer/muxer.hpp"
+#include "webm/output/context.hpp"
 
 namespace hisui {
 
 struct Frame;
 
 }
-
-namespace hisui::webm::output {
-
-class Context;
-
-}  // namespace hisui::webm::output
 
 namespace hisui::muxer {
 
@@ -39,7 +34,6 @@ class AsyncWebMMuxer : public Muxer {
   AsyncWebMMuxer(const hisui::Config&, const AsyncWebMMuxerParameters&);
   AsyncWebMMuxer(const hisui::Config&,
                  const AsyncWebMMuxerParametersForLayout&);
-  ~AsyncWebMMuxer();
 
   void setUp() override;
   void run() override;
@@ -50,7 +44,7 @@ class AsyncWebMMuxer : public Muxer {
   void appendAudio(hisui::Frame) override;
   void appendVideo(hisui::Frame) override;
 
-  hisui::webm::output::Context* m_context;
+  std::unique_ptr<hisui::webm::output::Context> m_context;
 
   bool has_preferred;
   hisui::Config m_config;

@@ -138,8 +138,8 @@ const RegionPrepareResult Region::prepare(
   m_plane_sizes[1] = (m_plane_sizes[0] + 3) >> 2;
   m_plane_sizes[2] = m_plane_sizes[1];
 
-  m_yuv_image =
-      new hisui::video::YUVImage(m_resolution.width, m_resolution.height);
+  m_yuv_image = std::make_shared<hisui::video::YUVImage>(m_resolution.width,
+                                                         m_resolution.height);
 
   m_plane_default_values[0] = 0;
   m_plane_default_values[1] = 128;
@@ -260,7 +260,8 @@ void Region::setEncodingInterval() {
   }
 }
 
-const hisui::video::YUVImage* Region::getYUV(const std::uint64_t t) {
+const std::shared_ptr<hisui::video::YUVImage> Region::getYUV(
+    const std::uint64_t t) {
   reset_cells_source({.cells = m_cells, .time = t});
 
   for (auto video_source : m_video_sources) {
@@ -296,10 +297,6 @@ const hisui::video::YUVImage* Region::getYUV(const std::uint64_t t) {
   }
 
   return m_yuv_image;
-}
-
-Region::~Region() {
-  delete m_yuv_image;
 }
 
 }  // namespace hisui::layout
