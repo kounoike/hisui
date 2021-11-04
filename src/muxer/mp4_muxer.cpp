@@ -39,9 +39,10 @@ MP4Muxer::MP4Muxer(const MP4MuxerParameters& params)
       m_preferred_archives(params.preferred_archives),
       m_max_stop_time_offset(params.max_stop_time_offset) {}
 
-void MP4Muxer::initialize(const hisui::Config& config_orig,
-                          shiguredo::mp4::writer::Writer* writer,
-                          const float duration) {
+void MP4Muxer::initialize(
+    const hisui::Config& config_orig,
+    std::shared_ptr<shiguredo::mp4::writer::Writer> writer,
+    const float duration) {
   m_writer = writer;
   hisui::Config config = config_orig;
   if (config.out_video_bit_rate == 0) {
@@ -75,14 +76,15 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
         config, FDKAACAudioProducerParameters{
                     .archives = m_audio_archives,
                     .max_stop_time_offset = m_max_stop_time_offset});
-    m_soun_track = new shiguredo::mp4::track::AACTrack({
-        .timescale = 48000,
-        .duration = duration,
-        .track_id = m_writer->getAndUpdateNextTrackID(),
-        .max_bitrate = config.out_aac_bit_rate,
-        .avg_bitrate = config.out_aac_bit_rate,
-        .writer = m_writer,
-    });
+    m_soun_track = std::make_shared<shiguredo::mp4::track::AACTrack>(
+        shiguredo::mp4::track::AACTrackParameters{
+            .timescale = 48000,
+            .duration = duration,
+            .track_id = m_writer->getAndUpdateNextTrackID(),
+            .max_bitrate = config.out_aac_bit_rate,
+            .avg_bitrate = config.out_aac_bit_rate,
+            .writer = m_writer.get(),
+        });
 #else
     throw std::logic_error("AAC: inconsistent setting");
 #endif
@@ -91,11 +93,12 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
         config, m_audio_archives, m_max_stop_time_offset, 48000);
     const auto skip = audio_producer->getSkip();
     m_audio_producer = audio_producer;
-    m_soun_track = new shiguredo::mp4::track::OpusTrack(
-        {.pre_skip = static_cast<std::uint64_t>(skip),
-         .duration = duration,
-         .track_id = m_writer->getAndUpdateNextTrackID(),
-         .writer = m_writer});
+    m_soun_track = std::make_shared<shiguredo::mp4::track::OpusTrack>(
+        shiguredo::mp4::track::OpusTrackParameters{
+            .pre_skip = static_cast<std::uint64_t>(skip),
+            .duration = duration,
+            .track_id = m_writer->getAndUpdateNextTrackID(),
+            .writer = m_writer.get()});
   }
 
   if (config.audio_only) {
@@ -117,13 +120,14 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
                       .max_stop_time_offset = m_max_stop_time_offset,
                       .timescale = 16000});
     }
-    m_vide_track = new shiguredo::mp4::track::VPXTrack(
-        {.timescale = 16000,
-         .duration = duration,
-         .track_id = m_writer->getAndUpdateNextTrackID(),
-         .width = m_video_producer->getWidth(),
-         .height = m_video_producer->getHeight(),
-         .writer = m_writer});
+    m_vide_track = std::make_shared<shiguredo::mp4::track::VPXTrack>(
+        shiguredo::mp4::track::VPXTrackParameters{
+            .timescale = 16000,
+            .duration = duration,
+            .track_id = m_writer->getAndUpdateNextTrackID(),
+            .width = m_video_producer->getWidth(),
+            .height = m_video_producer->getHeight(),
+            .writer = m_writer.get()});
 
     m_timescale_ratio.assign(m_soun_track->getTimescale(),
                              m_vide_track->getTimescale());
@@ -150,11 +154,6 @@ void MP4Muxer::initialize(const hisui::Config& config_orig,
 
 MP4Muxer::~MP4Muxer() {
   m_ofs.close();
-
-  if (m_vide_track) {
-    delete m_vide_track;
-  }
-  delete m_soun_track;
 }
 
 void MP4Muxer::appendAudio(hisui::Frame frame) {

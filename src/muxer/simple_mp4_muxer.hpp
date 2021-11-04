@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "config.hpp"
 #include "metadata.hpp"
 #include "muxer/mp4_muxer.hpp"
@@ -15,14 +17,13 @@ namespace hisui::muxer {
 class SimpleMP4Muxer : public MP4Muxer {
  public:
   SimpleMP4Muxer(const hisui::Config&, const MP4MuxerParameters&);
-  ~SimpleMP4Muxer();
 
   void setUp() override;
   void run() override;
   void cleanUp() override;
 
  private:
-  shiguredo::mp4::writer::SimpleWriter* m_simple_writer;
+  std::shared_ptr<shiguredo::mp4::writer::SimpleWriter> m_simple_writer;
   float m_duration;
 
   hisui::Config m_config;

@@ -7,6 +7,7 @@
 
 #include <filesystem>
 #include <iosfwd>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -49,8 +50,11 @@ FaststartMP4Muxer::FaststartMP4Muxer(const hisui::Config& t_config,
                 directory_for_faststart_intermediate_file.string());
 
   m_duration = static_cast<float>(params.max_stop_time_offset);
-  m_faststart_writer = new shiguredo::mp4::writer::FaststartWriter(
-      m_ofs, {.mvhd_timescale = 1000,
+  m_faststart_writer =
+      std::make_shared<shiguredo::mp4::writer::FaststartWriter>(
+          m_ofs,
+          shiguredo::mp4::writer::FaststartWriterParameters{
+              .mvhd_timescale = 1000,
               .duration = m_duration,
               .mdat_path_templete =
                   directory_for_faststart_intermediate_file.string() +
@@ -61,19 +65,16 @@ void FaststartMP4Muxer::setUp() {
   initialize(m_config, m_faststart_writer, m_duration);
 }
 
-FaststartMP4Muxer::~FaststartMP4Muxer() {
-  delete m_faststart_writer;
-}
-
 void FaststartMP4Muxer::run() {
   m_faststart_writer->writeFtypBox();
 
   mux();
 
   if (m_vide_track) {
-    m_faststart_writer->appendTrakAndUdtaBoxInfo({m_soun_track, m_vide_track});
+    m_faststart_writer->appendTrakAndUdtaBoxInfo(
+        {m_soun_track.get(), m_vide_track.get()});
   } else {
-    m_faststart_writer->appendTrakAndUdtaBoxInfo({m_soun_track});
+    m_faststart_writer->appendTrakAndUdtaBoxInfo({m_soun_track.get()});
   }
   m_faststart_writer->writeMoovBox();
   m_faststart_writer->writeMdatHeader();
