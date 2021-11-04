@@ -39,8 +39,8 @@ VPXVideoProducer::VPXVideoProducer(const hisui::Config& t_config,
   m_layout_composer = std::make_shared<Composer>(ComposerParameters{
       .regions = params.regions, .resolution = m_resolution});
 
-  m_encoder = new hisui::video::BufferVPXEncoder(&m_buffer, vpx_config,
-                                                 params.timescale);
+  m_encoder = std::make_shared<hisui::video::BufferVPXEncoder>(
+      &m_buffer, vpx_config, params.timescale);
 }
 
 void VPXVideoProducer::produce() {

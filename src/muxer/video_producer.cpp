@@ -32,18 +32,6 @@ VideoProducer::VideoProducer(const VideoProducerParameters& params)
     : m_show_progress_bar(params.show_progress_bar),
       m_is_finished(params.is_finished) {}
 
-VideoProducer::~VideoProducer() {
-  if (m_encoder) {
-    delete m_encoder;
-  }
-  if (m_sequencer) {
-    delete m_sequencer;
-  }
-  if (m_composer) {
-    delete m_composer;
-  }
-}
-
 void VideoProducer::produce() {
   if (isFinished()) {
     return;

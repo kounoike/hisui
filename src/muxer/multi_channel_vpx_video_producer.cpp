@@ -40,7 +40,7 @@ MultiChannelVPXVideoProducer::MultiChannelVPXVideoProducer(
     : VideoProducer({.show_progress_bar = t_config.show_progress_bar}),
       m_normal_bit_rate(t_config.out_video_bit_rate),
       m_preferred_bit_rate(t_config.screen_capture_bit_rate) {
-  m_sequencer = new hisui::video::MultiChannelSequencer(
+  m_sequencer = std::make_shared<hisui::video::MultiChannelSequencer>(
       params.normal_archives, params.preferred_archives);
 
   const auto scaling_width = t_config.scaling_width != 0
@@ -52,22 +52,25 @@ MultiChannelVPXVideoProducer::MultiChannelVPXVideoProducer(
 
   switch (t_config.video_composer) {
     case hisui::config::VideoComposer::Grid:
-      m_normal_channel_composer = new hisui::video::GridComposer(
+      m_normal_channel_composer = std::make_shared<hisui::video::GridComposer>(
           scaling_width, scaling_height, m_sequencer->getSize(),
           t_config.max_columns, t_config.video_scaler,
           t_config.libyuv_filter_mode);
-      m_preferred_channel_composer = new hisui::video::GridComposer(
-          t_config.screen_capture_width, t_config.screen_capture_height, 1, 1,
-          t_config.video_scaler, t_config.libyuv_filter_mode);
+      m_preferred_channel_composer =
+          std::make_shared<hisui::video::GridComposer>(
+              t_config.screen_capture_width, t_config.screen_capture_height, 1,
+              1, t_config.video_scaler, t_config.libyuv_filter_mode);
       break;
     case hisui::config::VideoComposer::ParallelGrid:
-      m_normal_channel_composer = new hisui::video::ParallelGridComposer(
-          scaling_width, scaling_height, m_sequencer->getSize(),
-          t_config.max_columns, t_config.video_scaler,
-          t_config.libyuv_filter_mode);
-      m_preferred_channel_composer = new hisui::video::GridComposer(
-          t_config.screen_capture_width, t_config.screen_capture_height, 1, 1,
-          t_config.video_scaler, t_config.libyuv_filter_mode);
+      m_normal_channel_composer =
+          std::make_shared<hisui::video::ParallelGridComposer>(
+              scaling_width, scaling_height, m_sequencer->getSize(),
+              t_config.max_columns, t_config.video_scaler,
+              t_config.libyuv_filter_mode);
+      m_preferred_channel_composer =
+          std::make_shared<hisui::video::GridComposer>(
+              t_config.screen_capture_width, t_config.screen_capture_height, 1,
+              1, t_config.video_scaler, t_config.libyuv_filter_mode);
       break;
   }
 
@@ -80,19 +83,11 @@ MultiChannelVPXVideoProducer::MultiChannelVPXVideoProducer(
                m_preferred_channel_composer->getHeight()),
       t_config);
 
-  m_encoder = new hisui::video::BufferVPXEncoder(&m_buffer, vpx_config,
-                                                 params.timescale);
+  m_encoder = std::make_shared<hisui::video::BufferVPXEncoder>(
+      &m_buffer, vpx_config, params.timescale);
 
   m_max_stop_time_offset = params.max_stop_time_offset;
   m_frame_rate = t_config.out_video_frame_rate;
-}
-
-MultiChannelVPXVideoProducer::~MultiChannelVPXVideoProducer() {
-  delete m_normal_channel_composer;
-  m_normal_channel_composer = nullptr;
-  delete m_preferred_channel_composer;
-  m_preferred_channel_composer = nullptr;
-  m_composer = nullptr;
 }
 
 void MultiChannelVPXVideoProducer::produce() {
