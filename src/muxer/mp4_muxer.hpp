@@ -38,9 +38,16 @@ struct MP4MuxerParameters {
   const double max_stop_time_offset;
 };
 
+struct MP4MuxerParametersForLayout {
+  const std::vector<hisui::Archive>& audio_archives;
+  const std::shared_ptr<VideoProducer>& video_producer;
+  const double max_stop_time_offset;
+};
+
 class MP4Muxer : public Muxer {
  public:
   explicit MP4Muxer(const MP4MuxerParameters&);
+  explicit MP4Muxer(const MP4MuxerParametersForLayout&);
   virtual ~MP4Muxer();
 
  protected:

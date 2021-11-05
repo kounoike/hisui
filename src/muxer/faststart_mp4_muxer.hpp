@@ -17,6 +17,7 @@ namespace hisui::muxer {
 class FaststartMP4Muxer : public MP4Muxer {
  public:
   FaststartMP4Muxer(const hisui::Config&, const MP4MuxerParameters&);
+  FaststartMP4Muxer(const hisui::Config&, const MP4MuxerParametersForLayout&);
 
   void setUp() override;
   void run() override;
