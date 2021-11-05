@@ -25,7 +25,6 @@ class SimpleMP4Muxer : public MP4Muxer {
 
  private:
   std::shared_ptr<shiguredo::mp4::writer::SimpleWriter> m_simple_writer;
-  float m_duration;
 
   hisui::Config m_config;
 };

@@ -67,14 +67,13 @@ class MP4Muxer : public Muxer {
 
   void writeTrackData();
   void initialize(const hisui::Config&,
-                  std::shared_ptr<shiguredo::mp4::writer::Writer>,
-                  const float);
+                  std::shared_ptr<shiguredo::mp4::writer::Writer>);
+  double m_duration;
 
  private:
   std::vector<hisui::Archive> m_audio_archives;
   std::vector<hisui::Archive> m_normal_archives;
   std::vector<hisui::Archive> m_preferred_archives;
-  double m_duration;
 };
 
 }  // namespace hisui::muxer
