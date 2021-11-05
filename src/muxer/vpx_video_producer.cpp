@@ -51,7 +51,7 @@ VPXVideoProducer::VPXVideoProducer(const hisui::Config& t_config,
   m_encoder = std::make_shared<hisui::video::BufferVPXEncoder>(
       &m_buffer, vpx_config, params.timescale);
 
-  m_max_stop_time_offset = params.max_stop_time_offset;
+  m_duration = params.duration;
   m_frame_rate = t_config.out_video_frame_rate;
 }
 

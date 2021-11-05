@@ -15,7 +15,7 @@ namespace hisui::muxer {
 
 struct FDKAACAudioProducerParameters {
   const std::vector<hisui::Archive>& archives;
-  const double max_stop_time_offset;
+  const double duration;
 };
 
 class FDKAACAudioProducer : public AudioProducer {

@@ -29,13 +29,13 @@ namespace hisui::muxer {
 FaststartMP4Muxer::FaststartMP4Muxer(const hisui::Config& t_config,
                                      const MP4MuxerParameters& params)
     : MP4Muxer(params), m_config(t_config) {
-  m_duration = static_cast<float>(params.max_stop_time_offset);
+  m_duration = static_cast<float>(params.duration);
 }
 
 FaststartMP4Muxer::FaststartMP4Muxer(const hisui::Config& t_config,
                                      const MP4MuxerParametersForLayout& params)
     : MP4Muxer(params), m_config(t_config) {
-  m_duration = static_cast<float>(params.max_stop_time_offset);
+  m_duration = static_cast<float>(params.duration);
 }
 
 void FaststartMP4Muxer::setUp() {

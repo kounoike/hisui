@@ -21,7 +21,7 @@ namespace hisui::layout {
 struct VPXVideoProducerParameters {
   const std::vector<std::shared_ptr<Region>>& regions;
   const Resolution& resolution;
-  const double max_stop_time_offset;
+  const double duration;
   const std::uint64_t timescale = hisui::Constants::NANO_SECOND;
 };
 

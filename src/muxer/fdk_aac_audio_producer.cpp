@@ -14,7 +14,7 @@ FDKAACAudioProducer::FDKAACAudioProducer(
     const FDKAACAudioProducerParameters& params)
     : AudioProducer({.archives = params.archives,
                      .mixer = t_config.audio_mixer,
-                     .max_stop_time_offset = params.max_stop_time_offset,
+                     .duration = params.duration,
                      .show_progress_bar =
                          t_config.show_progress_bar && t_config.audio_only}) {
   m_encoder = std::make_shared<hisui::audio::BufferFDKAACEncoder>(

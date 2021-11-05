@@ -86,7 +86,7 @@ MultiChannelVPXVideoProducer::MultiChannelVPXVideoProducer(
   m_encoder = std::make_shared<hisui::video::BufferVPXEncoder>(
       &m_buffer, vpx_config, params.timescale);
 
-  m_max_stop_time_offset = params.max_stop_time_offset;
+  m_duration = params.duration;
   m_frame_rate = t_config.out_video_frame_rate;
 }
 
@@ -101,7 +101,7 @@ void MultiChannelVPXVideoProducer::produce() {
     yuvs.resize(m_sequencer->getSize());
 
     const std::uint64_t max_time = static_cast<std::uint64_t>(
-        std::ceil(m_max_stop_time_offset * hisui::Constants::NANO_SECOND));
+        std::ceil(m_duration * hisui::Constants::NANO_SECOND));
 
     progresscpp::ProgressBar progress_bar(max_time, 60);
 

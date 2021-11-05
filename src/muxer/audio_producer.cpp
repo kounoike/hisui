@@ -23,7 +23,7 @@
 namespace hisui::muxer {
 
 AudioProducer::AudioProducer(const AudioProducerParameters& params)
-    : m_max_stop_time_offset(params.max_stop_time_offset),
+    : m_duration(params.duration),
       m_show_progress_bar(params.show_progress_bar) {
   switch (params.mixer) {
     case hisui::config::AudioMixer::Simple:
@@ -41,7 +41,7 @@ void AudioProducer::produce() {
     std::vector<std::pair<std::int16_t, std::int16_t>> samples;
 
     const std::uint64_t max_time = static_cast<std::uint64_t>(
-        std::ceil(m_max_stop_time_offset * hisui::Constants::PCM_SAMPLE_RATE));
+        std::ceil(m_duration * hisui::Constants::PCM_SAMPLE_RATE));
 
     progresscpp::ProgressBar progress_bar(max_time, 60);
 

@@ -30,7 +30,7 @@ int compose(const hisui::Config& t_config) {
         config, VPXVideoProducerParameters{
                     .regions = metadata.getRegions(),
                     .resolution = metadata.getResolution(),
-                    .max_stop_time_offset = metadata.getMaxStopTimeOffset(),
+                    .duration = metadata.getMaxStopTimeOffset(),
                     .timescale = config.out_container ==
                                          hisui::config::OutContainer::WebM
                                      ? hisui::Constants::NANO_SECOND
@@ -43,13 +43,13 @@ int compose(const hisui::Config& t_config) {
         config, hisui::muxer::AsyncWebMMuxerParametersForLayout{
                     .audio_archives = metadata.getAudioArchives(),
                     .video_producer = video_producer,
-                    .max_stop_time_offset = metadata.getMaxStopTimeOffset()});
+                    .duration = metadata.getMaxStopTimeOffset()});
 
   } else if (config.out_container == hisui::config::OutContainer::MP4) {
     auto params = hisui::muxer::MP4MuxerParametersForLayout{
         .audio_archives = metadata.getAudioArchives(),
         .video_producer = video_producer,
-        .max_stop_time_offset = metadata.getMaxStopTimeOffset()};
+        .duration = metadata.getMaxStopTimeOffset()};
     if (config.mp4_muxer == hisui::config::MP4Muxer::Simple) {
       muxer = std::make_shared<hisui::muxer::SimpleMP4Muxer>(config, params);
     } else if (config.mp4_muxer == hisui::config::MP4Muxer::Faststart) {

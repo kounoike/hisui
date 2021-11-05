@@ -48,7 +48,7 @@ class VideoProducer {
 
   std::mutex m_mutex_buffer;
 
-  double m_max_stop_time_offset;
+  double m_duration;
   boost::rational<std::uint64_t> m_frame_rate;
 };
 

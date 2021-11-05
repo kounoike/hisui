@@ -26,7 +26,7 @@ namespace hisui::muxer {
 struct MultiChannelVPXVideoProducerParameters {
   const std::vector<hisui::Archive>& normal_archives = {};
   const std::vector<hisui::Archive>& preferred_archives = {};
-  const double max_stop_time_offset;
+  const double duration;
   const std::uint64_t timescale = hisui::Constants::NANO_SECOND;
 };
 

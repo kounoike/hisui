@@ -28,13 +28,13 @@ AsyncWebMMuxer::AsyncWebMMuxer(const hisui::Config& t_config,
       m_audio_archives(params.normal_archives),
       m_normal_archives(params.normal_archives),
       m_preferred_archives(params.preferred_archives),
-      m_max_stop_time_offset(params.max_stop_time_offset) {}
+      m_duration(params.duration) {}
 
 AsyncWebMMuxer::AsyncWebMMuxer(const hisui::Config& t_config,
                                const AsyncWebMMuxerParametersForLayout& params)
     : m_config(t_config),
       m_audio_archives(params.audio_archives),
-      m_max_stop_time_offset(params.max_stop_time_offset) {
+      m_duration(params.duration) {
   m_video_producer = params.video_producer;
 }
 
@@ -67,13 +67,12 @@ void AsyncWebMMuxer::setUp() {
             m_config, MultiChannelVPXVideoProducerParameters{
                           .normal_archives = m_normal_archives,
                           .preferred_archives = m_preferred_archives,
-                          .max_stop_time_offset = m_max_stop_time_offset,
+                          .duration = m_duration,
                       });
       } else {
         m_video_producer = std::make_shared<VPXVideoProducer>(
-            m_config, VPXVideoProducerParameters{
-                          .archives = m_normal_archives,
-                          .max_stop_time_offset = m_max_stop_time_offset});
+            m_config, VPXVideoProducerParameters{.archives = m_normal_archives,
+                                                 .duration = m_duration});
       }
     }
   }
@@ -85,7 +84,7 @@ void AsyncWebMMuxer::setUp() {
   }
 
   auto audio_producer = std::make_shared<OpusAudioProducer>(
-      m_config, m_audio_archives, m_max_stop_time_offset);
+      m_config, m_audio_archives, m_duration);
   const auto skip = audio_producer->getSkip();
   m_audio_producer = audio_producer;
 
@@ -106,7 +105,7 @@ void AsyncWebMMuxer::setUp() {
                 ? "vp9"
                 : "vp8",
         .audio_codec = "opus",
-        .duration = m_max_stop_time_offset,
+        .duration = m_duration,
     });
   }
 }

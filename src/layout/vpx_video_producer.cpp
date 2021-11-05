@@ -27,7 +27,7 @@ VPXVideoProducer::VPXVideoProducer(const hisui::Config& t_config,
     : VideoProducer({.show_progress_bar = t_config.show_progress_bar}),
       m_resolution(params.resolution) {
   m_frame_rate = t_config.out_video_frame_rate;
-  m_max_stop_time_offset = params.max_stop_time_offset;
+  m_duration = params.duration;
 
   hisui::video::VPXEncoderConfig vpx_config(m_resolution.width,
                                             m_resolution.height, t_config);
@@ -54,7 +54,7 @@ void VPXVideoProducer::produce() {
     raw_image.resize(m_resolution.width * m_resolution.height * 3 >> 1);
 
     const std::uint64_t max_time = static_cast<std::uint64_t>(
-        std::ceil(m_max_stop_time_offset * hisui::Constants::NANO_SECOND));
+        std::ceil(m_duration * hisui::Constants::NANO_SECOND));
 
     progresscpp::ProgressBar progress_bar(max_time, 60);
 

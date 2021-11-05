@@ -44,7 +44,7 @@ void VideoProducer::produce() {
     raw_image.resize(m_composer->getWidth() * m_composer->getHeight() * 3 >> 1);
 
     const std::uint64_t max_time = static_cast<std::uint64_t>(
-        std::ceil(m_max_stop_time_offset * hisui::Constants::NANO_SECOND));
+        std::ceil(m_duration * hisui::Constants::NANO_SECOND));
 
     progresscpp::ProgressBar progress_bar(max_time, 60);
 

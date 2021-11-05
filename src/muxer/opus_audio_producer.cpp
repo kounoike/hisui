@@ -19,7 +19,7 @@ OpusAudioProducer::OpusAudioProducer(
     const std::uint64_t timescale)
     : AudioProducer({.archives = t_archives,
                      .mixer = t_config.audio_mixer,
-                     .max_stop_time_offset = t_duration,
+                     .duration = t_duration,
                      .show_progress_bar =
                          t_config.show_progress_bar && t_config.audio_only}) {
   auto encoder = std::make_shared<hisui::audio::BufferOpusEncoder>(

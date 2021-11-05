@@ -18,7 +18,7 @@ namespace hisui::muxer {
 struct AudioProducerParameters {
   const std::vector<hisui::Archive>& archives;
   const hisui::config::AudioMixer mixer;
-  const double max_stop_time_offset;
+  const double duration;
   const bool show_progress_bar = true;
 };
 
@@ -38,7 +38,7 @@ class AudioProducer {
  private:
   std::unique_ptr<hisui::audio::Sequencer> m_sequencer;
   std::int16_t (*m_mix_sample)(const std::int16_t, const std::int16_t);
-  double m_max_stop_time_offset;
+  double m_duration;
 
   std::mutex m_mutex_buffer;
 

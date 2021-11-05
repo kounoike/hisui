@@ -35,13 +35,13 @@ struct MP4MuxerParameters {
   const std::vector<hisui::Archive>& audio_archives;
   const std::vector<hisui::Archive>& normal_archives;
   const std::vector<hisui::Archive>& preferred_archives;
-  const double max_stop_time_offset;
+  const double duration;
 };
 
 struct MP4MuxerParametersForLayout {
   const std::vector<hisui::Archive>& audio_archives;
   const std::shared_ptr<VideoProducer>& video_producer;
-  const double max_stop_time_offset;
+  const double duration;
 };
 
 class MP4Muxer : public Muxer {
@@ -74,7 +74,7 @@ class MP4Muxer : public Muxer {
   std::vector<hisui::Archive> m_audio_archives;
   std::vector<hisui::Archive> m_normal_archives;
   std::vector<hisui::Archive> m_preferred_archives;
-  double m_max_stop_time_offset;
+  double m_duration;
 };
 
 }  // namespace hisui::muxer
