@@ -315,9 +315,7 @@ void Metadata::copyToConfig(hisui::Config* config) const {
   // TODO(haruyama): audio も考慮する?
   config->out_video_bit_rate = static_cast<std::uint32_t>(m_bitrate);
   config->out_container = m_format;
-  if (config->out_filename == "") {
-    config->in_metadata_filename = m_path.string();
-  }
+  config->in_metadata_filename = m_path.string();
 }
 
 double Metadata::getMaxEndTime() const {

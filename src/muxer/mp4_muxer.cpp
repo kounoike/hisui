@@ -39,6 +39,12 @@ MP4Muxer::MP4Muxer(const MP4MuxerParameters& params)
       m_preferred_archives(params.preferred_archives),
       m_max_stop_time_offset(params.max_stop_time_offset) {}
 
+MP4Muxer::MP4Muxer(const MP4MuxerParametersForLayout& params)
+    : m_audio_archives(params.audio_archives),
+      m_max_stop_time_offset(params.max_stop_time_offset) {
+  m_video_producer = params.video_producer;
+}
+
 void MP4Muxer::initialize(
     const hisui::Config& config_orig,
     std::shared_ptr<shiguredo::mp4::writer::Writer> writer,
@@ -105,20 +111,22 @@ void MP4Muxer::initialize(
     m_video_producer = std::make_shared<NoVideoProducer>();
     m_timescale_ratio.assign(1, 1);
   } else {
-    if (!std::empty(m_preferred_archives)) {
-      m_video_producer = std::make_shared<MultiChannelVPXVideoProducer>(
-          config, MultiChannelVPXVideoProducerParameters{
-                      .normal_archives = m_normal_archives,
-                      .preferred_archives = m_preferred_archives,
-                      .max_stop_time_offset = m_max_stop_time_offset,
-                      .timescale = 16000,
-                  });
-    } else {
-      m_video_producer = std::make_shared<VPXVideoProducer>(
-          config, VPXVideoProducerParameters{
-                      .archives = m_normal_archives,
-                      .max_stop_time_offset = m_max_stop_time_offset,
-                      .timescale = 16000});
+    if (!m_video_producer) {
+      if (!std::empty(m_preferred_archives)) {
+        m_video_producer = std::make_shared<MultiChannelVPXVideoProducer>(
+            config, MultiChannelVPXVideoProducerParameters{
+                        .normal_archives = m_normal_archives,
+                        .preferred_archives = m_preferred_archives,
+                        .max_stop_time_offset = m_max_stop_time_offset,
+                        .timescale = 16000,
+                    });
+      } else {
+        m_video_producer = std::make_shared<VPXVideoProducer>(
+            config, VPXVideoProducerParameters{
+                        .archives = m_normal_archives,
+                        .max_stop_time_offset = m_max_stop_time_offset,
+                        .timescale = 16000});
+      }
     }
     m_vide_track = std::make_shared<shiguredo::mp4::track::VPXTrack>(
         shiguredo::mp4::track::VPXTrackParameters{

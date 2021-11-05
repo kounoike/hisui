@@ -29,7 +29,18 @@ namespace hisui::muxer {
 FaststartMP4Muxer::FaststartMP4Muxer(const hisui::Config& t_config,
                                      const MP4MuxerParameters& params)
     : MP4Muxer(params), m_config(t_config) {
+  m_duration = static_cast<float>(params.max_stop_time_offset);
+}
+
+FaststartMP4Muxer::FaststartMP4Muxer(const hisui::Config& t_config,
+                                     const MP4MuxerParametersForLayout& params)
+    : MP4Muxer(params), m_config(t_config) {
+  m_duration = static_cast<float>(params.max_stop_time_offset);
+}
+
+void FaststartMP4Muxer::setUp() {
   std::filesystem::path directory_for_faststart_intermediate_file;
+
   if (m_config.directory_for_faststart_intermediate_file != "") {
     directory_for_faststart_intermediate_file =
         m_config.directory_for_faststart_intermediate_file;
@@ -41,6 +52,8 @@ FaststartMP4Muxer::FaststartMP4Muxer(const hisui::Config& t_config,
     }
   } else {
     std::filesystem::path metadata_path(m_config.in_metadata_filename);
+    spdlog::debug("metadata_path: {}", metadata_path.string());
+
     if (metadata_path.is_relative()) {
       metadata_path = std::filesystem::absolute(metadata_path);
     }
@@ -49,7 +62,6 @@ FaststartMP4Muxer::FaststartMP4Muxer(const hisui::Config& t_config,
   spdlog::debug("directory_for_faststart_intermediate_file: {}",
                 directory_for_faststart_intermediate_file.string());
 
-  m_duration = static_cast<float>(params.max_stop_time_offset);
   m_faststart_writer =
       std::make_shared<shiguredo::mp4::writer::FaststartWriter>(
           m_ofs,
@@ -59,9 +71,7 @@ FaststartMP4Muxer::FaststartMP4Muxer(const hisui::Config& t_config,
               .mdat_path_templete =
                   directory_for_faststart_intermediate_file.string() +
                   std::filesystem::path::preferred_separator + "mdatXXXXXX"});
-}
 
-void FaststartMP4Muxer::setUp() {
   initialize(m_config, m_faststart_writer, m_duration);
 }
 
