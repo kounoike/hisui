@@ -20,7 +20,8 @@ Cell::Cell(const CellParameters& params)
   }
 }
 
-const hisui::video::YUVImage* Cell::getYUV(const std::uint64_t t) {
+const std::shared_ptr<hisui::video::YUVImage> Cell::getYUV(
+    const std::uint64_t t) {
   return m_scaler->scale(m_source->source->getYUV(
       m_source->encoding_interval.getSubstructLower(t)));
 }

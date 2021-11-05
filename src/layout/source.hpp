@@ -32,7 +32,7 @@ struct SourceParameters {
 
 struct Source {
   explicit Source(const SourceParameters&);
-  virtual ~Source() {}
+  virtual ~Source() = default;
   std::filesystem::path file_path;
   std::size_t index;
   std::string connection_id;

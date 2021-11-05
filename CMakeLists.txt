@@ -180,6 +180,7 @@ endif()
 
 target_sources(hisui
     PRIVATE
+    src/archive.cpp
     src/config.cpp
     src/datetime.cpp
     src/hisui.cpp
@@ -190,7 +191,6 @@ target_sources(hisui
     src/audio/opus.cpp
     src/audio/basic_sequencer.cpp
     src/audio/webm_source.cpp
-    src/layout/audio_source.cpp
     src/layout/archive.cpp
     src/layout/cell.cpp
     src/layout/cell_util.cpp
@@ -203,9 +203,6 @@ target_sources(hisui
     src/layout/region.cpp
     src/layout/source.cpp
     src/layout/video_source.cpp
-    src/layout/async_webm_muxer.cpp
-    src/layout/audio_sequencer.cpp
-    src/layout/opus_audio_producer.cpp
     src/layout/vpx_video_producer.cpp
     src/muxer/async_webm_muxer.cpp
     src/muxer/audio_producer.cpp

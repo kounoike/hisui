@@ -15,12 +15,10 @@
 
 #include "config.hpp"
 #include "layout/archive.hpp"
-#include "layout/audio_source.hpp"
+#include "layout/cell_util.hpp"
 #include "layout/region.hpp"
 
 namespace hisui::layout {
-
-struct ParseRegionParameters {};
 
 class Metadata {
  public:
@@ -29,10 +27,12 @@ class Metadata {
   void prepare();
   void copyToConfig(hisui::Config*) const;
   double getMaxEndTime() const;
-  std::vector<std::shared_ptr<AudioSource>> getAudioSources() const;
   std::vector<std::shared_ptr<Region>> getRegions() const;
   Resolution getResolution() const;
   void resetPath() const;
+
+  std::vector<hisui::Archive> getAudioArchives() const;
+  double getMaxStopTimeOffset() const;
 
  private:
   std::filesystem::path m_path;
@@ -45,7 +45,6 @@ class Metadata {
   std::filesystem::path m_working_path;
 
   std::vector<std::shared_ptr<Archive>> m_audio_archives;
-  std::vector<std::shared_ptr<AudioSource>> m_audio_sources;
   double m_audio_max_end_time;
   double m_max_end_time;
   std::vector<std::shared_ptr<Region>> m_regions;

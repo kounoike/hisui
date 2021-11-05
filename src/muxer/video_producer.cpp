@@ -6,6 +6,7 @@
 
 #include <cmath>
 #include <cstdint>
+#include <memory>
 #include <mutex>
 #include <optional>
 #include <vector>
@@ -31,25 +32,13 @@ VideoProducer::VideoProducer(const VideoProducerParameters& params)
     : m_show_progress_bar(params.show_progress_bar),
       m_is_finished(params.is_finished) {}
 
-VideoProducer::~VideoProducer() {
-  if (m_encoder) {
-    delete m_encoder;
-  }
-  if (m_sequencer) {
-    delete m_sequencer;
-  }
-  if (m_composer) {
-    delete m_composer;
-  }
-}
-
 void VideoProducer::produce() {
   if (isFinished()) {
     return;
   }
 
   try {
-    std::vector<const video::YUVImage*> yuvs;
+    std::vector<std::shared_ptr<video::YUVImage>> yuvs;
     std::vector<unsigned char> raw_image;
     yuvs.resize(m_sequencer->getSize());
     raw_image.resize(m_composer->getWidth() * m_composer->getHeight() * 3 >> 1);

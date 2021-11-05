@@ -1,6 +1,7 @@
 #include "video/yuv.hpp"
 
 #include <algorithm>
+#include <memory>
 
 namespace hisui::video {
 
@@ -65,9 +66,9 @@ void YUVImage::setBlack() {
   }
 }
 
-YUVImage* create_black_yuv_image(const std::uint32_t width,
-                                 const std::uint32_t height) {
-  YUVImage* image = new YUVImage(width, height);
+std::shared_ptr<YUVImage> create_black_yuv_image(const std::uint32_t width,
+                                                 const std::uint32_t height) {
+  std::shared_ptr<YUVImage> image = std::make_shared<YUVImage>(width, height);
   image->setBlack();
   return image;
 }

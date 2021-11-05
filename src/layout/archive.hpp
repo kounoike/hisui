@@ -6,6 +6,8 @@
 
 #include <boost/json/value.hpp>
 
+#include <archive.hpp>
+#include "layout/interval.hpp"
 #include "layout/source.hpp"
 
 namespace hisui::layout {
@@ -16,6 +18,9 @@ class Archive {
   void dump() const;
   void prepare();
   const SourceParameters getSourceParameters(const std::size_t) const;
+  void substructTrimIntervals(const TrimIntervals&);
+  Interval getInterval() const;
+  hisui::Archive getArchive() const;
 
  private:
   std::filesystem::path m_path;
@@ -35,5 +40,5 @@ struct FindFileResult {
 };
 
 FindFileResult find_file(const std::string&);
-}  // namespace hisui::layout
 
+}  // namespace hisui::layout

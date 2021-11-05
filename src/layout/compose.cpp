@@ -2,10 +2,14 @@
 
 #include <spdlog/spdlog.h>
 
+#include <memory>
+
 #include "config.hpp"
-#include "layout/async_webm_muxer.hpp"
 #include "layout/metadata.hpp"
+#include "layout/vpx_video_producer.hpp"
+#include "muxer/async_webm_muxer.hpp"
 #include "muxer/muxer.hpp"
+#include "muxer/no_video_producer.hpp"
 
 namespace hisui::layout {
 
@@ -14,9 +18,26 @@ int compose(const hisui::Config& t_config) {
   auto metadata = hisui::layout::parse_metadata(config.layout);
   metadata.copyToConfig(&config);
 
-  hisui::muxer::Muxer* muxer = nullptr;
+  // hisui::muxer::Muxer* muxer = nullptr;
+  hisui::muxer::AsyncWebMMuxer* muxer = nullptr;
+  std::shared_ptr<muxer::VideoProducer> video_producer;
+  if (config.audio_only) {
+    video_producer = std::make_shared<muxer::NoVideoProducer>();
+  } else {
+    video_producer = std::make_shared<VPXVideoProducer>(
+        config, VPXVideoProducerParameters{
+                    .regions = metadata.getRegions(),
+                    .resolution = metadata.getResolution(),
+                    .max_stop_time_offset = metadata.getMaxStopTimeOffset()});
+  }
+
   if (config.out_container == hisui::config::OutContainer::WebM) {
-    muxer = new AsyncWebMMuxer(config, metadata);
+    muxer = new hisui::muxer::AsyncWebMMuxer(
+        config, hisui::muxer::AsyncWebMMuxerParametersForLayout{
+                    .audio_archives = metadata.getAudioArchives(),
+                    .video_producer = video_producer,
+                    .max_stop_time_offset = metadata.getMaxStopTimeOffset()});
+
     // } else if (config.out_container == hisui::config::OutContainer::MP4) {
     //   if (config.mp4_muxer == hisui::config::MP4Muxer::Simple) {
     //     muxer = new hisui::muxer::SimpleMP4Muxer(config, metadata_set);
@@ -44,6 +65,7 @@ int compose(const hisui::Config& t_config) {
     // }
     return 1;
   }
+  // delete video_producer;
   delete muxer;
 
   return 0;

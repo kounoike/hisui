@@ -55,12 +55,9 @@ void Metadata::dump() const {
     region->dump();
     spdlog::debug("");
   }
-  if (!std::empty(m_audio_sources)) {
-    for (const auto& a : m_audio_sources) {
-      spdlog::debug("    file_path: {}", a->file_path.string());
-      spdlog::debug("    connection_id: {}", a->connection_id);
-      spdlog::debug("    start_time: {}", a->source_interval.start_time);
-      spdlog::debug("    end_time: {}", a->source_interval.end_time);
+  if (!std::empty(m_audio_archives)) {
+    for (const auto& a : m_audio_archives) {
+      a->dump();
     }
     spdlog::debug("audio_max_end_time: {}", m_audio_max_end_time);
     spdlog::debug("max_end_time: {}", m_max_end_time);
@@ -177,18 +174,15 @@ void Metadata::prepare() {
     }
   }
 
-  std::size_t index = 0;
   for (const auto& f : m_audio_source_filenames) {
     auto archive = parse_archive(f);
     m_audio_archives.push_back(archive);
-    m_audio_sources.push_back(
-        std::make_shared<AudioSource>(archive->getSourceParameters(index++)));
   }
 
   std::vector<Interval> audio_source_intervals;
-  std::transform(std::begin(m_audio_sources), std::end(m_audio_sources),
+  std::transform(std::begin(m_audio_archives), std::end(m_audio_archives),
                  std::back_inserter(audio_source_intervals),
-                 [](const auto& s) -> Interval { return s->source_interval; });
+                 [](const auto& a) -> Interval { return a->getInterval(); });
   auto audio_overlap_result = overlap_intervals(
       {.intervals = audio_source_intervals, .reuse = Reuse::None});
 
@@ -207,7 +201,7 @@ void Metadata::prepare() {
                   i.end_time);
   }
 
-  std::vector<Interval> trim_intervals{};
+  std::vector<Interval> trim_intervals;
   if (m_trim) {
     trim_intervals = overlap_trim_intervals_result.trim_intervals;
   } else {
@@ -219,8 +213,8 @@ void Metadata::prepare() {
     }
   }
 
-  for (auto& s : m_audio_sources) {
-    s->substructTrimIntervals({.trim_intervals = trim_intervals});
+  for (auto& a : m_audio_archives) {
+    a->substructTrimIntervals({.trim_intervals = trim_intervals});
   }
   auto interval = substruct_trim_intervals(
       {.interval = {0, audio_overlap_result.max_end_time},
@@ -330,8 +324,18 @@ double Metadata::getMaxEndTime() const {
   return m_max_end_time;
 }
 
-std::vector<std::shared_ptr<AudioSource>> Metadata::getAudioSources() const {
-  return m_audio_sources;
+double Metadata::getMaxStopTimeOffset() const {
+  return m_max_end_time;
+}
+
+std::vector<hisui::Archive> Metadata::getAudioArchives() const {
+  std::vector<hisui::Archive> res;
+  std::transform(std::begin(m_audio_archives), std::end(m_audio_archives),
+                 std::back_inserter(res), [](const auto& a) -> hisui::Archive {
+                   return a->getArchive();
+                 });
+
+  return res;
 }
 
 Resolution Metadata::getResolution() const {
