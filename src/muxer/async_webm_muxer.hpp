@@ -17,14 +17,14 @@ struct Frame;
 namespace hisui::muxer {
 
 struct AsyncWebMMuxerParameters {
-  const std::vector<hisui::ArchiveItem>& audio_archives;
+  const std::vector<hisui::ArchiveItem>& audio_archive_items;
   const std::vector<hisui::ArchiveItem>& normal_archives;
   const std::vector<hisui::ArchiveItem>& preferred_archives;
   const double duration;
 };
 
 struct AsyncWebMMuxerParametersForLayout {
-  const std::vector<hisui::ArchiveItem>& audio_archives;
+  const std::vector<hisui::ArchiveItem>& audio_archive_items;
   const std::shared_ptr<VideoProducer>& video_producer;
   const double duration;
 };

@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
   if (config.out_container == hisui::config::OutContainer::WebM) {
     muxer = new hisui::muxer::AsyncWebMMuxer(
         config, hisui::muxer::AsyncWebMMuxerParameters{
-                    .audio_archives = metadata_set.getArchives(),
+                    .audio_archive_items = metadata_set.getArchives(),
                     .normal_archives = metadata_set.getNormal().getArchives(),
                     .preferred_archives =
                         metadata_set.hasPreferred()
@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
     if (config.mp4_muxer == hisui::config::MP4Muxer::Simple) {
       muxer = new hisui::muxer::SimpleMP4Muxer(
           config, hisui::muxer::MP4MuxerParameters{
-                      .audio_archives = metadata_set.getArchives(),
+                      .audio_archive_items = metadata_set.getArchives(),
                       .normal_archives = metadata_set.getNormal().getArchives(),
                       .preferred_archives =
                           metadata_set.hasPreferred()
@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
     } else if (config.mp4_muxer == hisui::config::MP4Muxer::Faststart) {
       muxer = new hisui::muxer::FaststartMP4Muxer(
           config, hisui::muxer::MP4MuxerParameters{
-                      .audio_archives = metadata_set.getArchives(),
+                      .audio_archive_items = metadata_set.getArchives(),
                       .normal_archives = metadata_set.getNormal().getArchives(),
                       .preferred_archives =
                           metadata_set.hasPreferred()

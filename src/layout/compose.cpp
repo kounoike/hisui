@@ -30,7 +30,7 @@ int compose(const hisui::Config& t_config) {
         config, VPXVideoProducerParameters{
                     .regions = metadata.getRegions(),
                     .resolution = metadata.getResolution(),
-                    .duration = metadata.getMaxStopTimeOffset(),
+                    .duration = metadata.getMaxEndTime(),
                     .timescale = config.out_container ==
                                          hisui::config::OutContainer::WebM
                                      ? hisui::Constants::NANO_SECOND
@@ -38,18 +38,20 @@ int compose(const hisui::Config& t_config) {
                 });
   }
 
+  auto audio_archive_items = metadata.getAudioArchiveItems();
+
   if (config.out_container == hisui::config::OutContainer::WebM) {
     muxer = std::make_shared<hisui::muxer::AsyncWebMMuxer>(
         config, hisui::muxer::AsyncWebMMuxerParametersForLayout{
-                    .audio_archives = metadata.getAudioArchives(),
+                    .audio_archive_items = audio_archive_items,
                     .video_producer = video_producer,
-                    .duration = metadata.getMaxStopTimeOffset()});
+                    .duration = metadata.getMaxEndTime()});
 
   } else if (config.out_container == hisui::config::OutContainer::MP4) {
     auto params = hisui::muxer::MP4MuxerParametersForLayout{
-        .audio_archives = metadata.getAudioArchives(),
+        .audio_archive_items = audio_archive_items,
         .video_producer = video_producer,
-        .duration = metadata.getMaxStopTimeOffset()};
+        .duration = metadata.getMaxEndTime()};
     if (config.mp4_muxer == hisui::config::MP4Muxer::Simple) {
       muxer = std::make_shared<hisui::muxer::SimpleMP4Muxer>(config, params);
     } else if (config.mp4_muxer == hisui::config::MP4Muxer::Faststart) {

@@ -33,7 +33,7 @@ AsyncWebMMuxer::AsyncWebMMuxer(const hisui::Config& t_config,
 AsyncWebMMuxer::AsyncWebMMuxer(const hisui::Config& t_config,
                                const AsyncWebMMuxerParametersForLayout& params)
     : m_config(t_config),
-      m_audio_archives(params.audio_archives),
+      m_audio_archives(params.audio_archive_items),
       m_duration(params.duration) {
   m_video_producer = params.video_producer;
 }

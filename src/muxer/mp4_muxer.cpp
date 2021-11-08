@@ -34,13 +34,14 @@
 namespace hisui::muxer {
 
 MP4Muxer::MP4Muxer(const MP4MuxerParameters& params)
-    : m_audio_archives(params.audio_archives),
+    : m_duration(params.duration),
+      m_audio_archives(params.audio_archive_items),
       m_normal_archives(params.normal_archives),
-      m_preferred_archives(params.preferred_archives),
-      m_duration(params.duration) {}
+      m_preferred_archives(params.preferred_archives) {}
 
 MP4Muxer::MP4Muxer(const MP4MuxerParametersForLayout& params)
-    : m_audio_archives(params.audio_archives), m_duration(params.duration) {
+    : m_duration(params.duration),
+      m_audio_archives(params.audio_archive_items) {
   m_video_producer = params.video_producer;
 }
 
