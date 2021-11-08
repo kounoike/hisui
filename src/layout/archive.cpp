@@ -42,14 +42,8 @@ std::shared_ptr<Archive> parse_archive(const std::string& filename) {
         "failed to parse metadata json file: message", ec.message()));
   }
 
-  return std::make_shared<Archive>(json_path_result.path, jv);
-}
-
-Archive::Archive(const std::filesystem::path& t_path,
-                 const boost::json::value& jv)
-    : m_path(t_path) {
   const auto current_path = std::filesystem::current_path();
-  std::filesystem::current_path(m_path.parent_path());
+  std::filesystem::current_path(json_path_result.path.parent_path());
 
   boost::json::object j;
   if (jv.is_object()) {
@@ -58,35 +52,54 @@ Archive::Archive(const std::filesystem::path& t_path,
     throw std::runtime_error("jv is not object");
   }
 
-  m_connection_id =
+  auto connection_id =
       hisui::util::get_string_from_json_object(j, "connection_id");
-  m_start_time = hisui::util::get_double_from_json_object(j, "start_time");
-  m_stop_time = hisui::util::get_double_from_json_object(j, "stop_time");
+  auto start_time = hisui::util::get_double_from_json_object(j, "start_time");
+  auto stop_time = hisui::util::get_double_from_json_object(j, "stop_time");
 
-  auto filename = hisui::util::get_string_from_json_object(j, "filename");
-  auto filename_result = hisui::util::find_file(std::string(filename));
+  auto filename_string =
+      hisui::util::get_string_from_json_object(j, "filename");
+  auto filename_result = hisui::util::find_file(std::string(filename_string));
+  std::filesystem::path file_path;
   if (filename_result.found) {
-    m_file_path = filename_result.path;
+    file_path = filename_result.path;
   } else {
-    auto file_path = hisui::util::get_string_from_json_object(j, "file_path");
-    auto file_path_result = hisui::util::find_file(std::string(file_path));
+    auto file_path_string =
+        hisui::util::get_string_from_json_object(j, "file_path");
+    auto file_path_result =
+        hisui::util::find_file(std::string(file_path_string));
     if (file_path_result.found) {
-      m_file_path = file_path_result.path;
+      file_path = file_path_result.path;
     } else {
-      throw std::invalid_argument(fmt::format(
-          "filename() and file_path() do not exsit", filename, file_path));
+      throw std::invalid_argument(
+          fmt::format("filename() and file_path() do not exsit", filename,
+                      file_path_string));
     }
   }
 
   std::filesystem::current_path(current_path);
+
+  return std::make_shared<Archive>(
+      ArchiveParameters{.path = json_path_result.path,
+                        .file_path = file_path,
+                        .connection_id = std::string(connection_id),
+                        .start_time = start_time,
+                        .stop_time = stop_time});
 }
+
+Archive::Archive(const ArchiveParameters& params)
+    : m_path(params.path),
+      m_file_path(params.file_path),
+      m_connection_id(params.connection_id),
+      m_start_time(params.start_time),
+      m_stop_time(params.stop_time) {}
 
 void Archive::dump() const {
   spdlog::debug("path: {}", m_path.string());
+  spdlog::debug("file_path: {}", m_file_path.string());
   spdlog::debug("connection_id: {}", m_connection_id);
   spdlog::debug("start_time: {}", m_start_time);
   spdlog::debug("stop_time: {}", m_stop_time);
-  spdlog::debug("file_path: {}", m_file_path.string());
 }
 
 const SourceParameters Archive::getSourceParameters(
@@ -111,7 +124,7 @@ Interval Archive::getInterval() const {
   return {.start_time = m_start_time, .end_time = m_stop_time};
 }
 
-hisui::ArchiveItem Archive::getArchive() const {
+hisui::ArchiveItem Archive::getArchiveItem() const {
   return hisui::ArchiveItem(m_file_path, m_connection_id, m_start_time,
                             m_stop_time);
 }

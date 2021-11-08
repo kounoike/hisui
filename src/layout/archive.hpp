@@ -12,18 +12,26 @@
 
 namespace hisui::layout {
 
+struct ArchiveParameters {
+  const std::filesystem::path& path;
+  const std::filesystem::path& file_path;
+  const std::string& connection_id;
+  const double start_time;
+  const double stop_time;
+};
+
 class Archive {
  public:
-  Archive(const std::filesystem::path& t_path, const boost::json::value& jv);
+  explicit Archive(const ArchiveParameters&);
+
   void dump() const;
   const SourceParameters getSourceParameters(const std::size_t) const;
   void substructTrimIntervals(const TrimIntervals&);
   Interval getInterval() const;
-  hisui::ArchiveItem getArchive() const;
+  hisui::ArchiveItem getArchiveItem() const;
 
  private:
   std::filesystem::path m_path;
-
   std::filesystem::path m_file_path;
   std::string m_connection_id;
   double m_start_time;

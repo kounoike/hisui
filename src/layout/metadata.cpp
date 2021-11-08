@@ -331,7 +331,7 @@ std::vector<hisui::ArchiveItem> Metadata::getAudioArchives() const {
   std::transform(
       std::begin(m_audio_archives), std::end(m_audio_archives),
       std::back_inserter(res),
-      [](const auto& a) -> hisui::ArchiveItem { return a->getArchive(); });
+      [](const auto& a) -> hisui::ArchiveItem { return a->getArchiveItem(); });
 
   return res;
 }
