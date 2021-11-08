@@ -22,7 +22,7 @@
 #include <boost/json/system_error.hpp>
 #include <boost/json/value.hpp>
 
-#include "archive.hpp"
+#include "archive_item.hpp"
 #include "util/json.hpp"
 
 namespace hisui {
@@ -92,14 +92,14 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
             fmt::format("file is not found: {}", get<0>(a)));
       }
     }
-    Archive archive(path, get<1>(a), get<2>(a), get<3>(a));
+    ArchiveItem archive(path, get<1>(a), get<2>(a), get<3>(a));
     m_archives.push_back(archive);
   }
   setTimeOffsets();
   std::filesystem::current_path(current_path);
 }
 
-Metadata::Metadata(const std::vector<Archive>& t_archives)
+Metadata::Metadata(const std::vector<ArchiveItem>& t_archives)
     : m_archives(t_archives) {
   setTimeOffsets();
 }
@@ -115,7 +115,7 @@ void Metadata::setTimeOffsets() {
   }
 }
 
-std::vector<Archive> Metadata::getArchives() const {
+std::vector<ArchiveItem> Metadata::getArchiveItems() const {
   return m_archives;
 }
 
@@ -184,7 +184,7 @@ Metadata parse_metadata(const std::string& filename) {
                 metadata.getMinStartTimeOffset());
   spdlog::debug("metadata max_start_time_offset={}",
                 metadata.getMaxStopTimeOffset());
-  for (const auto& archive : metadata.getArchives()) {
+  for (const auto& archive : metadata.getArchiveItems()) {
     spdlog::debug("  file_path='{} start_time_offset={} stop_time_offset={}",
                   archive.getPath().string(), archive.getStartTimeOffset(),
                   archive.getStopTimeOffset());
@@ -215,20 +215,20 @@ void MetadataSet::setPrefered(const Metadata& t_preferred) {
   }
 }
 
-std::vector<Archive> MetadataSet::getArchives() const {
+std::vector<ArchiveItem> MetadataSet::getArchiveItems() const {
   if (m_has_preferred) {
-    std::vector<hisui::Archive> archives;
-    auto a0 = m_normal.getArchives();
+    std::vector<hisui::ArchiveItem> archives;
+    auto a0 = m_normal.getArchiveItems();
     archives.insert(std::end(archives), std::begin(a0), std::end(a0));
-    auto a1 = m_preferred.getArchives();
+    auto a1 = m_preferred.getArchiveItems();
     archives.insert(std::end(archives), std::begin(a1), std::end(a1));
     return archives;
   }
-  return m_normal.getArchives();
+  return m_normal.getArchiveItems();
 }
 
-std::vector<Archive> MetadataSet::getNormalArchives() const {
-  return m_normal.getArchives();
+std::vector<ArchiveItem> MetadataSet::getNormalArchives() const {
+  return m_normal.getArchiveItems();
 }
 
 Metadata MetadataSet::getNormal() const {
@@ -271,10 +271,10 @@ void Metadata::copyWithoutArchives(const Metadata& orig) {
   m_recording_id = orig.m_recording_id;
 }
 
-std::vector<Archive> Metadata::deleteArchivesByConnectionID(
+std::vector<ArchiveItem> Metadata::deleteArchivesByConnectionID(
     const std::string& connection_id) {
-  std::vector<Archive> undeleted{};
-  std::vector<Archive> deleted{};
+  std::vector<ArchiveItem> undeleted{};
+  std::vector<ArchiveItem> deleted{};
 
   for (const auto& archive : m_archives) {
     if (archive.getConnectionID() == connection_id) {
@@ -288,7 +288,7 @@ std::vector<Archive> Metadata::deleteArchivesByConnectionID(
   return deleted;
 }
 
-void Metadata::setArchives(const std::vector<Archive>& t_archives) {
+void Metadata::setArchives(const std::vector<ArchiveItem>& t_archives) {
   m_archives = t_archives;
 }
 

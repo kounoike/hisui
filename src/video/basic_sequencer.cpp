@@ -18,7 +18,8 @@
 
 namespace hisui::video {
 
-BasicSequencer::BasicSequencer(const std::vector<hisui::Archive>& archives) {
+BasicSequencer::BasicSequencer(
+    const std::vector<hisui::ArchiveItem>& archives) {
   auto result = make_sequence(archives);
 
   m_sequence = result.sequence;

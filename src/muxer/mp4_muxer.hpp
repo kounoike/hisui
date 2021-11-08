@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-#include "archive.hpp"
+#include "archive_item.hpp"
 #include "frame.hpp"
 #include "muxer/muxer.hpp"
 
@@ -32,16 +32,16 @@ class Writer;
 namespace hisui::muxer {
 
 struct MP4MuxerParameters {
-  const std::vector<hisui::Archive>& audio_archives;
-  const std::vector<hisui::Archive>& normal_archives;
-  const std::vector<hisui::Archive>& preferred_archives;
-  const double max_stop_time_offset;
+  const std::vector<hisui::ArchiveItem>& audio_archive_items;
+  const std::vector<hisui::ArchiveItem>& normal_archives;
+  const std::vector<hisui::ArchiveItem>& preferred_archives;
+  const double duration;
 };
 
 struct MP4MuxerParametersForLayout {
-  const std::vector<hisui::Archive>& audio_archives;
+  const std::vector<hisui::ArchiveItem>& audio_archive_items;
   const std::shared_ptr<VideoProducer>& video_producer;
-  const double max_stop_time_offset;
+  const double duration;
 };
 
 class MP4Muxer : public Muxer {
@@ -67,14 +67,13 @@ class MP4Muxer : public Muxer {
 
   void writeTrackData();
   void initialize(const hisui::Config&,
-                  std::shared_ptr<shiguredo::mp4::writer::Writer>,
-                  const float);
+                  std::shared_ptr<shiguredo::mp4::writer::Writer>);
+  double m_duration;
 
  private:
-  std::vector<hisui::Archive> m_audio_archives;
-  std::vector<hisui::Archive> m_normal_archives;
-  std::vector<hisui::Archive> m_preferred_archives;
-  double m_max_stop_time_offset;
+  std::vector<hisui::ArchiveItem> m_audio_archives;
+  std::vector<hisui::ArchiveItem> m_normal_archives;
+  std::vector<hisui::ArchiveItem> m_preferred_archives;
 };
 
 }  // namespace hisui::muxer

@@ -17,16 +17,16 @@ struct Frame;
 namespace hisui::muxer {
 
 struct AsyncWebMMuxerParameters {
-  const std::vector<hisui::Archive>& audio_archives;
-  const std::vector<hisui::Archive>& normal_archives;
-  const std::vector<hisui::Archive>& preferred_archives;
-  const double max_stop_time_offset;
+  const std::vector<hisui::ArchiveItem>& audio_archive_items;
+  const std::vector<hisui::ArchiveItem>& normal_archives;
+  const std::vector<hisui::ArchiveItem>& preferred_archives;
+  const double duration;
 };
 
 struct AsyncWebMMuxerParametersForLayout {
-  const std::vector<hisui::Archive>& audio_archives;
+  const std::vector<hisui::ArchiveItem>& audio_archive_items;
   const std::shared_ptr<VideoProducer>& video_producer;
-  const double max_stop_time_offset;
+  const double duration;
 };
 
 class AsyncWebMMuxer : public Muxer {
@@ -48,10 +48,10 @@ class AsyncWebMMuxer : public Muxer {
 
   bool has_preferred;
   hisui::Config m_config;
-  std::vector<hisui::Archive> m_audio_archives;
-  std::vector<hisui::Archive> m_normal_archives;
-  std::vector<hisui::Archive> m_preferred_archives;
-  double m_max_stop_time_offset;
+  std::vector<hisui::ArchiveItem> m_audio_archives;
+  std::vector<hisui::ArchiveItem> m_normal_archives;
+  std::vector<hisui::ArchiveItem> m_preferred_archives;
+  double m_duration;
   std::size_t m_normal_archive_size;
 };
 

@@ -28,15 +28,11 @@ namespace hisui::muxer {
 
 FaststartMP4Muxer::FaststartMP4Muxer(const hisui::Config& t_config,
                                      const MP4MuxerParameters& params)
-    : MP4Muxer(params), m_config(t_config) {
-  m_duration = static_cast<float>(params.max_stop_time_offset);
-}
+    : MP4Muxer(params), m_config(t_config) {}
 
 FaststartMP4Muxer::FaststartMP4Muxer(const hisui::Config& t_config,
                                      const MP4MuxerParametersForLayout& params)
-    : MP4Muxer(params), m_config(t_config) {
-  m_duration = static_cast<float>(params.max_stop_time_offset);
-}
+    : MP4Muxer(params), m_config(t_config) {}
 
 void FaststartMP4Muxer::setUp() {
   std::filesystem::path directory_for_faststart_intermediate_file;
@@ -67,12 +63,12 @@ void FaststartMP4Muxer::setUp() {
           m_ofs,
           shiguredo::mp4::writer::FaststartWriterParameters{
               .mvhd_timescale = 1000,
-              .duration = m_duration,
+              .duration = static_cast<float>(m_duration),
               .mdat_path_templete =
                   directory_for_faststart_intermediate_file.string() +
                   std::filesystem::path::preferred_separator + "mdatXXXXXX"});
 
-  initialize(m_config, m_faststart_writer, m_duration);
+  initialize(m_config, m_faststart_writer);
 }
 
 void FaststartMP4Muxer::run() {

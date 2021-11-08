@@ -25,7 +25,6 @@ class FaststartMP4Muxer : public MP4Muxer {
 
  private:
   std::shared_ptr<shiguredo::mp4::writer::FaststartWriter> m_faststart_writer;
-  float m_duration;
 
   hisui::Config m_config;
 };

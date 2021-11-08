@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "archive.hpp"
+#include "archive_item.hpp"
 #include "constants.hpp"
 #include "muxer/audio_producer.hpp"
 
@@ -22,7 +22,7 @@ class OpusAudioProducer : public AudioProducer {
  public:
   OpusAudioProducer(
       const hisui::Config&,
-      const std::vector<hisui::Archive>,
+      const std::vector<hisui::ArchiveItem>,
       const double t_duration,
       const std::uint64_t timescale = hisui::Constants::NANO_SECOND);
   ::opus_int32 getSkip() const;

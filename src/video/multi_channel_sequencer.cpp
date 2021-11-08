@@ -19,8 +19,8 @@
 namespace hisui::video {
 
 MultiChannelSequencer::MultiChannelSequencer(
-    const std::vector<hisui::Archive>& normal_archives,
-    const std::vector<hisui::Archive>& preferred_archives) {
+    const std::vector<hisui::ArchiveItem>& normal_archives,
+    const std::vector<hisui::ArchiveItem>& preferred_archives) {
   auto normal_result = make_sequence(normal_archives);
 
   m_sequence = normal_result.sequence;

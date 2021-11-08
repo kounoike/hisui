@@ -18,21 +18,18 @@ namespace hisui::muxer {
 
 SimpleMP4Muxer::SimpleMP4Muxer(const hisui::Config& t_config,
                                const MP4MuxerParameters& params)
-    : MP4Muxer(params), m_config(t_config) {
-  m_duration = static_cast<float>(params.max_stop_time_offset);
-}
+    : MP4Muxer(params), m_config(t_config) {}
 
 SimpleMP4Muxer::SimpleMP4Muxer(const hisui::Config& t_config,
                                const MP4MuxerParametersForLayout& params)
-    : MP4Muxer(params), m_config(t_config) {
-  m_duration = static_cast<float>(params.max_stop_time_offset);
-}
+    : MP4Muxer(params), m_config(t_config) {}
 
 void SimpleMP4Muxer::setUp() {
   m_simple_writer = std::make_shared<shiguredo::mp4::writer::SimpleWriter>(
-      m_ofs, shiguredo::mp4::writer::SimpleWriterParameters{
-                 .mvhd_timescale = 1000, .duration = m_duration});
-  initialize(m_config, m_simple_writer, m_duration);
+      m_ofs,
+      shiguredo::mp4::writer::SimpleWriterParameters{
+          .mvhd_timescale = 1000, .duration = static_cast<float>(m_duration)});
+  initialize(m_config, m_simple_writer);
 }
 
 void SimpleMP4Muxer::run() {

@@ -20,7 +20,7 @@ add_compile_options(
 add_executable(metadata_test
     main.cpp
     time_offset.cpp
-    ../../src/archive.cpp
+    ../../src/archive_item.cpp
     ../../src/metadata.cpp
     ../../src/util/json.cpp
     )

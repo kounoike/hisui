@@ -14,12 +14,12 @@ namespace hisui::muxer {
 
 OpusAudioProducer::OpusAudioProducer(
     const hisui::Config& t_config,
-    const std::vector<hisui::Archive> t_archives,
+    const std::vector<hisui::ArchiveItem> t_archives,
     const double t_duration,
     const std::uint64_t timescale)
     : AudioProducer({.archives = t_archives,
                      .mixer = t_config.audio_mixer,
-                     .max_stop_time_offset = t_duration,
+                     .duration = t_duration,
                      .show_progress_bar =
                          t_config.show_progress_bar && t_config.audio_only}) {
   auto encoder = std::make_shared<hisui::audio::BufferOpusEncoder>(

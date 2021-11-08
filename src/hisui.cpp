@@ -76,39 +76,37 @@ int main(int argc, char** argv) {
   if (config.out_container == hisui::config::OutContainer::WebM) {
     muxer = new hisui::muxer::AsyncWebMMuxer(
         config, hisui::muxer::AsyncWebMMuxerParameters{
-                    .audio_archives = metadata_set.getArchives(),
-                    .normal_archives = metadata_set.getNormal().getArchives(),
+                    .audio_archive_items = metadata_set.getArchiveItems(),
+                    .normal_archives = metadata_set.getNormal().getArchiveItems(),
                     .preferred_archives =
                         metadata_set.hasPreferred()
-                            ? metadata_set.getPreferred().getArchives()
-                            : std::vector<hisui::Archive>{},
-                    .max_stop_time_offset = metadata_set.getMaxStopTimeOffset(),
+                            ? metadata_set.getPreferred().getArchiveItems()
+                            : std::vector<hisui::ArchiveItem>{},
+                    .duration = metadata_set.getMaxStopTimeOffset(),
                 });
   } else if (config.out_container == hisui::config::OutContainer::MP4) {
     if (config.mp4_muxer == hisui::config::MP4Muxer::Simple) {
       muxer = new hisui::muxer::SimpleMP4Muxer(
-          config,
-          hisui::muxer::MP4MuxerParameters{
-              .audio_archives = metadata_set.getArchives(),
-              .normal_archives = metadata_set.getNormal().getArchives(),
-              .preferred_archives =
-                  metadata_set.hasPreferred()
-                      ? metadata_set.getPreferred().getArchives()
-                      : std::vector<hisui::Archive>{},
-              .max_stop_time_offset = metadata_set.getMaxStopTimeOffset(),
-          });
+          config, hisui::muxer::MP4MuxerParameters{
+                      .audio_archive_items = metadata_set.getArchiveItems(),
+                      .normal_archives = metadata_set.getNormal().getArchiveItems(),
+                      .preferred_archives =
+                          metadata_set.hasPreferred()
+                              ? metadata_set.getPreferred().getArchiveItems()
+                              : std::vector<hisui::ArchiveItem>{},
+                      .duration = metadata_set.getMaxStopTimeOffset(),
+                  });
     } else if (config.mp4_muxer == hisui::config::MP4Muxer::Faststart) {
       muxer = new hisui::muxer::FaststartMP4Muxer(
-          config,
-          hisui::muxer::MP4MuxerParameters{
-              .audio_archives = metadata_set.getArchives(),
-              .normal_archives = metadata_set.getNormal().getArchives(),
-              .preferred_archives =
-                  metadata_set.hasPreferred()
-                      ? metadata_set.getPreferred().getArchives()
-                      : std::vector<hisui::Archive>{},
-              .max_stop_time_offset = metadata_set.getMaxStopTimeOffset(),
-          });
+          config, hisui::muxer::MP4MuxerParameters{
+                      .audio_archive_items = metadata_set.getArchiveItems(),
+                      .normal_archives = metadata_set.getNormal().getArchiveItems(),
+                      .preferred_archives =
+                          metadata_set.hasPreferred()
+                              ? metadata_set.getPreferred().getArchiveItems()
+                              : std::vector<hisui::ArchiveItem>{},
+                      .duration = metadata_set.getMaxStopTimeOffset(),
+                  });
     } else {
       throw std::runtime_error("config.mp4_muxer is invalid");
     }

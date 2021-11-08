@@ -34,21 +34,20 @@
 namespace hisui::muxer {
 
 MP4Muxer::MP4Muxer(const MP4MuxerParameters& params)
-    : m_audio_archives(params.audio_archives),
+    : m_duration(params.duration),
+      m_audio_archives(params.audio_archive_items),
       m_normal_archives(params.normal_archives),
-      m_preferred_archives(params.preferred_archives),
-      m_max_stop_time_offset(params.max_stop_time_offset) {}
+      m_preferred_archives(params.preferred_archives) {}
 
 MP4Muxer::MP4Muxer(const MP4MuxerParametersForLayout& params)
-    : m_audio_archives(params.audio_archives),
-      m_max_stop_time_offset(params.max_stop_time_offset) {
+    : m_duration(params.duration),
+      m_audio_archives(params.audio_archive_items) {
   m_video_producer = params.video_producer;
 }
 
 void MP4Muxer::initialize(
     const hisui::Config& config_orig,
-    std::shared_ptr<shiguredo::mp4::writer::Writer> writer,
-    const float duration) {
+    std::shared_ptr<shiguredo::mp4::writer::Writer> writer) {
   m_writer = writer;
   hisui::Config config = config_orig;
   if (config.out_video_bit_rate == 0) {
@@ -79,13 +78,12 @@ void MP4Muxer::initialize(
   if (config.out_audio_codec == config::OutAudioCodec::FDK_AAC) {
 #ifdef USE_FDK_AAC
     m_audio_producer = std::make_shared<FDKAACAudioProducer>(
-        config, FDKAACAudioProducerParameters{
-                    .archives = m_audio_archives,
-                    .max_stop_time_offset = m_max_stop_time_offset});
+        config, FDKAACAudioProducerParameters{.archives = m_audio_archives,
+                                              .duration = m_duration});
     m_soun_track = std::make_shared<shiguredo::mp4::track::AACTrack>(
         shiguredo::mp4::track::AACTrackParameters{
             .timescale = 48000,
-            .duration = duration,
+            .duration = static_cast<float>(m_duration),
             .track_id = m_writer->getAndUpdateNextTrackID(),
             .max_bitrate = config.out_aac_bit_rate,
             .avg_bitrate = config.out_aac_bit_rate,
@@ -96,13 +94,13 @@ void MP4Muxer::initialize(
 #endif
   } else {
     auto audio_producer = std::make_shared<OpusAudioProducer>(
-        config, m_audio_archives, m_max_stop_time_offset, 48000);
+        config, m_audio_archives, m_duration, 48000);
     const auto skip = audio_producer->getSkip();
     m_audio_producer = audio_producer;
     m_soun_track = std::make_shared<shiguredo::mp4::track::OpusTrack>(
         shiguredo::mp4::track::OpusTrackParameters{
             .pre_skip = static_cast<std::uint64_t>(skip),
-            .duration = duration,
+            .duration = static_cast<float>(m_duration),
             .track_id = m_writer->getAndUpdateNextTrackID(),
             .writer = m_writer.get()});
   }
@@ -117,21 +115,20 @@ void MP4Muxer::initialize(
             config, MultiChannelVPXVideoProducerParameters{
                         .normal_archives = m_normal_archives,
                         .preferred_archives = m_preferred_archives,
-                        .max_stop_time_offset = m_max_stop_time_offset,
+                        .duration = m_duration,
                         .timescale = 16000,
                     });
       } else {
         m_video_producer = std::make_shared<VPXVideoProducer>(
-            config, VPXVideoProducerParameters{
-                        .archives = m_normal_archives,
-                        .max_stop_time_offset = m_max_stop_time_offset,
-                        .timescale = 16000});
+            config, VPXVideoProducerParameters{.archives = m_normal_archives,
+                                               .duration = m_duration,
+                                               .timescale = 16000});
       }
     }
     m_vide_track = std::make_shared<shiguredo::mp4::track::VPXTrack>(
         shiguredo::mp4::track::VPXTrackParameters{
             .timescale = 16000,
-            .duration = duration,
+            .duration = static_cast<float>(m_duration),
             .track_id = m_writer->getAndUpdateNextTrackID(),
             .width = m_video_producer->getWidth(),
             .height = m_video_producer->getHeight(),
@@ -155,7 +152,7 @@ void MP4Muxer::initialize(
         .audio_codec = config.out_audio_codec == config::OutAudioCodec::FDK_AAC
                            ? "aac"
                            : "opus",
-        .duration = m_max_stop_time_offset,
+        .duration = m_duration,
     });
   }
 }

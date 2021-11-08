@@ -8,7 +8,7 @@
 
 namespace hisui {
 
-class Archive;
+class ArchiveItem;
 
 }
 
@@ -18,7 +18,7 @@ class YUVImage;
 
 class BasicSequencer : public Sequencer {
  public:
-  explicit BasicSequencer(const std::vector<hisui::Archive>&);
+  explicit BasicSequencer(const std::vector<hisui::ArchiveItem>&);
 
   SequencerGetYUVsResult getYUVs(std::vector<std::shared_ptr<YUVImage>>*,
                                  const std::uint64_t);

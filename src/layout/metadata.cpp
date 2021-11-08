@@ -216,6 +216,12 @@ void Metadata::prepare() {
   for (auto& a : m_audio_archives) {
     a->substructTrimIntervals({.trim_intervals = trim_intervals});
   }
+
+  std::transform(
+      std::begin(m_audio_archives), std::end(m_audio_archives),
+      std::back_inserter(m_audio_archive_items),
+      [](const auto& a) -> hisui::ArchiveItem { return a->getArchiveItem(); });
+
   auto interval = substruct_trim_intervals(
       {.interval = {0, audio_overlap_result.max_end_time},
        .trim_intervals = trim_intervals});
@@ -322,18 +328,8 @@ double Metadata::getMaxEndTime() const {
   return m_max_end_time;
 }
 
-double Metadata::getMaxStopTimeOffset() const {
-  return m_max_end_time;
-}
-
-std::vector<hisui::Archive> Metadata::getAudioArchives() const {
-  std::vector<hisui::Archive> res;
-  std::transform(std::begin(m_audio_archives), std::end(m_audio_archives),
-                 std::back_inserter(res), [](const auto& a) -> hisui::Archive {
-                   return a->getArchive();
-                 });
-
-  return res;
+std::vector<hisui::ArchiveItem> Metadata::getAudioArchiveItems() const {
+  return m_audio_archive_items;
 }
 
 Resolution Metadata::getResolution() const {

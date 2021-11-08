@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "archive.hpp"
+#include "archive_item.hpp"
 #include "constants.hpp"
 #include "muxer/video_producer.hpp"
 
@@ -24,9 +24,9 @@ class Composer;
 namespace hisui::muxer {
 
 struct MultiChannelVPXVideoProducerParameters {
-  const std::vector<hisui::Archive>& normal_archives = {};
-  const std::vector<hisui::Archive>& preferred_archives = {};
-  const double max_stop_time_offset;
+  const std::vector<hisui::ArchiveItem>& normal_archives = {};
+  const std::vector<hisui::ArchiveItem>& preferred_archives = {};
+  const double duration;
   const std::uint64_t timescale = hisui::Constants::NANO_SECOND;
 };
 
