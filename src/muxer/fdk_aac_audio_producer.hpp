@@ -14,7 +14,7 @@ class MetadataSet;
 namespace hisui::muxer {
 
 struct FDKAACAudioProducerParameters {
-  const std::vector<hisui::Archive>& archives;
+  const std::vector<hisui::ArchiveItem>& archives;
   const double duration;
 };
 

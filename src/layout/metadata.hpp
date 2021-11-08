@@ -31,7 +31,7 @@ class Metadata {
   Resolution getResolution() const;
   void resetPath() const;
 
-  std::vector<hisui::Archive> getAudioArchives() const;
+  std::vector<hisui::ArchiveItem> getAudioArchives() const;
   double getMaxStopTimeOffset() const;
 
  private:

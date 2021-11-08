@@ -17,7 +17,7 @@ class Metadata;
 namespace hisui::muxer {
 
 struct VPXVideoProducerParameters {
-  const std::vector<hisui::Archive>& archives;
+  const std::vector<hisui::ArchiveItem>& archives;
   const double duration;
   const std::uint64_t timescale = hisui::Constants::NANO_SECOND;
 };

@@ -32,14 +32,14 @@ class Writer;
 namespace hisui::muxer {
 
 struct MP4MuxerParameters {
-  const std::vector<hisui::Archive>& audio_archives;
-  const std::vector<hisui::Archive>& normal_archives;
-  const std::vector<hisui::Archive>& preferred_archives;
+  const std::vector<hisui::ArchiveItem>& audio_archives;
+  const std::vector<hisui::ArchiveItem>& normal_archives;
+  const std::vector<hisui::ArchiveItem>& preferred_archives;
   const double duration;
 };
 
 struct MP4MuxerParametersForLayout {
-  const std::vector<hisui::Archive>& audio_archives;
+  const std::vector<hisui::ArchiveItem>& audio_archives;
   const std::shared_ptr<VideoProducer>& video_producer;
   const double duration;
 };
@@ -71,9 +71,9 @@ class MP4Muxer : public Muxer {
   double m_duration;
 
  private:
-  std::vector<hisui::Archive> m_audio_archives;
-  std::vector<hisui::Archive> m_normal_archives;
-  std::vector<hisui::Archive> m_preferred_archives;
+  std::vector<hisui::ArchiveItem> m_audio_archives;
+  std::vector<hisui::ArchiveItem> m_normal_archives;
+  std::vector<hisui::ArchiveItem> m_preferred_archives;
 };
 
 }  // namespace hisui::muxer

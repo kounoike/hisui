@@ -326,12 +326,12 @@ double Metadata::getMaxStopTimeOffset() const {
   return m_max_end_time;
 }
 
-std::vector<hisui::Archive> Metadata::getAudioArchives() const {
-  std::vector<hisui::Archive> res;
-  std::transform(std::begin(m_audio_archives), std::end(m_audio_archives),
-                 std::back_inserter(res), [](const auto& a) -> hisui::Archive {
-                   return a->getArchive();
-                 });
+std::vector<hisui::ArchiveItem> Metadata::getAudioArchives() const {
+  std::vector<hisui::ArchiveItem> res;
+  std::transform(
+      std::begin(m_audio_archives), std::end(m_audio_archives),
+      std::back_inserter(res),
+      [](const auto& a) -> hisui::ArchiveItem { return a->getArchive(); });
 
   return res;
 }

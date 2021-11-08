@@ -14,7 +14,7 @@ namespace hisui::muxer {
 
 OpusAudioProducer::OpusAudioProducer(
     const hisui::Config& t_config,
-    const std::vector<hisui::Archive> t_archives,
+    const std::vector<hisui::ArchiveItem> t_archives,
     const double t_duration,
     const std::uint64_t timescale)
     : AudioProducer({.archives = t_archives,

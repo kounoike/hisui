@@ -7,7 +7,7 @@
 BOOST_AUTO_TEST_SUITE(time_offset)
 
 BOOST_AUTO_TEST_CASE(archive_adjust_time_offsets) {
-  hisui::Archive archive("dummy", "connection_id", 0, 10);
+  hisui::ArchiveItem archive("dummy", "connection_id", 0, 10);
   archive.adjustTimeOffsets(1.5);
   BOOST_REQUIRE_CLOSE(1.5, archive.getStartTimeOffset(), 0.00001);
   BOOST_REQUIRE_CLOSE(11.5, archive.getStopTimeOffset(), 0.00001);

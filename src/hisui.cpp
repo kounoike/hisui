@@ -81,7 +81,7 @@ int main(int argc, char** argv) {
                     .preferred_archives =
                         metadata_set.hasPreferred()
                             ? metadata_set.getPreferred().getArchives()
-                            : std::vector<hisui::Archive>{},
+                            : std::vector<hisui::ArchiveItem>{},
                     .duration = metadata_set.getMaxStopTimeOffset(),
                 });
   } else if (config.out_container == hisui::config::OutContainer::MP4) {
@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
                       .preferred_archives =
                           metadata_set.hasPreferred()
                               ? metadata_set.getPreferred().getArchives()
-                              : std::vector<hisui::Archive>{},
+                              : std::vector<hisui::ArchiveItem>{},
                       .duration = metadata_set.getMaxStopTimeOffset(),
                   });
     } else if (config.mp4_muxer == hisui::config::MP4Muxer::Faststart) {
@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
                       .preferred_archives =
                           metadata_set.hasPreferred()
                               ? metadata_set.getPreferred().getArchives()
-                              : std::vector<hisui::Archive>{},
+                              : std::vector<hisui::ArchiveItem>{},
                       .duration = metadata_set.getMaxStopTimeOffset(),
                   });
     } else {

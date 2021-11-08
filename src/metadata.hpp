@@ -17,9 +17,9 @@ namespace hisui {
 class Metadata {
  public:
   Metadata(const std::string&, const boost::json::value&);
-  explicit Metadata(const std::vector<Archive>&);
+  explicit Metadata(const std::vector<ArchiveItem>&);
 
-  std::vector<Archive> getArchives() const;
+  std::vector<ArchiveItem> getArchives() const;
   double getMinStartTimeOffset() const;
   double getMaxStopTimeOffset() const;
   double getCreatedAt() const;
@@ -28,15 +28,15 @@ class Metadata {
 
   void adjustTimeOffsets(double);
   void copyWithoutArchives(const Metadata&);
-  void setArchives(const std::vector<Archive>&);
-  std::vector<Archive> deleteArchivesByConnectionID(const std::string&);
+  void setArchives(const std::vector<ArchiveItem>&);
+  std::vector<ArchiveItem> deleteArchivesByConnectionID(const std::string&);
 
  private:
   boost::json::array prepare(const boost::json::value& jv);
   void setTimeOffsets();
 
   std::filesystem::path m_path;
-  std::vector<Archive> m_archives;
+  std::vector<ArchiveItem> m_archives;
   double m_min_start_time_offset = std::numeric_limits<double>::max();
   double m_max_stop_time_offset = std::numeric_limits<double>::min();
   boost::json::string m_recording_id;
@@ -53,8 +53,8 @@ class MetadataSet {
   Metadata getNormal() const;
   Metadata getPreferred() const;
   bool hasPreferred() const;
-  std::vector<Archive> getNormalArchives() const;
-  std::vector<Archive> getArchives() const;
+  std::vector<ArchiveItem> getNormalArchives() const;
+  std::vector<ArchiveItem> getArchives() const;
   double getMaxStopTimeOffset() const;
 
  private:

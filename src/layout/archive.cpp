@@ -111,9 +111,9 @@ Interval Archive::getInterval() const {
   return {.start_time = m_start_time, .end_time = m_stop_time};
 }
 
-hisui::Archive Archive::getArchive() const {
-  return hisui::Archive(m_file_path, m_connection_id, m_start_time,
-                        m_stop_time);
+hisui::ArchiveItem Archive::getArchive() const {
+  return hisui::ArchiveItem(m_file_path, m_connection_id, m_start_time,
+                            m_stop_time);
 }
 
 }  // namespace hisui::layout

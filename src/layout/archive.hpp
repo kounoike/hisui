@@ -19,7 +19,7 @@ class Archive {
   const SourceParameters getSourceParameters(const std::size_t) const;
   void substructTrimIntervals(const TrimIntervals&);
   Interval getInterval() const;
-  hisui::Archive getArchive() const;
+  hisui::ArchiveItem getArchive() const;
 
  private:
   std::filesystem::path m_path;

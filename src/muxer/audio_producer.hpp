@@ -16,7 +16,7 @@
 namespace hisui::muxer {
 
 struct AudioProducerParameters {
-  const std::vector<hisui::Archive>& archives;
+  const std::vector<hisui::ArchiveItem>& archives;
   const hisui::config::AudioMixer mixer;
   const double duration;
   const bool show_progress_bar = true;

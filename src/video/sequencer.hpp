@@ -11,7 +11,7 @@
 
 namespace hisui {
 
-class Archive;
+class ArchiveItem;
 
 }
 
@@ -56,6 +56,6 @@ struct MakeSequenceResult {
   std::uint32_t max_height = 0;
 };
 
-MakeSequenceResult make_sequence(const std::vector<hisui::Archive>&);
+MakeSequenceResult make_sequence(const std::vector<hisui::ArchiveItem>&);
 
 }  // namespace hisui::video
