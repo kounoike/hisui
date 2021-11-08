@@ -19,7 +19,7 @@ class Metadata {
   Metadata(const std::string&, const boost::json::value&);
   explicit Metadata(const std::vector<ArchiveItem>&);
 
-  std::vector<ArchiveItem> getArchives() const;
+  std::vector<ArchiveItem> getArchiveItems() const;
   double getMinStartTimeOffset() const;
   double getMaxStopTimeOffset() const;
   double getCreatedAt() const;
@@ -54,7 +54,7 @@ class MetadataSet {
   Metadata getPreferred() const;
   bool hasPreferred() const;
   std::vector<ArchiveItem> getNormalArchives() const;
-  std::vector<ArchiveItem> getArchives() const;
+  std::vector<ArchiveItem> getArchiveItems() const;
   double getMaxStopTimeOffset() const;
 
  private:

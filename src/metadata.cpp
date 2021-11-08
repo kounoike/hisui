@@ -115,7 +115,7 @@ void Metadata::setTimeOffsets() {
   }
 }
 
-std::vector<ArchiveItem> Metadata::getArchives() const {
+std::vector<ArchiveItem> Metadata::getArchiveItems() const {
   return m_archives;
 }
 
@@ -184,7 +184,7 @@ Metadata parse_metadata(const std::string& filename) {
                 metadata.getMinStartTimeOffset());
   spdlog::debug("metadata max_start_time_offset={}",
                 metadata.getMaxStopTimeOffset());
-  for (const auto& archive : metadata.getArchives()) {
+  for (const auto& archive : metadata.getArchiveItems()) {
     spdlog::debug("  file_path='{} start_time_offset={} stop_time_offset={}",
                   archive.getPath().string(), archive.getStartTimeOffset(),
                   archive.getStopTimeOffset());
@@ -215,20 +215,20 @@ void MetadataSet::setPrefered(const Metadata& t_preferred) {
   }
 }
 
-std::vector<ArchiveItem> MetadataSet::getArchives() const {
+std::vector<ArchiveItem> MetadataSet::getArchiveItems() const {
   if (m_has_preferred) {
     std::vector<hisui::ArchiveItem> archives;
-    auto a0 = m_normal.getArchives();
+    auto a0 = m_normal.getArchiveItems();
     archives.insert(std::end(archives), std::begin(a0), std::end(a0));
-    auto a1 = m_preferred.getArchives();
+    auto a1 = m_preferred.getArchiveItems();
     archives.insert(std::end(archives), std::begin(a1), std::end(a1));
     return archives;
   }
-  return m_normal.getArchives();
+  return m_normal.getArchiveItems();
 }
 
 std::vector<ArchiveItem> MetadataSet::getNormalArchives() const {
-  return m_normal.getArchives();
+  return m_normal.getArchiveItems();
 }
 
 Metadata MetadataSet::getNormal() const {
