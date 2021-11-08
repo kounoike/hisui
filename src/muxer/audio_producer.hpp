@@ -7,7 +7,7 @@
 #include <queue>
 #include <vector>
 
-#include "archive.hpp"
+#include "archive_item.hpp"
 #include "audio/encoder.hpp"
 #include "audio/sequencer.hpp"
 #include "config.hpp"

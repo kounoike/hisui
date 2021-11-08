@@ -5,12 +5,12 @@
 
 namespace hisui {
 
-class Archive {
+class ArchiveItem {
  public:
-  Archive(const std::filesystem::path&,
-          const std::string&,
-          const double,
-          const double);
+  ArchiveItem(const std::filesystem::path&,
+              const std::string&,
+              const double,
+              const double);
 
   std::filesystem::path getPath() const;
   std::string getConnectionID() const;
@@ -18,7 +18,7 @@ class Archive {
   double getStopTimeOffset() const;
   void adjustTimeOffsets(double);
 
-  Archive& operator=(const Archive& other);
+  ArchiveItem& operator=(const ArchiveItem& other);
 
  private:
   std::filesystem::path m_path;

@@ -180,7 +180,7 @@ endif()
 
 target_sources(hisui
     PRIVATE
-    src/archive.cpp
+    src/archive_item.cpp
     src/config.cpp
     src/datetime.cpp
     src/hisui.cpp
