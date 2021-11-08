@@ -89,8 +89,6 @@ void Archive::dump() const {
   spdlog::debug("file_path: {}", m_file_path.string());
 }
 
-void Archive::prepare() {}
-
 const SourceParameters Archive::getSourceParameters(
     const std::size_t index) const {
   return SourceParameters{

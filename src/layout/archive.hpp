@@ -16,7 +16,6 @@ class Archive {
  public:
   Archive(const std::filesystem::path& t_path, const boost::json::value& jv);
   void dump() const;
-  void prepare();
   const SourceParameters getSourceParameters(const std::size_t) const;
   void substructTrimIntervals(const TrimIntervals&);
   Interval getInterval() const;
