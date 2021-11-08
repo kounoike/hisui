@@ -33,12 +33,4 @@ class Archive {
 
 std::shared_ptr<Archive> parse_archive(const std::string&);
 
-struct FindFileResult {
-  bool found;
-  std::filesystem::path path;
-  std::string message;
-};
-
-FindFileResult find_file(const std::string&);
-
 }  // namespace hisui::layout

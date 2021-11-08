@@ -218,6 +218,7 @@ target_sources(hisui
     src/report/reporter.cpp
     src/util/interval.cpp
     src/util/json.cpp
+    src/util/file.cpp
     src/version/version.cpp
     src/video/buffer_vpx_encoder.cpp
     src/video/composer.cpp

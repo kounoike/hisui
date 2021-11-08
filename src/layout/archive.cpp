@@ -18,32 +18,13 @@
 #include <boost/json/value.hpp>
 
 #include "layout/interval.hpp"
+#include "util/file.hpp"
 #include "util/json.hpp"
 
 namespace hisui::layout {
 
-FindFileResult find_file(const std::string& filename) {
-  auto path = std::filesystem::path(filename);
-  if (path.is_absolute()) {
-    if (!std::filesystem::exists(path)) {
-      return {.found = false,
-              .message = fmt::format("does not exist path({})", filename)};
-    }
-    return {.found = true, .path = path};
-  }
-  if (std::filesystem::exists(path)) {
-    return {.found = true, .path = std::filesystem::absolute(path)};
-  }
-  path = std::filesystem::absolute(path.filename());
-  if (std::filesystem::exists(path)) {
-    return {.found = true, .path = path};
-  }
-  return {.found = false,
-          .message = fmt::format("does not exist path({})", filename)};
-}
-
 std::shared_ptr<Archive> parse_archive(const std::string& filename) {
-  auto json_path_result = find_file(filename);
+  auto json_path_result = hisui::util::find_file(filename);
   if (!json_path_result.found) {
     throw std::invalid_argument(json_path_result.message);
   }
@@ -83,12 +64,12 @@ Archive::Archive(const std::filesystem::path& t_path,
   m_stop_time = hisui::util::get_double_from_json_object(j, "stop_time");
 
   auto filename = hisui::util::get_string_from_json_object(j, "filename");
-  auto filename_result = find_file(std::string(filename));
+  auto filename_result = hisui::util::find_file(std::string(filename));
   if (filename_result.found) {
     m_file_path = filename_result.path;
   } else {
     auto file_path = hisui::util::get_string_from_json_object(j, "file_path");
-    auto file_path_result = find_file(std::string(file_path));
+    auto file_path_result = hisui::util::find_file(std::string(file_path));
     if (file_path_result.found) {
       m_file_path = file_path_result.path;
     } else {
