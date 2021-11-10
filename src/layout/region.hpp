@@ -80,7 +80,7 @@ class Region {
 };
 
 struct SetVideoSourceToCells {
-  const std::shared_ptr<VideoSource> video_source;
+  const std::shared_ptr<VideoSource>& video_source;
   Reuse reuse;
   const std::vector<std::shared_ptr<Cell>>& cells;
 };
