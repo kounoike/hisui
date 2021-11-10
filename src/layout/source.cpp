@@ -24,11 +24,11 @@ std::ostream& operator<<(std::ostream& os, const TrimIntervals& r) {
   return os;
 }
 
-Source::Source(const SourceParameters& params) {
-  file_path = params.file_path;
-  connection_id = params.connection_id;
-  source_interval.start_time = params.start_time;
-  source_interval.end_time = params.end_time;
+Source::Source(const SourceParameters& params)
+    : file_path(params.file_path),
+      index(params.index),
+      connection_id(params.connection_id),
+      source_interval{params.start_time, params.end_time} {
   encoding_interval.set(static_cast<std::uint64_t>(params.start_time),
                         static_cast<std::uint64_t>(params.end_time));
 }

@@ -79,6 +79,8 @@ const RegionPrepareResult Region::prepare(
     m_video_archives.push_back(archive);
     m_video_sources.push_back(
         std::make_shared<VideoSource>(archive->getSourceParameters(index++)));
+
+    spdlog::debug("index: {} {}", index, m_video_sources[index - 1]->index);
   }
 
   std::vector<Interval> source_intervals;
@@ -168,32 +170,35 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
   auto reuse = params.reuse;
   auto cells = params.cells;
 
-  auto it_connection_id = std::find_if(
+  // spdlog::debug("show_newest: {} {} {}", reuse, video_source->index,
+  //               video_source->encoding_interval.getUpper());
+
+  auto it_index = std::find_if(
       std::begin(cells), std::end(cells), [&video_source](const auto& cell) {
         // return cell->hasVideoSourceConnectionID(video_source->connection_id);
         return cell->hasVideoSourceIndex(video_source->index);
       });
-  if (it_connection_id != std::end(cells)) {
+  if (it_index != std::end(cells)) {
     return;
   }
-  auto it_fresh = std::find_if(std::begin(cells), std::end(cells),
-                               [video_source](const auto& cell) {
-                                 return cell->hasStatus(CellStatus::Fresh);
-                               });
+  auto it_fresh = std::find_if(
+      std::begin(cells), std::end(cells),
+      [](const auto& cell) { return cell->hasStatus(CellStatus::Fresh); });
   if (it_fresh != std::end(cells)) {
     (*it_fresh)->setSource(video_source);
+    return;
   }
 
   if (reuse == Reuse::None) {
     return;
   }
 
-  auto it_idle = std::find_if(std::begin(cells), std::end(cells),
-                              [video_source](const auto& cell) {
-                                return cell->hasStatus(CellStatus::Idle);
-                              });
+  auto it_idle = std::find_if(
+      std::begin(cells), std::end(cells),
+      [](const auto& cell) { return cell->hasStatus(CellStatus::Idle); });
   if (it_idle != std::end(cells)) {
     (*it_idle)->setSource(video_source);
+    return;
   }
 
   if (reuse == Reuse::ShowOldest) {
@@ -264,7 +269,7 @@ const std::shared_ptr<hisui::video::YUVImage> Region::getYUV(
     const std::uint64_t t) {
   reset_cells_source({.cells = m_cells, .time = t});
 
-  for (auto video_source : m_video_sources) {
+  for (const auto& video_source : m_video_sources) {
     if (video_source->encoding_interval.isIn(t)) {
       set_video_source_to_cells(
           {.video_source = video_source, .reuse = m_reuse, .cells = m_cells});

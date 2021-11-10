@@ -28,9 +28,10 @@
       "height": 164,
       "max_columns": 1,
       "max_rows": 1,
-      "reuse": "show_newest",
+      "reuse": "show_oldest",
       "video_sources": [
-        "0-5.json"
+        "0-2.json",
+        "3-5.json"
       ],
       "video_sources_excluded": [],
       "width": 244,

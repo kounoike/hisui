@@ -30,7 +30,8 @@
       "max_rows": 1,
       "reuse": "show_newest",
       "video_sources": [
-        "0-5.json"
+        "0-4.json",
+        "1-5.json"
       ],
       "video_sources_excluded": [],
       "width": 244,

@@ -1,6 +1,7 @@
 #include "layout/cell.hpp"
 
 #include <libyuv/scale.h>
+#include <spdlog/spdlog.h>
 
 #include <limits>
 #include <stdexcept>
@@ -46,6 +47,7 @@ void Cell::setSource(std::shared_ptr<VideoSource> source) {
 
 void Cell::resetSource(const std::uint64_t time) {
   if (time >= m_end_time) {
+    spdlog::debug("reset cell: {}", m_index);
     m_status = CellStatus::Idle;
     m_source = nullptr;
     m_end_time = std::numeric_limits<std::uint64_t>::max();
