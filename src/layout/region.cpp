@@ -168,12 +168,12 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
   auto reuse = params.reuse;
   auto cells = params.cells;
 
-  auto it_connection_id = std::find_if(
+  auto it_index = std::find_if(
       std::begin(cells), std::end(cells), [&video_source](const auto& cell) {
         // return cell->hasVideoSourceConnectionID(video_source->connection_id);
         return cell->hasVideoSourceIndex(video_source->index);
       });
-  if (it_connection_id != std::end(cells)) {
+  if (it_index != std::end(cells)) {
     return;
   }
   auto it_fresh = std::find_if(std::begin(cells), std::end(cells),
@@ -193,6 +193,7 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
                                 return cell->hasStatus(CellStatus::Idle);
                               });
   if (it_idle != std::end(cells)) {
+    spdlog::debug("Idle: {}", (*it_idle)->getInformation().pos.x);
     (*it_idle)->setSource(video_source);
   }
 
