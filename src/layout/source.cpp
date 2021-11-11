@@ -28,10 +28,7 @@ Source::Source(const SourceParameters& params)
     : file_path(params.file_path),
       index(params.index),
       connection_id(params.connection_id),
-      source_interval{params.start_time, params.end_time} {
-  encoding_interval.set(static_cast<std::uint64_t>(params.start_time),
-                        static_cast<std::uint64_t>(params.end_time));
-}
+      source_interval{params.start_time, params.end_time} {}
 
 void Source::substructTrimIntervals(const TrimIntervals& params) {
   source_interval = substruct_trim_intervals(
