@@ -6,12 +6,13 @@
 #include "video/yuv.hpp"
 
 namespace hisui::layout {
-
-struct VideoSource : public Source {
+class VideoSource : public Source {
+ public:
   explicit VideoSource(const SourceParameters&);
-  const std::shared_ptr<video::YUVImage> getYUV(const std::uint64_t);
+  const std::shared_ptr<hisui::video::YUVImage> getYUV(const std::uint64_t);
 
-  std::shared_ptr<hisui::video::Source> source;
+ private:
+  std::shared_ptr<hisui::video::Source> m_source;
 };
 
 }  // namespace hisui::layout
