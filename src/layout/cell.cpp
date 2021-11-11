@@ -23,8 +23,7 @@ Cell::Cell(const CellParameters& params)
 
 const std::shared_ptr<hisui::video::YUVImage> Cell::getYUV(
     const std::uint64_t t) {
-  return m_scaler->scale(m_source->source->getYUV(
-      m_source->encoding_interval.getSubstructLower(t)));
+  return m_scaler->scale(m_source->getYUV(t));
 }
 
 bool Cell::hasVideoSourceConnectionID(const std::string& connection_id) {
