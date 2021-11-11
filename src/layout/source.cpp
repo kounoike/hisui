@@ -1,6 +1,7 @@
 #include "layout/source.hpp"
 
 #include <fmt/core.h>
+#include <spdlog/spdlog.h>
 
 #include <algorithm>
 #include <limits>
@@ -25,14 +26,14 @@ std::ostream& operator<<(std::ostream& os, const TrimIntervals& r) {
 }
 
 Source::Source(const SourceParameters& params)
-    : file_path(params.file_path),
-      index(params.index),
-      connection_id(params.connection_id),
-      source_interval{params.start_time, params.end_time} {}
+    : m_file_path(params.file_path),
+      m_index(params.index),
+      m_connection_id(params.connection_id),
+      m_source_interval{params.start_time, params.end_time} {}
 
 void Source::substructTrimIntervals(const TrimIntervals& params) {
-  source_interval = substruct_trim_intervals(
-      {.interval = source_interval, .trim_intervals = params.trim_intervals});
+  m_source_interval = substruct_trim_intervals(
+      {.interval = m_source_interval, .trim_intervals = params.trim_intervals});
 }
 
 Interval substruct_trim_intervals(
@@ -56,4 +57,42 @@ Interval substruct_trim_intervals(
   return interval;
 }
 
+bool Source::hasConnectionID(const std::string& connection_id) {
+  return m_connection_id == connection_id;
+}
+
+bool Source::hasIndex(const std::size_t index) {
+  return m_index == index;
+}
+
+std::uint64_t Source::getMaxEncodingTime() const {
+  return m_encoding_interval.getUpper();
+}
+
+void Source::dump() const {
+  spdlog::debug("    file_path: {}", m_file_path.string());
+  spdlog::debug("    connection_id: {}", m_connection_id);
+  spdlog::debug("    start_time: {}", m_source_interval.start_time);
+  spdlog::debug("    end_time: {}", m_source_interval.end_time);
+}
+
+void Source::setEncodingInterval(const std::uint64_t timescale) {
+  m_encoding_interval.set(
+      static_cast<std::uint64_t>(std::floor(m_source_interval.start_time *
+                                            static_cast<double>(timescale))),
+      static_cast<std::uint64_t>(std::ceil(m_source_interval.end_time *
+                                           static_cast<double>(timescale))));
+}
+
+bool Source::isIn(const std::uint64_t t) const {
+  return m_encoding_interval.isIn(t);
+}
+
+std::size_t Source::getIndex() const {
+  return m_index;
+}
+
+Interval Source::getSourceInterval() const {
+  return m_source_interval;
+}
 }  // namespace hisui::layout

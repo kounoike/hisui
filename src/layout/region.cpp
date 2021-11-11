@@ -79,14 +79,13 @@ const RegionPrepareResult Region::prepare(
     m_video_archives.push_back(archive);
     m_video_sources.push_back(
         std::make_shared<VideoSource>(archive->getSourceParameters(index++)));
-
-    spdlog::debug("index: {} {}", index, m_video_sources[index - 1]->index);
   }
 
   std::vector<Interval> source_intervals;
-  std::transform(std::begin(m_video_sources), std::end(m_video_sources),
-                 std::back_inserter(source_intervals),
-                 [](const auto& s) -> Interval { return s->source_interval; });
+  std::transform(
+      std::begin(m_video_sources), std::end(m_video_sources),
+      std::back_inserter(source_intervals),
+      [](const auto& s) -> Interval { return s->getSourceInterval(); });
   auto overlap_result =
       overlap_intervals({.intervals = source_intervals, .reuse = m_reuse});
 
@@ -176,7 +175,7 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
   auto it_index = std::find_if(
       std::begin(cells), std::end(cells), [&video_source](const auto& cell) {
         // return cell->hasVideoSourceConnectionID(video_source->connection_id);
-        return cell->hasVideoSourceIndex(video_source->index);
+        return cell->hasVideoSourceIndex(video_source->getIndex());
       });
   if (it_index != std::end(cells)) {
     return;
@@ -212,7 +211,7 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
 
   if (it_min != std::end(cells)) {
     if ((*it_min)->hasStatus(CellStatus::Used) &&
-        (*it_min)->getEndTime() < video_source->encoding_interval.getUpper()) {
+        (*it_min)->getEndTime() < video_source->getMaxEncodingTime()) {
       (*it_min)->setSource(video_source);
     }
   }
@@ -247,21 +246,14 @@ void Region::dump() const {
     spdlog::debug("  grid_dimension: {}x{}", m_grid_dimension.columns,
                   m_grid_dimension.rows);
     for (const auto& a : m_video_sources) {
-      spdlog::debug("    file_path: {}", a->file_path.string());
-      spdlog::debug("    connection_id: {}", a->connection_id);
-      spdlog::debug("    start_time: {}", a->source_interval.start_time);
-      spdlog::debug("    end_time: {}", a->source_interval.end_time);
+      a->dump();
     }
   }
 }
 
 void Region::setEncodingInterval() {
   for (auto& s : m_video_sources) {
-    s->encoding_interval.set(
-        static_cast<std::uint64_t>(std::floor(s->source_interval.start_time *
-                                              hisui::Constants::NANO_SECOND)),
-        static_cast<std::uint64_t>(std::ceil(s->source_interval.end_time *
-                                             hisui::Constants::NANO_SECOND)));
+    s->setEncodingInterval(hisui::Constants::NANO_SECOND);
   }
 }
 
@@ -270,7 +262,7 @@ const std::shared_ptr<hisui::video::YUVImage> Region::getYUV(
   reset_cells_source({.cells = m_cells, .time = t});
 
   for (const auto& video_source : m_video_sources) {
-    if (video_source->encoding_interval.isIn(t)) {
+    if (video_source->isIn(t)) {
       set_video_source_to_cells(
           {.video_source = video_source, .reuse = m_reuse, .cells = m_cells});
     }
