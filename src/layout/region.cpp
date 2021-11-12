@@ -76,7 +76,6 @@ const RegionPrepareResult Region::prepare(
   std::size_t index = 0;
   for (const auto& f : m_video_source_filenames) {
     auto archive = parse_archive(f);
-    m_video_archives.push_back(archive);
     m_video_sources.push_back(
         std::make_shared<VideoSource>(archive->getSourceParameters(index++)));
   }

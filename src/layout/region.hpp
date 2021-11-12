@@ -69,7 +69,6 @@ class Region {
 
   // computed
   GridDimension m_grid_dimension;
-  std::vector<std::shared_ptr<Archive>> m_video_archives;
   std::vector<std::shared_ptr<VideoSource>> m_video_sources;
   std::vector<std::shared_ptr<Cell>> m_cells;
   double m_max_end_time;
