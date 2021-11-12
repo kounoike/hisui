@@ -25,6 +25,11 @@ std::ostream& operator<<(
   return os;
 }
 
+// [start, end) の間隔の集合における
+// - 最大 overlap 数
+// - 最大の end
+// - trim 可能な間隔
+// を算出する. 算出に reuse を考慮する
 MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_intervals(
     const OverlapIntervalsParameters& params) {
   std::vector<std::pair<double, std::uint64_t>> data;
@@ -115,6 +120,7 @@ std::vector<Interval> overlap_2_trim_intervals(const std::vector<Interval>& l,
   return ret;
 }
 
+// trim 可能な間隔の集合から すべての間隔から trim 可能な間隔を算出する.
 TrimIntervals overlap_trim_intervals(
     const OverlapTrimIntervalsParameters& params) {
   const auto s = std::size(params.list_of_trim_intervals);

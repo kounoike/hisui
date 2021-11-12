@@ -61,11 +61,15 @@ LengthAndPositions calc_cell_length_and_positions(
   if (params.min_frame_length % 2) {
     throw std::invalid_argument("min_frame_width should be even number");
   }
+  // 動画の描画に利用できる長さ
   auto allLength = params.region_length - (params.is_frame_on_ends
                                                ? (params.number_of_cells + 1)
                                                : (params.number_of_cells - 1)) *
                                               params.min_frame_length;
+  // 1 動画の長さ (4の倍数に補正)
   auto length = ((allLength / params.number_of_cells) >> 2) << 2;
+
+  // 各動画の位置を算出
   std::vector<std::uint32_t> positions;
   for (std::uint64_t i = 0; i < params.number_of_cells; ++i) {
     positions.emplace_back(params.min_frame_length *
