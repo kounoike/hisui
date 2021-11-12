@@ -76,6 +76,8 @@ class Region {
   std::shared_ptr<hisui::video::YUVImage> m_yuv_image;
   std::array<std::size_t, 3> m_plane_sizes;
   std::array<unsigned char, 3> m_plane_default_values;
+
+  void validateAndAdjust(const RegionPrepareParameters&);
 };
 
 struct SetVideoSourceToCells {

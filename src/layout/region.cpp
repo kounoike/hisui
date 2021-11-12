@@ -21,8 +21,7 @@ std::int32_t Region::getZPos() const {
   return m_z_pos;
 }
 
-const RegionPrepareResult Region::prepare(
-    const RegionPrepareParameters& params) {
+void Region::validateAndAdjust(const RegionPrepareParameters& params) {
   if (params.resolution.width < m_pos.x) {
     throw std::out_of_range(
         fmt::format("The x_pos({}) of region {} is out of parent width({})",
@@ -72,6 +71,11 @@ const RegionPrepareResult Region::prepare(
     throw std::out_of_range(fmt::format("height({}) of region({}) is too small",
                                         m_resolution.height, m_name));
   }
+}
+
+const RegionPrepareResult Region::prepare(
+    const RegionPrepareParameters& params) {
+  validateAndAdjust(params);
 
   std::size_t index = 0;
   for (const auto& f : m_video_source_filenames) {
@@ -80,6 +84,7 @@ const RegionPrepareResult Region::prepare(
         std::make_shared<VideoSource>(archive->getSourceParameters(index++)));
   }
 
+  // 最大に overlap する video の数, trim 可能な interval, 終了時間を算出
   std::vector<Interval> source_intervals;
   std::transform(
       std::begin(m_video_sources), std::end(m_video_sources),
@@ -94,12 +99,14 @@ const RegionPrepareResult Region::prepare(
     spdlog::debug("    trim_interval: [{}, {}]", i.start_time, i.end_time);
   }
 
+  // cell_excluded を考慮した最大の video cell の数を算出
   std::sort(std::begin(m_cells_excluded), std::end(m_cells_excluded));
   auto max_cells = add_number_of_excluded_cells({
       .number_of_sources = overlap_result.max_number_of_overlap,
       .cells_excluded = m_cells_excluded,
   });
 
+  // grid の次元を算出
   m_grid_dimension = calc_grid_dimension({.max_columns = m_max_columns,
                                           .max_rows = m_max_rows,
                                           .number_of_sources = max_cells});
@@ -112,6 +119,7 @@ const RegionPrepareResult Region::prepare(
           !(m_resolution.height == params.resolution.height),
   });
 
+  // cell に情報を詰め m_cells に追加する
   for (std::size_t i = 0; i < m_grid_dimension.rows * m_grid_dimension.columns;
        ++i) {
     if (i >= max_cells) {
@@ -134,6 +142,7 @@ const RegionPrepareResult Region::prepare(
   }
   spdlog::debug("    cell size: {}", std::size(m_cells));
 
+  // YUV のサイズ
   m_plane_sizes[0] = m_resolution.width * m_resolution.height;
   m_plane_sizes[1] = (m_plane_sizes[0] + 3) >> 2;
   m_plane_sizes[2] = m_plane_sizes[1];
@@ -141,6 +150,7 @@ const RegionPrepareResult Region::prepare(
   m_yuv_image = std::make_shared<hisui::video::YUVImage>(m_resolution.width,
                                                          m_resolution.height);
 
+  // YUV のデフォルト値 (黒)
   m_plane_default_values[0] = 0;
   m_plane_default_values[1] = 128;
   m_plane_default_values[2] = 128;
@@ -163,6 +173,7 @@ void Region::substructTrimIntervals(const TrimIntervals& params) {
   m_max_end_time = interval.end_time;
 }
 
+// cells の中の cell に video_source を設定する (設定できない場合もある)
 void set_video_source_to_cells(const SetVideoSourceToCells& params) {
   auto video_source = params.video_source;
   auto reuse = params.reuse;
@@ -171,6 +182,7 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
   // spdlog::debug("show_newest: {} {} {}", reuse, video_source->index,
   //               video_source->encoding_interval.getUpper());
 
+  // Fresh な cell があればその先頭を利用する
   auto it_index = std::find_if(
       std::begin(cells), std::end(cells), [&video_source](const auto& cell) {
         // return cell->hasVideoSourceConnectionID(video_source->connection_id);
@@ -187,10 +199,12 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
     return;
   }
 
+  // Reuse が none なら終了
   if (reuse == Reuse::None) {
     return;
   }
 
+  // Idle な cell があればその先頭を利用する
   auto it_idle = std::find_if(
       std::begin(cells), std::end(cells),
       [](const auto& cell) { return cell->hasStatus(CellStatus::Idle); });
@@ -199,10 +213,12 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
     return;
   }
 
+  // Reuse が show_oldest なら終了
   if (reuse == Reuse::ShowOldest) {
     return;
   }
 
+  // 終了時刻が最小の cell の終了時刻が、 video_source の終了時刻のものより小さければ利用する(交換する)
   auto it_min = std::min_element(std::begin(cells), std::end(cells),
                                  [](const auto& a, const auto& b) {
                                    return a->getEndTime() < b->getEndTime();
