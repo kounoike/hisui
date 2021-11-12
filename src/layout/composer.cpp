@@ -21,13 +21,16 @@ Composer::Composer(const ComposerParameters& params)
 
 void Composer::compose(std::vector<unsigned char>* composed,
                        const std::uint64_t t) {
+  // 全体を黒塗りする
   for (std::size_t p = 0; p < 3; ++p) {
     std::fill_n(m_planes[p], m_plane_sizes[p], m_plane_default_values[p]);
   }
 
+  // m_regions は z_pos でソートされている想定
   for (auto region : m_regions) {
     auto yuv_image = region->getYUV(t);
     auto info = region->getInformation();
+    // 位置と解像度を取得し YUV を重ねる
     for (std::size_t p = 0; p < 3; ++p) {
       if (p == 0) {
         hisui::video::overlay_yuv_planes(

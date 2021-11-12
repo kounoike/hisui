@@ -9,6 +9,7 @@ namespace hisui::layout {
 
 GridDimension calc_grid_dimension_unconstrained_grid(
     const CalcGridDimensionParameters& params) {
+  // max_columns も max_rows も指定がない場合
   auto columns = static_cast<std::uint32_t>(
       std::ceil(std::sqrt(params.number_of_sources)));
   auto rows = static_cast<std::uint32_t>(
@@ -19,6 +20,7 @@ GridDimension calc_grid_dimension_unconstrained_grid(
 
 GridDimension calc_grid_dimension_unconstrained_dimension_rows(
     const CalcGridDimensionParameters& params) {
+  // max_columns の指定のみの場合
   if (params.max_columns >= params.number_of_sources) {
     return calc_grid_dimension_unconstrained_grid(params);
   }
@@ -31,6 +33,7 @@ GridDimension calc_grid_dimension_unconstrained_dimension_rows(
 
 GridDimension calc_grid_dimension_unconstrained_dimension_columns(
     const CalcGridDimensionParameters& params) {
+  // max_rows の指定のみの場合
   if (params.max_rows >= params.number_of_sources) {
     return calc_grid_dimension_unconstrained_grid(params);
   }
@@ -43,6 +46,7 @@ GridDimension calc_grid_dimension_unconstrained_dimension_columns(
 
 GridDimension calc_grid_dimension_constrained_grid(
     const CalcGridDimensionParameters& params) {
+  // max_columns も max_rows も指定がある場合
   if (params.max_columns * params.max_rows <= params.number_of_sources) {
     return {.columns = params.max_columns, .rows = params.max_rows};
   }

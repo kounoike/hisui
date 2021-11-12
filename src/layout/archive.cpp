@@ -57,6 +57,7 @@ std::shared_ptr<Archive> parse_archive(const std::string& filename) {
   auto start_time = hisui::util::get_double_from_json_object(j, "start_time");
   auto stop_time = hisui::util::get_double_from_json_object(j, "stop_time");
 
+  // filename から webm ファイルの path を解決する
   auto filename_string =
       hisui::util::get_string_from_json_object(j, "filename");
   auto filename_result = hisui::util::find_file(std::string(filename_string));
@@ -64,6 +65,7 @@ std::shared_ptr<Archive> parse_archive(const std::string& filename) {
   if (filename_result.found) {
     file_path = filename_result.path;
   } else {
+    // filename でうまくいかなかったら file_path から webm ファイルの path を解決する
     auto file_path_string =
         hisui::util::get_string_from_json_object(j, "file_path");
     auto file_path_result =

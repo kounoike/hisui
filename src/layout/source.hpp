@@ -30,15 +30,26 @@ struct SourceParameters {
   const double end_time;
 };
 
-struct Source {
+class Source {
+ public:
   explicit Source(const SourceParameters&);
   virtual ~Source() = default;
-  std::filesystem::path file_path;
-  std::size_t index;
-  std::string connection_id;
-  Interval source_interval;
-  hisui::util::Interval encoding_interval{0, 0};
   void substructTrimIntervals(const TrimIntervals&);
+  bool hasConnectionID(const std::string&);
+  bool hasIndex(const std::size_t);
+  std::uint64_t getMaxEncodingTime() const;
+  void dump() const;
+  void setEncodingInterval(const std::uint64_t);
+  bool isIn(const std::uint64_t) const;
+  std::size_t getIndex() const;
+  Interval getSourceInterval() const;
+
+ protected:
+  std::filesystem::path m_file_path;
+  std::size_t m_index;
+  std::string m_connection_id;
+  Interval m_source_interval;
+  hisui::util::Interval m_encoding_interval{0, 0};
 };
 
 struct SubstructTrimIntervalsParameters {

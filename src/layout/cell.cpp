@@ -23,16 +23,15 @@ Cell::Cell(const CellParameters& params)
 
 const std::shared_ptr<hisui::video::YUVImage> Cell::getYUV(
     const std::uint64_t t) {
-  return m_scaler->scale(m_source->source->getYUV(
-      m_source->encoding_interval.getSubstructLower(t)));
+  return m_scaler->scale(m_source->getYUV(t));
 }
 
 bool Cell::hasVideoSourceConnectionID(const std::string& connection_id) {
-  return m_source && m_source->connection_id == connection_id;
+  return m_source && m_source->hasConnectionID(connection_id);
 }
 
 bool Cell::hasVideoSourceIndex(const size_t index) {
-  return m_source && m_source->index == index;
+  return m_source && m_source->hasIndex(index);
 }
 
 bool Cell::hasStatus(const CellStatus status) {
@@ -42,7 +41,7 @@ bool Cell::hasStatus(const CellStatus status) {
 void Cell::setSource(std::shared_ptr<VideoSource> source) {
   m_status = CellStatus::Used;
   m_source = source;
-  m_end_time = source->encoding_interval.getUpper();
+  m_end_time = source->getMaxEncodingTime();
 }
 
 void Cell::resetSource(const std::uint64_t time) {

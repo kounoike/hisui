@@ -154,6 +154,7 @@ void Metadata::resetPath() const {
 }
 
 void Metadata::prepare() {
+  // 解像度は 4の倍数にまるめる
   // TODO(haruyama): 2 の倍数でいいかもしれない
   m_resolution.width = (m_resolution.width >> 2) << 2;
   m_resolution.height = (m_resolution.height >> 2) << 2;
@@ -179,6 +180,7 @@ void Metadata::prepare() {
     m_audio_archives.push_back(archive);
   }
 
+  // trim 可能な間隔を audio, video(regions) からそれぞれ算出
   std::vector<Interval> audio_source_intervals;
   std::transform(std::begin(m_audio_archives), std::end(m_audio_archives),
                  std::back_inserter(audio_source_intervals),
@@ -193,6 +195,8 @@ void Metadata::prepare() {
     auto result = region->prepare({.resolution = m_resolution});
     list_of_trim_intervals.push_back(result.trim_intervals);
   }
+
+  // すべての trim 可能な間隔の中で重なっている部分を算出
   auto overlap_trim_intervals_result = overlap_trim_intervals(
       {.list_of_trim_intervals = list_of_trim_intervals});
 
@@ -202,6 +206,8 @@ void Metadata::prepare() {
   }
 
   std::vector<Interval> trim_intervals;
+  // trim = true ならばすべての trim 可能間隔を削除する
+  // trim = false ならば 0 で始まる trim 可能間隔を削除する
   if (m_trim) {
     trim_intervals = overlap_trim_intervals_result.trim_intervals;
   } else {
@@ -232,6 +238,8 @@ void Metadata::prepare() {
     r->substructTrimIntervals({.trim_intervals = trim_intervals});
     m_max_end_time = std::max(m_max_end_time, r->getMaxEndTime());
   }
+
+  // m_regions は z_pos でソート
   std::sort(
       std::begin(m_regions), std::end(m_regions),
       [](const auto& a, const auto& b) { return a->getZPos() < b->getZPos(); });
@@ -318,7 +326,7 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
 }
 
 void Metadata::copyToConfig(hisui::Config* config) const {
-  // TODO(haruyama): audio も考慮する?
+  // TODO(haruyama): bitrate で audio も考慮する?
   config->out_video_bit_rate = static_cast<std::uint32_t>(m_bitrate);
   config->out_container = m_format;
   config->in_metadata_filename = m_path.string();
