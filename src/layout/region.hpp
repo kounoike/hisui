@@ -30,8 +30,7 @@ struct RegionParameters {
   const std::uint32_t max_rows;
   const std::vector<std::uint64_t>& cells_excluded = {};
   const Reuse reuse;
-  const std::vector<std::string>& video_sources = {};
-  const std::vector<std::string>& video_sources_excluded = {};
+  const std::vector<std::string>& video_source_filenames = {};
 };
 
 struct RegionPrepareParameters {
@@ -65,7 +64,6 @@ class Region {
   std::vector<std::uint64_t> m_cells_excluded;
   Reuse m_reuse;
   std::vector<std::string> m_video_source_filenames;
-  std::vector<std::string> m_video_source_excluded_filenames;
 
   // computed
   GridDimension m_grid_dimension;

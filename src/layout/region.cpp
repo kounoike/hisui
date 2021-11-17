@@ -241,8 +241,7 @@ Region::Region(const RegionParameters& params)
       m_max_rows(params.max_rows),
       m_cells_excluded(params.cells_excluded),
       m_reuse(params.reuse),
-      m_video_source_filenames(params.video_sources),
-      m_video_source_excluded_filenames(params.video_sources_excluded) {}
+      m_video_source_filenames(params.video_source_filenames) {}
 
 void Region::dump() const {
   spdlog::debug("  name: {}", m_name);
