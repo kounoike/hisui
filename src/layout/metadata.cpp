@@ -23,6 +23,7 @@
 #include "layout/source.hpp"
 #include "util/file.hpp"
 #include "util/json.hpp"
+#include "util/wildcard.hpp"
 
 namespace hisui::layout {
 
@@ -108,6 +109,7 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
   auto audio_sources = hisui::util::get_array_from_json_object_with_default(
       j, "audio_sources", boost::json::array());
 
+  std::vector<std::string> audio_source_filenames;
   for (const auto& v : audio_sources) {
     if (v.is_string()) {
       auto pattern = std::string(v.as_string());
@@ -116,15 +118,35 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
         throw std::invalid_argument(
             fmt::format("audio_source {} is not found", pattern));
       }
-      m_audio_source_filenames.insert(std::end(m_audio_source_filenames),
-                                      std::begin(filenames),
-                                      std::end(filenames));
+      audio_source_filenames.insert(std::end(audio_source_filenames),
+                                    std::begin(filenames), std::end(filenames));
     } else {
       throw std::invalid_argument(
           fmt::format("{} contains non-string values", "audio_sources"));
     }
   }
-  // TODO(haruyama): audio_sources_excluded
+
+  auto audio_sources_excluded =
+      hisui::util::get_array_from_json_object_with_default(
+          j, "audio_sources_excluded", boost::json::array());
+
+  for (const auto& v : audio_sources_excluded) {
+    if (v.is_string()) {
+      auto pattern = std::string(v.as_string());
+      auto result = std::remove_if(std::begin(audio_source_filenames),
+                                   std::end(audio_source_filenames),
+                                   [&pattern](const auto& text) {
+                                     return hisui::util::wildcard_match(
+                                         {.text = text, .pattern = pattern});
+                                   });
+      audio_source_filenames.erase(result, std::end(audio_source_filenames));
+    } else {
+      throw std::invalid_argument(fmt::format("{} contains non-string values",
+                                              "audio_sources_excluded"));
+    }
+  }
+
+  m_audio_source_filenames = audio_source_filenames;
   parseVideoLayout(j);
 }
 

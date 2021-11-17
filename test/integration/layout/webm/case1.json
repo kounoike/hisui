@@ -1,8 +1,9 @@
 {
   "audio_sources": [
-    "caminandes*.json"
+    "caminandes*.json",
+    "case1.json"
   ],
-  "audio_sources_excluded": [],
+  "audio_sources_excluded": [ "case*.json" ],
   "bitrate": 1000,
   "format": "webm",
   "resolution": "640x480",
