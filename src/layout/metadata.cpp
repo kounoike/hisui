@@ -21,6 +21,7 @@
 #include "layout/archive.hpp"
 #include "layout/overlap.hpp"
 #include "layout/source.hpp"
+#include "util/file.hpp"
 #include "util/json.hpp"
 
 namespace hisui::layout {
@@ -109,7 +110,15 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
 
   for (const auto& v : audio_sources) {
     if (v.is_string()) {
-      m_audio_source_filenames.push_back(std::string(v.as_string()));
+      auto pattern = std::string(v.as_string());
+      auto filenames = hisui::util::glob(pattern);
+      if (std::empty(filenames)) {
+        throw std::invalid_argument(
+            fmt::format("audio_source {} is not found", pattern));
+      }
+      m_audio_source_filenames.insert(std::end(m_audio_source_filenames),
+                                      std::begin(filenames),
+                                      std::end(filenames));
     } else {
       throw std::invalid_argument(
           fmt::format("{} contains non-string values", "audio_sources"));

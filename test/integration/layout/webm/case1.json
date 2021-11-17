@@ -1,6 +1,6 @@
 {
   "audio_sources": [
-    "caminandes3.json"
+    "caminandes*.json"
   ],
   "audio_sources_excluded": [],
   "bitrate": 1000,
