@@ -1,8 +1,9 @@
 {
   "audio_sources": [
-    "caminandes3.json"
+    "caminandes*.json",
+    "case1.json"
   ],
-  "audio_sources_excluded": [],
+  "audio_sources_excluded": [ "case*.json" ],
   "bitrate": 1000,
   "format": "webm",
   "resolution": "640x480",
@@ -15,7 +16,7 @@
       "max_rows": 0,
       "reuse": "show_oldest",
       "video_sources": [
-        "caminandes3.json"
+        "caminande*3.json"
       ],
       "video_sources_excluded": [],
       "width": 0,
@@ -30,9 +31,10 @@
       "max_rows": 1,
       "reuse": "show_newest",
       "video_sources": [
-        "0-5.json"
+        "0-5.json",
+        "case2.json"
       ],
-      "video_sources_excluded": [],
+      "video_sources_excluded": ["case*.json"],
       "width": 244,
       "x_pos": 100,
       "y_pos": 200,

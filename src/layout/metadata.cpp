@@ -21,7 +21,9 @@
 #include "layout/archive.hpp"
 #include "layout/overlap.hpp"
 #include "layout/source.hpp"
+#include "util/file.hpp"
 #include "util/json.hpp"
+#include "util/wildcard.hpp"
 
 namespace hisui::layout {
 
@@ -107,15 +109,44 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
   auto audio_sources = hisui::util::get_array_from_json_object_with_default(
       j, "audio_sources", boost::json::array());
 
+  std::vector<std::string> audio_source_filenames;
   for (const auto& v : audio_sources) {
     if (v.is_string()) {
-      m_audio_source_filenames.push_back(std::string(v.as_string()));
+      auto pattern = std::string(v.as_string());
+      auto filenames = hisui::util::glob(pattern);
+      if (std::empty(filenames)) {
+        throw std::invalid_argument(
+            fmt::format("audio_source {} is not found", pattern));
+      }
+      audio_source_filenames.insert(std::end(audio_source_filenames),
+                                    std::begin(filenames), std::end(filenames));
     } else {
       throw std::invalid_argument(
           fmt::format("{} contains non-string values", "audio_sources"));
     }
   }
-  // TODO(haruyama): audio_sources_excluded
+
+  auto audio_sources_excluded =
+      hisui::util::get_array_from_json_object_with_default(
+          j, "audio_sources_excluded", boost::json::array());
+
+  for (const auto& v : audio_sources_excluded) {
+    if (v.is_string()) {
+      auto pattern = std::string(v.as_string());
+      auto result = std::remove_if(std::begin(audio_source_filenames),
+                                   std::end(audio_source_filenames),
+                                   [&pattern](const auto& text) {
+                                     return hisui::util::wildcard_match(
+                                         {.text = text, .pattern = pattern});
+                                   });
+      audio_source_filenames.erase(result, std::end(audio_source_filenames));
+    } else {
+      throw std::invalid_argument(fmt::format("{} contains non-string values",
+                                              "audio_sources_excluded"));
+    }
+  }
+
+  m_audio_source_filenames = audio_source_filenames;
   parseVideoLayout(j);
 }
 
@@ -262,21 +293,47 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
       cells_excluded.push_back(value);
     } else {
       throw std::invalid_argument(
-          fmt::format("{} contains non-string values", "audio_sources"));
+          fmt::format("{} contains non-string values", "cells_excluded"));
     }
   }
 
-  auto video_sources_array =
-      hisui::util::get_array_from_json_object_with_default(
-          jo, "video_sources", boost::json::array());
-  std::vector<std::string> video_sources;
+  auto video_sources = hisui::util::get_array_from_json_object_with_default(
+      jo, "video_sources", boost::json::array());
+  std::vector<std::string> video_source_filenames;
 
-  for (const auto& v : video_sources_array) {
+  for (const auto& v : video_sources) {
     if (v.is_string()) {
-      video_sources.push_back(std::string(v.as_string()));
+      auto pattern = std::string(v.as_string());
+      auto filenames = hisui::util::glob(pattern);
+      if (std::empty(filenames)) {
+        throw std::invalid_argument(
+            fmt::format("video_source {} is not found", pattern));
+      }
+      video_source_filenames.insert(std::end(video_source_filenames),
+                                    std::begin(filenames), std::end(filenames));
     } else {
       throw std::invalid_argument(
           fmt::format("{} contains non-string values", "video_sources"));
+    }
+  }
+
+  auto video_sources_excluded =
+      hisui::util::get_array_from_json_object_with_default(
+          jo, "video_sources_excluded", boost::json::array());
+
+  for (const auto& v : video_sources_excluded) {
+    if (v.is_string()) {
+      auto pattern = std::string(v.as_string());
+      auto result = std::remove_if(std::begin(video_source_filenames),
+                                   std::end(video_source_filenames),
+                                   [&pattern](const auto& text) {
+                                     return hisui::util::wildcard_match(
+                                         {.text = text, .pattern = pattern});
+                                   });
+      video_source_filenames.erase(result, std::end(video_source_filenames));
+    } else {
+      throw std::invalid_argument(fmt::format("{} contains non-string values",
+                                              "video_sources_excluded"));
     }
   }
 
@@ -318,8 +375,7 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
                                                                 0)),
       .cells_excluded = cells_excluded,
       .reuse = reuse,
-      .video_sources = video_sources,
-      .video_sources_excluded = {}  // TODO(haruyama)
+      .video_source_filenames = video_source_filenames,
   };
 
   return std::make_shared<Region>(params);
