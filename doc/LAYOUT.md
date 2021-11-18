@@ -29,9 +29,12 @@ audio_sources のうち除外するソースを指定する。
 
 ### bitrate
 
-bitrate を指定する。
+目標 bitrate を指定する。
 
 (現状 video の bitrate 指定に利用している。 audio の分を引くべきか？)
+
+現状 100 未満なら 100 にしている。 
+0 ないし未定義(キーがない)場合は適当に計算している。
 
 ## format
 
@@ -40,6 +43,8 @@ bitrate を指定する。
 ## resolution
 
 映像の解像度を指定する。
+
+現状 3840x3840 まで許容している。
 
 ## trim
 
@@ -59,7 +64,7 @@ Region は内部を Grid によって区切られる。区切られた部分を 
 #### Grid の決め方
 
 Grid の行と列の最大値は `max_columns` と `max_rows` によって指定される。
-ただし、 0 の場合は未指定となる。
+ただし、 該当キーがない場合と 0 の場合は未指定となる。
 
 ##### max_columns, max_rows が両方指定されていない場合
 
@@ -106,7 +111,7 @@ Cell には次の状態が存在する
 
 ### height
 
-Region の高さを指定する。0 の場合は `y_pos` から決定される (resolution.height - y_pos)。 16 未満の場合、resolution.height からはみ出る場合はエラーとなる。
+Region の高さを指定する。キーがない場合と 0 の場合は `y_pos` から決定される (resolution.height - y_pos)。 16 未満の場合、resolution.height からはみ出る場合はエラーとなる。
 
 ### max_columns
 
@@ -138,16 +143,18 @@ video_sources のうち除外するソースを指定する。
 
 ### width
 
-Region の幅を指定する。 0 の場合は `x_pos` から決定される (resolution.width - x_pos)。 16 未満の場合、resolution.width からはみ出る場合はエラーとなる。
+Region の幅を指定する。 キーがない場合と 0 の場合は `x_pos` から決定される (resolution.width - x_pos)。 16 未満の場合、resolution.width からはみ出る場合はエラーとなる。
 
 ### x_pos
 
-Region の左上の位置の x を指定する。 [0, resolution.width] の範囲でない場合はエラーとなる。
+Region の左上の位置の x を指定する。キーがない場合は 0。 [0, resolution.width] の範囲でない場合はエラーとなる。
 
 ### y_pos
 
-Region の左上の位置の y を指定する。[0, resolution.height] の範囲でない場合はエラーとなる。
+Region の左上の位置の y を指定する。キーがない場合は0。[0, resolution.height] の範囲でない場合はエラーとなる。
 
 ### z_pos
 
-Region の z 軸での位置を指定する。[-99, 99] の範囲でない場合はエラーとなる.
+Region の z 軸での位置を指定する。キーがない場合は0。[-99, 99] の範囲でない場合はエラーとなる.
+
+同じ z_pos の Region の描画がどうなるかは規定しない。
