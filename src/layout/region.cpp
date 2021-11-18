@@ -24,13 +24,13 @@ std::int32_t Region::getZPos() const {
 void Region::validateAndAdjust(const RegionPrepareParameters& params) {
   if (params.resolution.width < m_pos.x) {
     throw std::out_of_range(
-        fmt::format("The x_pos({}) of region {} is out of parent width({})",
+        fmt::format("The x_pos({}) of region {} is out of base width({})",
                     m_pos.x, m_name, params.resolution.width));
   }
 
   if (params.resolution.height < m_pos.y) {
     throw std::out_of_range(
-        fmt::format("The y_pos({}) of region {} is out of parent height({})",
+        fmt::format("The y_pos({}) of region {} is out of base height({})",
                     m_pos.y, m_name, params.resolution.height));
   }
 
@@ -42,7 +42,7 @@ void Region::validateAndAdjust(const RegionPrepareParameters& params) {
   if (m_resolution.width != 0) {
     if (m_pos.x + m_resolution.width > params.resolution.width) {
       throw std::out_of_range(fmt::format(
-          "The x_pos({}) & width({}) of region {} is out of parent width({})",
+          "The x_pos({}) & width({}) of region {} is out of base width({})",
           m_pos.x, m_resolution.width, m_name, params.resolution.width));
     }
   } else {
@@ -52,7 +52,7 @@ void Region::validateAndAdjust(const RegionPrepareParameters& params) {
   if (m_resolution.height != 0) {
     if (m_pos.y + m_resolution.height > params.resolution.height) {
       throw std::out_of_range(fmt::format(
-          "The y_pos({}) & height({}) of region {} is out of parent height({})",
+          "The y_pos({}) & height({}) of region {} is out of base height({})",
           m_pos.y, m_resolution.height, m_name, params.resolution.height));
     }
   } else {
@@ -70,6 +70,24 @@ void Region::validateAndAdjust(const RegionPrepareParameters& params) {
   if (m_resolution.height < 16) {
     throw std::out_of_range(fmt::format("height({}) of region({}) is too small",
                                         m_resolution.height, m_name));
+  }
+
+  if (m_max_columns > 1000) {
+    throw std::out_of_range(fmt::format(
+        "max_columns({}) of region({}) is too large", m_max_columns, m_name));
+  }
+  if (m_max_rows > 1000) {
+    throw std::out_of_range(fmt::format(
+        "max_rows({}) of region({}) is too large", m_max_rows, m_name));
+  }
+
+  auto out_of_range_cells_excluded_iter =
+      std::find_if(std::begin(m_cells_excluded), std::end(m_cells_excluded),
+                   [](const auto e) { return e > 999999; });
+  if (out_of_range_cells_excluded_iter != std::end(m_cells_excluded)) {
+    throw std::out_of_range(
+        fmt::format("cell_excluded of region({}) contains too large value={}",
+                    m_max_rows, *out_of_range_cells_excluded_iter));
   }
 }
 
