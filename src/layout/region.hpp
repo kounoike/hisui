@@ -1,5 +1,7 @@
 #pragma once
 
+#include <libyuv/scale.h>
+
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -31,6 +33,7 @@ struct RegionParameters {
   const std::vector<std::uint64_t>& cells_excluded = {};
   const Reuse reuse;
   const std::vector<std::string>& video_source_filenames = {};
+  const libyuv::FilterMode filter_mode = libyuv::kFilterBox;
 };
 
 struct RegionPrepareParameters {
@@ -64,6 +67,7 @@ class Region {
   std::vector<std::uint64_t> m_cells_excluded;
   Reuse m_reuse;
   std::vector<std::string> m_video_source_filenames;
+  libyuv::FilterMode m_filter_mode;
 
   // computed
   GridDimension m_grid_dimension;

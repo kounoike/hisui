@@ -1,5 +1,7 @@
 #pragma once
 
+#include <libyuv/scale.h>
+
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -25,6 +27,7 @@ struct CellParameters {
   const Position& pos;
   const Resolution& resolution;
   const CellStatus status = CellStatus::Fresh;
+  const libyuv::FilterMode filter_mode = libyuv::kFilterBox;
 };
 
 struct CellInformation {

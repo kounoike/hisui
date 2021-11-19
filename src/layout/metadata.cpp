@@ -66,8 +66,10 @@ void Metadata::dump() const {
   }
 }
 
-Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
-    : m_path(file_path) {
+Metadata::Metadata(const std::string& file_path,
+                   const boost::json::value& jv,
+                   const hisui::Config& config)
+    : m_path(file_path), m_filter_mode(config.libyuv_filter_mode) {
   if (m_path.is_relative()) {
     m_path = std::filesystem::absolute(m_path);
   }
@@ -150,7 +152,8 @@ Metadata::Metadata(const std::string& file_path, const boost::json::value& jv)
   parseVideoLayout(j);
 }
 
-Metadata parse_metadata(const std::string& filename) {
+Metadata parse_metadata(const hisui::Config& config) {
+  auto filename = config.layout;
   std::ifstream i(filename);
   if (!i.is_open()) {
     throw std::runtime_error(
@@ -165,7 +168,7 @@ Metadata parse_metadata(const std::string& filename) {
         "failed to parse metadata json file: message", ec.message()));
   }
 
-  Metadata metadata(filename, jv);
+  Metadata metadata(filename, jv, config);
 
   spdlog::debug("not prepared");
 
@@ -383,6 +386,7 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
       .cells_excluded = cells_excluded,
       .reuse = reuse,
       .video_source_filenames = video_source_filenames,
+      .filter_mode = m_filter_mode,
   };
 
   return std::make_shared<Region>(params);

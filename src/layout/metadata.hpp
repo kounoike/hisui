@@ -1,5 +1,7 @@
 #pragma once
 
+#include <libyuv/scale.h>
+
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -22,7 +24,7 @@ namespace hisui::layout {
 
 class Metadata {
  public:
-  Metadata(const std::string& file_path, const boost::json::value& jv);
+  Metadata(const std::string&, const boost::json::value&, const hisui::Config&);
   void dump() const;
   void prepare();
   void copyToConfig(hisui::Config*) const;
@@ -49,12 +51,13 @@ class Metadata {
   double m_audio_max_end_time;
   double m_max_end_time;
   std::vector<std::shared_ptr<Region>> m_regions;
+  libyuv::FilterMode m_filter_mode;
 
   void parseVideoLayout(boost::json::object j);
   std::shared_ptr<Region> parseRegion(const std::string& name,
                                       boost::json::object jo);
 };
 
-Metadata parse_metadata(const std::string&);
+Metadata parse_metadata(const hisui::Config&);
 
 }  // namespace hisui::layout

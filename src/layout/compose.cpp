@@ -18,7 +18,7 @@ namespace hisui::layout {
 
 int compose(const hisui::Config& t_config) {
   auto config = t_config;
-  auto metadata = hisui::layout::parse_metadata(config.layout);
+  auto metadata = hisui::layout::parse_metadata(config);
   metadata.copyToConfig(&config);
 
   std::shared_ptr<hisui::muxer::Muxer> muxer;

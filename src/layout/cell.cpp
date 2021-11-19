@@ -15,9 +15,8 @@ Cell::Cell(const CellParameters& params)
       m_status(params.status) {
   m_end_time = std::numeric_limits<std::uint64_t>::max();
   if (m_status != CellStatus::Excluded) {
-    // TODO(haruyama): filtermode の指定
     m_scaler = std::make_shared<hisui::video::PreserveAspectRatioScaler>(
-        m_resolution.width, m_resolution.height, libyuv::kFilterBox);
+        m_resolution.width, m_resolution.height, params.filter_mode);
   }
 }
 
