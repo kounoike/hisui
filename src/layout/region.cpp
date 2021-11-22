@@ -153,7 +153,8 @@ const RegionPrepareResult Region::prepare(
         CellParameters{.index = i,
                        .pos = cell_resolution_and_posiitons.positions[i],
                        .resolution = cell_resolution_and_posiitons.resolution,
-                       .status = status}));
+                       .status = status,
+                       .filter_mode = m_filter_mode}));
     auto info = m_cells[i]->getInformation();
     spdlog::debug("    cell[{}]: x: {}, y:{}, w:{}, h:{}", i, info.pos.x,
                   info.pos.y, info.resolution.width, info.resolution.height);
@@ -259,7 +260,8 @@ Region::Region(const RegionParameters& params)
       m_max_rows(params.max_rows),
       m_cells_excluded(params.cells_excluded),
       m_reuse(params.reuse),
-      m_video_source_filenames(params.video_source_filenames) {}
+      m_video_source_filenames(params.video_source_filenames),
+      m_filter_mode(params.filter_mode) {}
 
 void Region::dump() const {
   spdlog::debug("  name: {}", m_name);
