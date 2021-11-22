@@ -13,17 +13,17 @@ hisui --layout layout.json
 ## レイアウト設定
 
 [Composing Video Recordings using Twilio Programmable Video - Twilio](https://www.twilio.com/docs/video/api/compositions-resource) に準ずる。
-`audio_sources`, `audio_sources_excluded`, Region(後述) 内の `video_sources`, `video_sources_excluded` には、Sora の archive-*.json のパスを指定する。
+`audio_sources`, `audio_sources_excluded`, Region(後述) 内の `video_sources`, `video_sources_excluded` には、Sora の archive-*.json のパス/パターンを指定する。
 
 ### audio_sources
 
-音声のソースとして用いる archive-*.json のパスを指定する。相対パスの場合は、レイアウト設定を指定する JSON ファイルのあるパスからの相対パスを探す。
+音声のソースとして用いる archive-*.json のパスの配列を指定する。相対パスの場合は、レイアウト設定を指定する JSON ファイルのあるパスからの相対パスを探す。
 
 `*` をワイルドカードとして利用できる。
 
 ### audio_sources_excluded
 
-audio_sources のうち除外するソースを指定する。
+audio_sources のうち除外するソースのパターンの配列を指定する。
 
 `*` をワイルドカードとして利用できる。
 
@@ -33,7 +33,7 @@ audio_sources のうち除外するソースを指定する。
 
 (現状 video の bitrate 指定に利用している。 audio の分を引くべきか？)
 
-現状 100 未満なら 100 にしている。 
+現状 100 未満なら 100 にしている。
 0 ないし未定義(キーがない)場合は適当に計算している。
 
 ## format
@@ -44,6 +44,7 @@ audio_sources のうち除外するソースを指定する。
 
 映像の解像度を指定する。
 
+現状 4 の倍数に丸める。
 現状 3840x3840 まで許容している。
 
 ## trim
@@ -73,15 +74,15 @@ Grid の行と列の最大値は `max_columns` と `max_rows` によって指定
 
 ##### max_columns, max_rows の片方のみ指定されている場合
 
-`cells_exclude` と `reuse` (後述) を考慮した最大同時ソース数よりも指定されている数が等しいか大きい場合は、1列ないし1行の Grid となる。
+`cells_exclude` と `reuse` (後述) を考慮した最大同時ソース数よりも指定されている数が等しいか大きい場合は、最大同時ソース数行x1列 ないし 1行x最大同時ソース数列の Grid となる。
 それよりも大きい場合は、列ないし行が必要なだけ追加される。
 
 ##### max_columns, max_rows が両方指定されている場合
 
-`cells_exclude` と `reuse` (後述) を考慮した最大同時ソース数よりも `max_columns` * `max_rows` が等しいか小さい場合は、`max_columns` 行 `max_rows` 列となる。
+`cells_exclude` と `reuse` (後述) を考慮した最大同時ソース数よりも `max_columns` * `max_rows` が等しいか小さい場合は、`max_columns` 行 x `max_rows` 列となる。
 
 `max_columns` > `max_rows` の場合、
-`max_columns` のほうが最大同時ソース数よりも大きいか等しい場合は 最大同時ソース数 行 1 列となる。
+`max_columns` のほうが最大同時ソース数よりも大きいか等しい場合は 最大同時ソース数行x1列 となる。
 そうでない場合は `max_columns` 行 ソースが収まる 列 となる。
 
 `max_columns` <= `max_rows` の場合も、行と列が入れ替わった形で同様となる。
@@ -113,6 +114,8 @@ Cell には次の状態が存在する
 
 Region の高さを指定する。キーがない場合と 0 の場合は `y_pos` から決定される (resolution.height - y_pos)。 16 未満の場合、resolution.height からはみ出る場合はエラーとなる。
 
+現状 2 の倍数に丸めている。
+
 ### max_columns
 
 前述
@@ -131,19 +134,21 @@ Cell へのソースの配置の仕方を指定する
 
 ### video_sources
 
-映像のソースとして用いる archive-*.json のパスを指定する。相対パスの場合は、レイアウト設定を指定する JSON ファイルのあるパスからの相対パスを探す。
+映像のソースとして用いる archive-*.json のパスの配列を指定する。相対パスの場合は、レイアウト設定を指定する JSON ファイルのあるパスからの相対パスを探す。
 
 `*` をワイルドカードとして利用できる。
 
 ### video_sources_excluded
 
-video_sources のうち除外するソースを指定する。
+video_sources のうち除外するソースのパターンの配列を指定する。
 
 `*` をワイルドカードとして利用できる。
 
 ### width
 
 Region の幅を指定する。 キーがない場合と 0 の場合は `x_pos` から決定される (resolution.width - x_pos)。 16 未満の場合、resolution.width からはみ出る場合はエラーとなる。
+
+現状 2 の倍数に丸めている。
 
 ### x_pos
 
