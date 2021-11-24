@@ -73,17 +73,17 @@ Grid の行と列の最大値は `max_columns` と `max_rows` によって指定
 
 ##### max_columns, max_rows が両方指定されていない場合
 
-`cells_exclude` と `reuse` (後述) を考慮した最大同時ソース数が収まるように、かつ行と列の数がなるべく同じになるように、行と列の数を決定する。
+`cells_excluded` と `reuse` (後述) を考慮した最大同時ソース数が収まるように、かつ行と列の数がなるべく同じになるように、行と列の数を決定する。
 ただし、行の数は列の数よりも 1 大きくてもよい。
 
 ##### max_columns, max_rows の片方のみ指定されている場合
 
-`cells_exclude` と `reuse` (後述) を考慮した最大同時ソース数よりも指定されている数が等しいか大きい場合は、最大同時ソース数行x1列 ないし 1行x最大同時ソース数列の Grid となる。
+`cells_excluded` と `reuse` (後述) を考慮した最大同時ソース数よりも指定されている数が等しいか大きい場合は、最大同時ソース数行x1列 ないし 1行x最大同時ソース数列の Grid となる。
 それよりも大きい場合は、`max_columns` 行ないし `max_rows`列となり、列ないし行が必要なだけ追加される。
 
 ##### max_columns, max_rows が両方指定されている場合
 
-`cells_exclude` と `reuse` (後述) を考慮した最大同時ソース数よりも `max_columns` * `max_rows` が等しいか小さい場合は、`max_columns` 行 x `max_rows` 列となる。
+`cells_excluded` と `reuse` (後述) を考慮した最大同時ソース数よりも `max_columns` * `max_rows` が等しいか小さい場合は、`max_columns` 行 x `max_rows` 列となる。
 
 `max_columns` > `max_rows` の場合、
 `max_columns` のほうが最大同時ソース数よりも大きいか等しい場合は 最大同時ソース数行x1列 となる。
@@ -110,9 +110,9 @@ Cell には次の状態が存在する
 - Fresh: まだ利用されていない
 - Used: 現在利用されている
 - Idel: 以前利用されていたが現在は利用されていない
-- Excluded: `cells_exclude` で指定された Cell で利用されることはない
+- Excluded: `cells_excluded` で指定された Cell で利用されることはない
 
-### cells_exclude
+### cells_excluded
 
 一番左上の Cell の index を 0 として、左から右、上から下の順で index が振られた Cell のうち、映像を表示しない index の配列を指定する。
 
