@@ -92,17 +92,23 @@ std::vector<Interval> overlap_2_trim_intervals(const std::vector<Interval>& l,
   while (true) {
     if (li == std::size(l)) {
       for (; ri < std::size(r); ++ri) {
-        ret.push_back({.start_time = std::max(last_end_time, r[ri].start_time),
-                       .end_time = r[ri].end_time});
-        last_end_time = r[ri].end_time;
+        auto start = std::max(last_end_time, r[ri].start_time);
+        auto end = r[ri].end_time;
+        if (start < end) {
+          ret.push_back({.start_time = start, .end_time = end});
+        }
+        last_end_time = end;
       }
       break;
     }
     if (ri == std::size(r)) {
       for (; li < std::size(r); ++li) {
-        ret.push_back({.start_time = std::max(last_end_time, l[li].start_time),
-                       .end_time = l[li].end_time});
-        last_end_time = l[li].end_time;
+        auto start = std::max(last_end_time, l[li].start_time);
+        auto end = l[li].end_time;
+        if (start < end) {
+          ret.push_back({.start_time = start, .end_time = end});
+        }
+        last_end_time = end;
       }
       break;
     }

@@ -355,6 +355,23 @@ BOOST_AUTO_TEST_CASE(overlap_trim_intervals) {
 
   {
     auto expected = hisui::layout::TrimIntervals{
+        .trim_intervals = {{200, 300},
+                           {325, 350},
+                           {500, std::numeric_limits<double>::max()}},
+    };
+    BOOST_REQUIRE_EQUAL(
+        expected,
+        hisui::layout::overlap_trim_intervals(
+            {.list_of_trim_intervals = {
+                 {{200, 300}, {325, std::numeric_limits<double>::max()}},
+                 {{0, 100},
+                  {200, 350},
+                  {500, std::numeric_limits<double>::max()}},
+             }}));
+  }
+
+  {
+    auto expected = hisui::layout::TrimIntervals{
         .trim_intervals = {{250, 300},
                            {500, std::numeric_limits<double>::max()}},
     };
