@@ -32,6 +32,10 @@ std::ostream& operator<<(
 // を算出する. 算出に reuse を考慮する
 MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_intervals(
     const OverlapIntervalsParameters& params) {
+  if (std::empty(params.intervals)) {
+    return {
+        .max_number_of_overlap = 0, .max_end_time = 0, .trim_intervals = {}};
+  }
   std::vector<std::pair<double, std::uint64_t>> data;
 
   for (const auto& s : params.intervals) {
