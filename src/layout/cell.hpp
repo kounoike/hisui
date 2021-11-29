@@ -44,6 +44,7 @@ class Cell {
   void setExcludedStatus();
   void setSource(std::shared_ptr<VideoSource>);
   void resetSource(const std::uint64_t);
+  std::uint64_t getStartTime() const;
   std::uint64_t getEndTime() const;
   const std::shared_ptr<hisui::video::YUVImage> getYUV(const std::uint64_t);
   const CellInformation getInformation() const;
@@ -54,6 +55,7 @@ class Cell {
   Resolution m_resolution;
   CellStatus m_status;
   std::shared_ptr<VideoSource> m_source;
+  std::uint64_t m_start_time = 0;
   std::uint64_t m_end_time;
 
   // std::shared_ptr<hisui::video::YUVImage> m_scaled_image;

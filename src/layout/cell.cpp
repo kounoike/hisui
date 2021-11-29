@@ -40,6 +40,7 @@ bool Cell::hasStatus(const CellStatus status) {
 void Cell::setSource(std::shared_ptr<VideoSource> source) {
   m_status = CellStatus::Used;
   m_source = source;
+  m_start_time = source->getMinEncodingTime();
   m_end_time = source->getMaxEncodingTime();
 }
 
@@ -48,8 +49,13 @@ void Cell::resetSource(const std::uint64_t time) {
     spdlog::debug("reset cell: {}", m_index);
     m_status = CellStatus::Idle;
     m_source = nullptr;
+    m_start_time = 0;
     m_end_time = std::numeric_limits<std::uint64_t>::max();
   }
+}
+
+std::uint64_t Cell::getStartTime() const {
+  return m_start_time;
 }
 
 std::uint64_t Cell::getEndTime() const {

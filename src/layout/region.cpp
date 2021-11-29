@@ -237,17 +237,29 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
     return;
   }
 
-  // 終了時刻が最小の cell の終了時刻が、 video_source の終了時刻のものより小さければ利用する(交換する)
-  auto it_min = std::min_element(std::begin(cells), std::end(cells),
+  // 開始時間が video_source よりも前の Used Cell を取得する
+  std::vector<std::shared_ptr<Cell>> candidates;
+  std::copy_if(
+      std::begin(cells), std::end(cells), std::back_inserter(candidates),
+      [&video_source](const auto& cell) {
+        return cell->getStartTime() < video_source->getMinEncodingTime();
+      });
+
+  auto size = std::size(candidates);
+  if (size == 0) {
+    return;
+  } else if (size == 1) {
+    candidates[0]->setSource(video_source);
+  }
+
+  // 終了時刻が最小の cell を選択する
+  auto it_min = std::min_element(std::begin(candidates), std::end(candidates),
                                  [](const auto& a, const auto& b) {
                                    return a->getEndTime() < b->getEndTime();
                                  });
 
   if (it_min != std::end(cells)) {
-    if ((*it_min)->hasStatus(CellStatus::Used) &&
-        (*it_min)->getEndTime() < video_source->getMaxEncodingTime()) {
-      (*it_min)->setSource(video_source);
-    }
+    (*it_min)->setSource(video_source);
   }
 }
 
