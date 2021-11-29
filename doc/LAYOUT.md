@@ -139,8 +139,7 @@ Cell へのソースの配置の仕方を指定する。
 
 - `none`: Fresh な Cell にのみ新しいソースを配置する
 - `show_oldest`: Fresh な Cell に加えて Idle な Cell にも 新しいソースを配置する
-- `show_newest` : さらに, Used な Cell の中で最小の終了時間が 配置しようとするソースの終了時間よりも前の場合は新しいソースを配置する(交換する)
-    - 同じ終了時間のソースを配置する場合、現状 `video_sources` での指定が前なものから配置していく
+- `show_newest` : さらに, Used な Cell の中で 新しいソースよりも Cell の持つソースの開始時間が前の Cell のうち、最小の終了時間のソースを持つ Cell に新しいソースを配置する
 
 ### video_sources
 
