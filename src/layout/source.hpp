@@ -38,6 +38,7 @@ class Source {
   bool hasConnectionID(const std::string&);
   bool hasIndex(const std::size_t);
   std::uint64_t getMaxEncodingTime() const;
+  std::uint64_t getMinEncodingTime() const;
   void dump() const;
   void setEncodingInterval(const std::uint64_t);
   bool isIn(const std::uint64_t) const;

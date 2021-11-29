@@ -69,6 +69,10 @@ std::uint64_t Source::getMaxEncodingTime() const {
   return m_encoding_interval.getUpper();
 }
 
+std::uint64_t Source::getMinEncodingTime() const {
+  return m_encoding_interval.getLower();
+}
+
 void Source::dump() const {
   spdlog::debug("    file_path: {}", m_file_path.string());
   spdlog::debug("    connection_id: {}", m_connection_id);
