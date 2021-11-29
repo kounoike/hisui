@@ -250,6 +250,7 @@ void set_video_source_to_cells(const SetVideoSourceToCells& params) {
     return;
   } else if (size == 1) {
     candidates[0]->setSource(video_source);
+    return;
   }
 
   // 終了時刻が最小の cell を選択する
