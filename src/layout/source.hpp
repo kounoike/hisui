@@ -28,6 +28,7 @@ struct SourceParameters {
   const std::string& connection_id;
   const double start_time;
   const double end_time;
+  const bool testing = false;
 };
 
 class Source {

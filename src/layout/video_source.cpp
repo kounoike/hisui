@@ -1,5 +1,7 @@
 #include "layout/video_source.hpp"
 
+#include <spdlog/spdlog.h>
+
 #include <string>
 
 #include "video/webm_source.hpp"
@@ -8,6 +10,11 @@
 namespace hisui::layout {
 
 VideoSource::VideoSource(const SourceParameters& params) : Source(params) {
+  if (params.testing) {
+    spdlog::info("VideoSource for testing");
+    setEncodingInterval(1);
+    return;
+  }
   m_source = std::make_shared<hisui::video::WebMSource>(m_file_path.string());
 }
 
