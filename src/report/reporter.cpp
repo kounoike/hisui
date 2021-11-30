@@ -1,6 +1,7 @@
 #include "report/reporter.hpp"
 
 #include <fmt/core.h>
+#include <spdlog/spdlog.h>
 #include <sys/time.h>
 
 #include <string>
@@ -53,6 +54,17 @@ std::string Reporter::makeReport() {
     } else {
       inputs[path] = {
           {"audio_decoder_info", boost::json::value_from(adi)},
+      };
+    }
+  }
+
+  for (const auto& [path, vdi] : m_video_decoder_map) {
+    if (!m_audio_decoder_map.contains(path)) {
+      inputs[path] = {
+          {"video_decoder_info",
+           boost::json::value_from(m_video_decoder_map.at(path))},
+          {"video_resolution_changes",
+           boost::json::value_from(m_resolution_changes_map.at(path))},
       };
     }
   }
