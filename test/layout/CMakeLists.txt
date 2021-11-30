@@ -24,13 +24,56 @@ add_executable(layout_test
     overlap_test.cpp
     region_test.cpp
     source_test.cpp
+    ../../src/archive_item.cpp
+    ../../src/layout/archive.cpp
+    ../../src/layout/cell.cpp
     ../../src/layout/cell_util.cpp
     ../../src/layout/grid.cpp
     ../../src/layout/interval.cpp
     ../../src/layout/overlap.cpp
-    # ../../src/layout/region.cpp
+    ../../src/layout/region.cpp
     ../../src/layout/source.cpp
+    ../../src/layout/video_source.cpp
+    ../../src/report/reporter.cpp
+    ../../src/util/file.cpp
     ../../src/util/interval.cpp
+    ../../src/util/json.cpp
+    ../../src/version/version.cpp
+    ../../src/video/decoder.cpp
+    ../../src/video/openh264.cpp
+    ../../src/video/openh264_decoder.cpp
+    ../../src/video/openh264_handler.cpp
+    ../../src/video/preserve_aspect_ratio_scaler.cpp
+    ../../src/video/scaler.cpp
+    ../../src/video/vpx.cpp
+    ../../src/video/vpx_decoder.cpp
+    ../../src/video/webm_source.cpp
+    ../../src/video/yuv.cpp
+    ../../src/webm/input/context.cpp
+    ../../src/webm/input/video_context.cpp
+    ../../third_party/libvpx/third_party/libyuv/source/cpu_id.cc
+    ../../third_party/libvpx/third_party/libyuv/source/planar_functions.cc
+    ../../third_party/libvpx/third_party/libyuv/source/row_any.cc
+    ../../third_party/libvpx/third_party/libyuv/source/row_common.cc
+    ../../third_party/libvpx/third_party/libyuv/source/row_gcc.cc
+    ../../third_party/libvpx/third_party/libyuv/source/row_msa.cc
+    ../../third_party/libvpx/third_party/libyuv/source/row_neon.cc
+    ../../third_party/libvpx/third_party/libyuv/source/row_neon64.cc
+    ../../third_party/libvpx/third_party/libyuv/source/row_win.cc
+    ../../third_party/libvpx/third_party/libyuv/source/scale.cc
+    ../../third_party/libvpx/third_party/libyuv/source/scale_any.cc
+    ../../third_party/libvpx/third_party/libyuv/source/scale_common.cc
+    ../../third_party/libvpx/third_party/libyuv/source/scale_gcc.cc
+    ../../third_party/libvpx/third_party/libyuv/source/scale_msa.cc
+    ../../third_party/libvpx/third_party/libyuv/source/scale_neon.cc
+    ../../third_party/libvpx/third_party/libyuv/source/scale_neon64.cc
+    ../../third_party/libvpx/third_party/libyuv/source/scale_win.cc
+    ../../third_party/libvpx/third_party/libyuv/source/convert.cc
+    ../../third_party/libvpx/third_party/libwebm/mkvparser/mkvparser.cc
+    ../../third_party/libvpx/third_party/libwebm/mkvparser/mkvreader.cc
+    ../../third_party/libvpx/third_party/libwebm/mkvmuxer/mkvmuxer.cc
+    ../../third_party/libvpx/third_party/libwebm/mkvmuxer/mkvwriter.cc
+    ../../third_party/libvpx/third_party/libwebm/mkvmuxer/mkvmuxerutil.cc
     )
 
 set_target_properties(layout_test PROPERTIES CXX_STANDARD 20 C_STANDARD 11)
@@ -51,6 +94,7 @@ target_include_directories(layout_test
     ${boost_io_SOURCE_DIR}/include
     ${boost_iterator_SOURCE_DIR}/include
     ${boost_json_SOURCE_DIR}/include
+    ${boost_rational_SOURCE_DIR}/include
     ${boost_move_SOURCE_DIR}/include
     ${boost_mpl_SOURCE_DIR}/include
     ${boost_numeric_conversion_SOURCE_DIR}/include
@@ -63,15 +107,23 @@ target_include_directories(layout_test
     ${boost_type_index_SOURCE_DIR}/include
     ${boost_type_traits_SOURCE_DIR}/include
     ${boost_utility_SOURCE_DIR}/include
+    ${cpp-mp4_SOURCE_DIR}/include
     ${fmt_SOURCE_DIR}/include
     ${spdlog_SOURCE_DIR}/include
+    ../../third_party/libvpx/third_party/libyuv/include
+    ../../third_party/libvpx/third_party/libwebm
+    ../../third_party/libvpx
+    ../../third_party/openh264
     )
 
 target_link_libraries(layout_test
     PRIVATE
     Boost::json
+    dl
     fmt
+    shiguredo-mp4
     spdlog 
+    ${CMAKE_SOURCE_DIR}/third_party/libvpx/libvpx.a
     )
 
 add_test(NAME layout COMMAND layout_test)

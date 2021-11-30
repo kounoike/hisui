@@ -181,16 +181,15 @@ endif()
 target_sources(hisui
     PRIVATE
     src/archive_item.cpp
+    src/audio/basic_sequencer.cpp
+    src/audio/buffer_opus_encoder.cpp
+    src/audio/mixer.cpp
+    src/audio/opus.cpp
+    src/audio/opus_decoder.cpp
+    src/audio/webm_source.cpp
     src/config.cpp
     src/datetime.cpp
     src/hisui.cpp
-    src/metadata.cpp
-    src/audio/buffer_opus_encoder.cpp
-    src/audio/mixer.cpp
-    src/audio/opus_decoder.cpp
-    src/audio/opus.cpp
-    src/audio/basic_sequencer.cpp
-    src/audio/webm_source.cpp
     src/layout/archive.cpp
     src/layout/cell.cpp
     src/layout/cell_util.cpp
@@ -204,27 +203,30 @@ target_sources(hisui
     src/layout/source.cpp
     src/layout/video_source.cpp
     src/layout/vpx_video_producer.cpp
+    src/metadata.cpp
     src/muxer/async_webm_muxer.cpp
     src/muxer/audio_producer.cpp
+    src/muxer/faststart_mp4_muxer.cpp
     src/muxer/mp4_muxer.cpp
     src/muxer/multi_channel_vpx_video_producer.cpp
-    src/muxer/opus_audio_producer.cpp
-    src/muxer/simple_mp4_muxer.cpp
-    src/muxer/faststart_mp4_muxer.cpp
     src/muxer/muxer.cpp
     src/muxer/no_video_producer.cpp
+    src/muxer/opus_audio_producer.cpp
+    src/muxer/simple_mp4_muxer.cpp
     src/muxer/video_producer.cpp
     src/muxer/vpx_video_producer.cpp
     src/report/reporter.cpp
+    src/util/file.cpp
     src/util/interval.cpp
     src/util/json.cpp
-    src/util/file.cpp
     src/util/wildcard.cpp
     src/version/version.cpp
+    src/video/basic_sequencer.cpp
     src/video/buffer_vpx_encoder.cpp
     src/video/composer.cpp
     src/video/decoder.cpp
     src/video/grid_composer.cpp
+    src/video/image_source.cpp
     src/video/multi_channel_sequencer.cpp
     src/video/openh264.cpp
     src/video/openh264_decoder.cpp
@@ -232,16 +234,14 @@ target_sources(hisui
     src/video/parallel_grid_composer.cpp
     src/video/preserve_aspect_ratio_scaler.cpp
     src/video/scaler.cpp
-    src/video/basic_sequencer.cpp
     src/video/sequencer.cpp
     src/video/simple_scaler.cpp
-    src/video/image_source.cpp
-    src/video/webm_source.cpp
     src/video/vpx.cpp
     src/video/vpx_decoder.cpp
+    src/video/webm_source.cpp
     src/video/yuv.cpp
-    src/webm/input/context.cpp
     src/webm/input/audio_context.cpp
+    src/webm/input/context.cpp
     src/webm/input/video_context.cpp
     src/webm/output/context.cpp
     third_party/libvpx/third_party/libyuv/source/cpu_id.cc
