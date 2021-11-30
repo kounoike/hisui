@@ -27,6 +27,12 @@ std::string second_to_string(double second) {
 
 namespace hisui::report {
 
+bool operator==(ResolutionWithTimestamp const& left,
+                ResolutionWithTimestamp const& right) {
+  return left.timestamp == right.timestamp && left.width == right.width &&
+         left.height == right.height;
+}
+
 Reporter::Reporter() {
   m_start_clock = std::clock();
 }
@@ -44,12 +50,14 @@ std::string Reporter::makeReport() {
   boost::json::object inputs;
   for (const auto& [path, adi] : m_audio_decoder_map) {
     if (m_video_decoder_map.contains(path)) {
+      auto v = m_resolution_changes_map.at(path);
+      auto iter = std::unique(std::begin(v), std::end(v));
+      v.erase(iter, std::end(v));
       inputs[path] = {
           {"audio_decoder_info", boost::json::value_from(adi)},
           {"video_decoder_info",
            boost::json::value_from(m_video_decoder_map.at(path))},
-          {"video_resolution_changes",
-           boost::json::value_from(m_resolution_changes_map.at(path))},
+          {"video_resolution_changes", boost::json::value_from(v)},
       };
     } else {
       inputs[path] = {
@@ -60,11 +68,13 @@ std::string Reporter::makeReport() {
 
   for (const auto& [path, vdi] : m_video_decoder_map) {
     if (!m_audio_decoder_map.contains(path)) {
+      auto v = m_resolution_changes_map.at(path);
+      auto iter = std::unique(std::begin(v), std::end(v));
+      v.erase(iter, std::end(v));
       inputs[path] = {
           {"video_decoder_info",
            boost::json::value_from(m_video_decoder_map.at(path))},
-          {"video_resolution_changes",
-           boost::json::value_from(m_resolution_changes_map.at(path))},
+          {"video_resolution_changes", boost::json::value_from(v)},
       };
     }
   }
