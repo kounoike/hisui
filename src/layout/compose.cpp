@@ -6,6 +6,7 @@
 
 #include "config.hpp"
 #include "constants.hpp"
+#include "datetime.hpp"
 #include "layout/metadata.hpp"
 #include "layout/vpx_video_producer.hpp"
 #include "muxer/async_webm_muxer.hpp"
@@ -13,6 +14,7 @@
 #include "muxer/muxer.hpp"
 #include "muxer/no_video_producer.hpp"
 #include "muxer/simple_mp4_muxer.hpp"
+#include "report/reporter.hpp"
 
 namespace hisui::layout {
 
@@ -69,15 +71,22 @@ int compose(const hisui::Config& t_config) {
   } catch (const std::exception& e) {
     spdlog::error("muxing failed: {}", e.what());
     muxer->cleanUp();
-    // if (config.enabledFailureReport()) {
-    //   std::ofstream os(std::filesystem::path(config.failure_report) /
-    //                    fmt::format("{}_{}_failure.json",
-    //                                hisui::datetime::get_current_utc_string(),
-    //                                metadata_set.getNormal().getRecordingID()));
-    //   os << hisui::report::Reporter::getInstance().makeFailureReport(e.what());
-    //   hisui::report::Reporter::close();
-    // }
+    if (config.enabledFailureReport()) {
+      std::ofstream os(std::filesystem::path(config.failure_report) /
+                       fmt::format("{}_layout_failure.json",
+                                   hisui::datetime::get_current_utc_string()));
+      os << hisui::report::Reporter::getInstance().makeFailureReport(e.what());
+      hisui::report::Reporter::close();
+    }
     return 1;
+  }
+
+  if (config.enabledSuccessReport()) {
+    std::ofstream os(std::filesystem::path(config.success_report) /
+                     fmt::format("{}_layout_success.json",
+                                 hisui::datetime::get_current_utc_string()));
+    os << hisui::report::Reporter::getInstance().makeSuccessReport();
+    hisui::report::Reporter::close();
   }
 
   return 0;
