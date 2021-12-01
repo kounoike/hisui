@@ -13,6 +13,10 @@
 
 namespace hisui::layout {
 
+std::string Region::getName() const {
+  return m_name;
+}
+
 RegionInformation Region::getInformation() const {
   return {.pos = m_pos, .resolution = m_resolution};
 }
@@ -24,26 +28,26 @@ std::int32_t Region::getZPos() const {
 void Region::validateAndAdjust(const RegionPrepareParameters& params) {
   if (params.resolution.width < m_pos.x) {
     throw std::out_of_range(
-        fmt::format("The x_pos({}) of region {} is out of base width({})",
-                    m_pos.x, m_name, params.resolution.width));
+        fmt::format("The x_pos({}) is out of composition's width({})", m_pos.x,
+                    params.resolution.width));
   }
 
   if (params.resolution.height < m_pos.y) {
     throw std::out_of_range(
-        fmt::format("The y_pos({}) of region {} is out of base height({})",
-                    m_pos.y, m_name, params.resolution.height));
+        fmt::format("The y_pos({}) is out of composition's height({})", m_pos.y,
+                    params.resolution.height));
   }
 
   if (m_z_pos > 99 || m_z_pos < -99) {
-    throw std::out_of_range(fmt::format(
-        "The z_pos({}) of region {} is out of [-99, 99]", m_z_pos, m_name));
+    throw std::out_of_range(
+        fmt::format("The z_pos({}) is out of [-99, 99]", m_z_pos));
   }
 
   if (m_resolution.width != 0) {
     if (m_pos.x + m_resolution.width > params.resolution.width) {
       throw std::out_of_range(fmt::format(
-          "The x_pos({}) & width({}) of region {} is out of base width({})",
-          m_pos.x, m_resolution.width, m_name, params.resolution.width));
+          "The x_pos({}) & width({}) is out of composition's width({})",
+          m_pos.x, m_resolution.width, params.resolution.width));
     }
   } else {
     m_resolution.width = params.resolution.width - m_pos.x;
@@ -52,8 +56,8 @@ void Region::validateAndAdjust(const RegionPrepareParameters& params) {
   if (m_resolution.height != 0) {
     if (m_pos.y + m_resolution.height > params.resolution.height) {
       throw std::out_of_range(fmt::format(
-          "The y_pos({}) & height({}) of region {} is out of base height({})",
-          m_pos.y, m_resolution.height, m_name, params.resolution.height));
+          "The y_pos({}) & height({}) is out of composition's height({})",
+          m_pos.y, m_resolution.height, params.resolution.height));
     }
   } else {
     m_resolution.height = params.resolution.height - m_pos.y;
@@ -64,21 +68,21 @@ void Region::validateAndAdjust(const RegionPrepareParameters& params) {
   m_resolution.height = (m_resolution.height >> 1) << 1;
 
   if (m_resolution.width < 16) {
-    throw std::out_of_range(fmt::format("width({}) of region({}) is too small",
-                                        m_resolution.width, m_name));
+    throw std::out_of_range(
+        fmt::format("width({}) is too small", m_resolution.width));
   }
   if (m_resolution.height < 16) {
-    throw std::out_of_range(fmt::format("height({}) of region({}) is too small",
-                                        m_resolution.height, m_name));
+    throw std::out_of_range(
+        fmt::format("height({}) is too small", m_resolution.height));
   }
 
   if (m_max_columns > 1000) {
-    throw std::out_of_range(fmt::format(
-        "max_columns({}) of region({}) is too large", m_max_columns, m_name));
+    throw std::out_of_range(
+        fmt::format("max_columns({})  is too large", m_max_columns));
   }
   if (m_max_rows > 1000) {
-    throw std::out_of_range(fmt::format(
-        "max_rows({}) of region({}) is too large", m_max_rows, m_name));
+    throw std::out_of_range(
+        fmt::format("max_rows({}) is too large", m_max_rows));
   }
 
   auto out_of_range_cells_excluded_iter =
@@ -86,8 +90,8 @@ void Region::validateAndAdjust(const RegionPrepareParameters& params) {
                    [](const auto e) { return e > 999999; });
   if (out_of_range_cells_excluded_iter != std::end(m_cells_excluded)) {
     throw std::out_of_range(
-        fmt::format("cell_excluded of region({}) contains too large value={}",
-                    m_max_rows, *out_of_range_cells_excluded_iter));
+        fmt::format("cell_excluded contains too large value({})",
+                    *out_of_range_cells_excluded_iter));
   }
 }
 

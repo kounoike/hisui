@@ -34,6 +34,9 @@ std::vector<std::string> glob(const std::string& pattern) {
   std::vector<std::string> filenames;
 
   if (auto ret = ::glob(pattern.c_str(), 0, nullptr, &globbuf)) {
+    if (ret == GLOB_NOMATCH) {
+      return filenames;
+    }
     throw std::runtime_error(
         fmt::format("glob({}) failed: return_value={}", pattern, ret));
   }

@@ -49,6 +49,7 @@ class Region {
   explicit Region(const RegionParameters&);
 
   void dump() const;
+  std::string getName() const;
   RegionInformation getInformation() const;
   std::int32_t getZPos() const;
   const RegionPrepareResult prepare(const RegionPrepareParameters&);

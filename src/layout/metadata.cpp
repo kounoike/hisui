@@ -3,6 +3,7 @@
 #include <spdlog/spdlog.h>
 
 #include <algorithm>
+#include <cstdlib>
 #include <fstream>
 #include <list>
 #include <regex>
@@ -36,7 +37,12 @@ void Metadata::parseVideoLayout(boost::json::object j) {
   for (const auto& region : vl) {
     std::string name(region.key());
     if (region.value().is_object()) {
-      m_regions.push_back(parseRegion(name, region.value().as_object()));
+      try {
+        m_regions.push_back(parseRegion(name, region.value().as_object()));
+      } catch (const std::exception& e) {
+        spdlog::error("parsing region '{}' failed: {}", name, e.what());
+        std::exit(EXIT_FAILURE);
+      }
     } else {
       throw std::invalid_argument(
           fmt::format("region: {} is not object", name));
@@ -92,7 +98,7 @@ Metadata::Metadata(const std::string& file_path,
   } else if (format == "webm") {
     m_format = hisui::config::OutContainer::WebM;
   } else {
-    throw std::invalid_argument(fmt::format("invalid format: {}", format));
+    throw std::invalid_argument(fmt::format("format is invalid: {}", format));
   }
 
   std::string resolution(
@@ -104,7 +110,7 @@ Metadata::Metadata(const std::string& file_path,
     m_resolution.height = static_cast<std::uint32_t>(std::stoul(m[2].str()));
   } else {
     throw std::invalid_argument(
-        fmt::format("invalid resolution: {}", resolution));
+        fmt::format("resolution is invalide: {}", resolution));
   }
   m_trim = hisui::util::get_bool_from_json_object_with_default(j, "trim", true);
 
@@ -117,8 +123,9 @@ Metadata::Metadata(const std::string& file_path,
       auto pattern = std::string(v.as_string());
       auto filenames = hisui::util::glob(pattern);
       if (std::empty(filenames)) {
-        throw std::invalid_argument(
-            fmt::format("audio_source {} is not found", pattern));
+        throw std::invalid_argument(fmt::format(
+            "pattern '{}' in audio_sources is not matched with filenames",
+            pattern));
       }
       audio_source_filenames.insert(std::end(audio_source_filenames),
                                     std::begin(filenames), std::end(filenames));
@@ -153,34 +160,39 @@ Metadata::Metadata(const std::string& file_path,
 }
 
 Metadata parse_metadata(const hisui::Config& config) {
-  auto filename = config.layout;
-  std::ifstream i(filename);
-  if (!i.is_open()) {
-    throw std::runtime_error(
-        fmt::format("failed to open metadata json file: {}", filename));
+  try {
+    auto filename = config.layout;
+    std::ifstream i(filename);
+    if (!i.is_open()) {
+      throw std::runtime_error(
+          fmt::format("failed to open metadata json file: {}", filename));
+    }
+    std::string string_json((std::istreambuf_iterator<char>(i)),
+                            std::istreambuf_iterator<char>());
+    boost::json::error_code ec;
+    boost::json::value jv = boost::json::parse(string_json, ec);
+    if (ec) {
+      throw std::runtime_error(fmt::format(
+          "failed to parse metadata json file: message", ec.message()));
+    }
+
+    Metadata metadata(filename, jv, config);
+
+    spdlog::debug("not prepared");
+
+    metadata.prepare();
+
+    metadata.dump();
+
+    spdlog::debug("prepared");
+
+    metadata.resetPath();
+
+    return metadata;
+  } catch (const std::exception& e) {
+    spdlog::error("parsing layout metadata failed: {}", e.what());
+    std::exit(EXIT_FAILURE);
   }
-  std::string string_json((std::istreambuf_iterator<char>(i)),
-                          std::istreambuf_iterator<char>());
-  boost::json::error_code ec;
-  boost::json::value jv = boost::json::parse(string_json, ec);
-  if (ec) {
-    throw std::runtime_error(fmt::format(
-        "failed to parse metadata json file: message", ec.message()));
-  }
-
-  Metadata metadata(filename, jv, config);
-
-  spdlog::debug("not prepared");
-
-  metadata.prepare();
-
-  metadata.dump();
-
-  spdlog::debug("prepared");
-
-  metadata.resetPath();
-
-  return metadata;
 }
 
 void Metadata::resetPath() const {
@@ -233,8 +245,14 @@ void Metadata::prepare() {
   list_of_trim_intervals.push_back(audio_overlap_result.trim_intervals);
 
   for (const auto& region : m_regions) {
-    auto result = region->prepare({.resolution = m_resolution});
-    list_of_trim_intervals.push_back(result.trim_intervals);
+    try {
+      auto result = region->prepare({.resolution = m_resolution});
+      list_of_trim_intervals.push_back(result.trim_intervals);
+    } catch (const std::exception& e) {
+      spdlog::error("preparing region '{}' failed: {}", region->getName(),
+                    e.what());
+      std::exit(EXIT_FAILURE);
+    }
   }
 
   // すべての trim 可能な間隔の中で重なっている部分を算出
@@ -297,8 +315,9 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
       boost::json::error_code ec;
       auto value = v.to_number<std::uint64_t>(ec);
       if (ec) {
-        throw std::runtime_error(
-            fmt::format("v.to_number() failed: {}", ec.message()));
+        throw std::runtime_error(fmt::format(
+            "cells_excluded: v.to_number<std::uint64_t>() failed: {}",
+            ec.message()));
       }
       cells_excluded.push_back(value);
     } else {
@@ -317,7 +336,7 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
       auto filenames = hisui::util::glob(pattern);
       if (std::empty(filenames)) {
         throw std::invalid_argument(
-            fmt::format("video_source {} is not found", pattern));
+            fmt::format("pattern '{}' is not matched with filenames", pattern));
       }
       video_source_filenames.insert(std::end(video_source_filenames),
                                     std::begin(filenames), std::end(filenames));
