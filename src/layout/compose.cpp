@@ -78,7 +78,7 @@ int compose(const hisui::Config& t_config) {
       os << hisui::report::Reporter::getInstance().makeFailureReport(e.what());
       hisui::report::Reporter::close();
     }
-    return 1;
+    return EXIT_FAILURE;
   }
 
   if (config.enabledSuccessReport()) {
@@ -89,7 +89,7 @@ int compose(const hisui::Config& t_config) {
     hisui::report::Reporter::close();
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 }  // namespace hisui::layout

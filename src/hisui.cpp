@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
 
   if (std::empty(config.in_metadata_filename)) {
     spdlog::error("-f,--in-metadata-file is required");
-    return 1;
+    return EXIT_FAILURE;
   }
 
   hisui::MetadataSet metadata_set(
@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
       os << hisui::report::Reporter::getInstance().makeFailureReport(e.what());
       hisui::report::Reporter::close();
     }
-    return 1;
+    return EXIT_FAILURE;
   }
   delete muxer;
 
@@ -147,5 +147,5 @@ int main(int argc, char** argv) {
     hisui::video::OpenH264Handler::close();
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
