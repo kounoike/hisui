@@ -40,8 +40,8 @@ void Metadata::parseVideoLayout(boost::json::object j) {
       try {
         m_regions.push_back(parseRegion(name, region.value().as_object()));
       } catch (const std::exception& e) {
-        spdlog::error("region '{}': {}", name, e.what());
-        throw;
+        spdlog::error("parsing region '{}' failed: {}", name, e.what());
+        std::exit(EXIT_FAILURE);
       }
     } else {
       throw std::invalid_argument(
@@ -245,8 +245,14 @@ void Metadata::prepare() {
   list_of_trim_intervals.push_back(audio_overlap_result.trim_intervals);
 
   for (const auto& region : m_regions) {
-    auto result = region->prepare({.resolution = m_resolution});
-    list_of_trim_intervals.push_back(result.trim_intervals);
+    try {
+      auto result = region->prepare({.resolution = m_resolution});
+      list_of_trim_intervals.push_back(result.trim_intervals);
+    } catch (const std::exception& e) {
+      spdlog::error("preparing region '{}' failed: {}", region->getName(),
+                    e.what());
+      std::exit(EXIT_FAILURE);
+    }
   }
 
   // すべての trim 可能な間隔の中で重なっている部分を算出

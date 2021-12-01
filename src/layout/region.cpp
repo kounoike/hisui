@@ -13,6 +13,10 @@
 
 namespace hisui::layout {
 
+std::string Region::getName() const {
+  return m_name;
+}
+
 RegionInformation Region::getInformation() const {
   return {.pos = m_pos, .resolution = m_resolution};
 }
