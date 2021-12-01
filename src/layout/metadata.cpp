@@ -110,7 +110,7 @@ Metadata::Metadata(const std::string& file_path,
     m_resolution.height = static_cast<std::uint32_t>(std::stoul(m[2].str()));
   } else {
     throw std::invalid_argument(
-        fmt::format("invalid resolution: {}", resolution));
+        fmt::format("resolution is invalide: {}", resolution));
   }
   m_trim = hisui::util::get_bool_from_json_object_with_default(j, "trim", true);
 
@@ -315,8 +315,9 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
       boost::json::error_code ec;
       auto value = v.to_number<std::uint64_t>(ec);
       if (ec) {
-        throw std::runtime_error(
-            fmt::format("v.to_number() failed: {}", ec.message()));
+        throw std::runtime_error(fmt::format(
+            "cells_excluded: v.to_number<std::uint64_t>() failed: {}",
+            ec.message()));
       }
       cells_excluded.push_back(value);
     } else {
