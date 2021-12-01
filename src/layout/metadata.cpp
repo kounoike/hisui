@@ -3,6 +3,7 @@
 #include <spdlog/spdlog.h>
 
 #include <algorithm>
+#include <cstdlib>
 #include <fstream>
 #include <list>
 #include <regex>
@@ -97,7 +98,7 @@ Metadata::Metadata(const std::string& file_path,
   } else if (format == "webm") {
     m_format = hisui::config::OutContainer::WebM;
   } else {
-    throw std::invalid_argument(fmt::format("invalid format: {}", format));
+    throw std::invalid_argument(fmt::format("format is invalid: {}", format));
   }
 
   std::string resolution(
@@ -159,34 +160,39 @@ Metadata::Metadata(const std::string& file_path,
 }
 
 Metadata parse_metadata(const hisui::Config& config) {
-  auto filename = config.layout;
-  std::ifstream i(filename);
-  if (!i.is_open()) {
-    throw std::runtime_error(
-        fmt::format("failed to open metadata json file: {}", filename));
+  try {
+    auto filename = config.layout;
+    std::ifstream i(filename);
+    if (!i.is_open()) {
+      throw std::runtime_error(
+          fmt::format("failed to open metadata json file: {}", filename));
+    }
+    std::string string_json((std::istreambuf_iterator<char>(i)),
+                            std::istreambuf_iterator<char>());
+    boost::json::error_code ec;
+    boost::json::value jv = boost::json::parse(string_json, ec);
+    if (ec) {
+      throw std::runtime_error(fmt::format(
+          "failed to parse metadata json file: message", ec.message()));
+    }
+
+    Metadata metadata(filename, jv, config);
+
+    spdlog::debug("not prepared");
+
+    metadata.prepare();
+
+    metadata.dump();
+
+    spdlog::debug("prepared");
+
+    metadata.resetPath();
+
+    return metadata;
+  } catch (const std::exception& e) {
+    spdlog::error("parsing layout metadata failed: {}", e.what());
+    std::exit(EXIT_FAILURE);
   }
-  std::string string_json((std::istreambuf_iterator<char>(i)),
-                          std::istreambuf_iterator<char>());
-  boost::json::error_code ec;
-  boost::json::value jv = boost::json::parse(string_json, ec);
-  if (ec) {
-    throw std::runtime_error(fmt::format(
-        "failed to parse metadata json file: message", ec.message()));
-  }
-
-  Metadata metadata(filename, jv, config);
-
-  spdlog::debug("not prepared");
-
-  metadata.prepare();
-
-  metadata.dump();
-
-  spdlog::debug("prepared");
-
-  metadata.resetPath();
-
-  return metadata;
 }
 
 void Metadata::resetPath() const {
