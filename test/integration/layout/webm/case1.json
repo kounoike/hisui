@@ -32,7 +32,7 @@
       "reuse": "show_newest",
       "video_sources": [
         "0-5.json",
-        "case2ii.json"
+        "case2.json"
       ],
       "video_sources_excluded": ["case*.json"],
       "width": 244,
