@@ -36,7 +36,12 @@ void Metadata::parseVideoLayout(boost::json::object j) {
   for (const auto& region : vl) {
     std::string name(region.key());
     if (region.value().is_object()) {
-      m_regions.push_back(parseRegion(name, region.value().as_object()));
+      try {
+        m_regions.push_back(parseRegion(name, region.value().as_object()));
+      } catch (const std::exception& e) {
+        spdlog::error("region '{}': {}", name, e.what());
+        throw;
+      }
     } else {
       throw std::invalid_argument(
           fmt::format("region: {} is not object", name));
@@ -117,8 +122,9 @@ Metadata::Metadata(const std::string& file_path,
       auto pattern = std::string(v.as_string());
       auto filenames = hisui::util::glob(pattern);
       if (std::empty(filenames)) {
-        throw std::invalid_argument(
-            fmt::format("audio_source {} is not found", pattern));
+        throw std::invalid_argument(fmt::format(
+            "pattern '{}' in audio_sources is not matched with filenames",
+            pattern));
       }
       audio_source_filenames.insert(std::end(audio_source_filenames),
                                     std::begin(filenames), std::end(filenames));
@@ -317,7 +323,7 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
       auto filenames = hisui::util::glob(pattern);
       if (std::empty(filenames)) {
         throw std::invalid_argument(
-            fmt::format("video_source {} is not found", pattern));
+            fmt::format("pattern '{}' is not matched with filenames", pattern));
       }
       video_source_filenames.insert(std::end(video_source_filenames),
                                     std::begin(filenames), std::end(filenames));
