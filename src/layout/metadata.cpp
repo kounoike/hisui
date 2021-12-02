@@ -110,7 +110,7 @@ Metadata::Metadata(const std::string& file_path,
     m_resolution.height = static_cast<std::uint32_t>(std::stoul(m[2].str()));
   } else {
     throw std::invalid_argument(
-        fmt::format("resolution is invalide: {}", resolution));
+        fmt::format("resolution is invalid: {}", resolution));
   }
   m_trim = hisui::util::get_bool_from_json_object_with_default(j, "trim", true);
 
@@ -131,7 +131,7 @@ Metadata::Metadata(const std::string& file_path,
                                     std::begin(filenames), std::end(filenames));
     } else {
       throw std::invalid_argument(
-          fmt::format("{} contains non-string values", "audio_sources"));
+          fmt::format("{} contains a non-string value", "audio_sources"));
     }
   }
 
@@ -150,7 +150,7 @@ Metadata::Metadata(const std::string& file_path,
                                    });
       audio_source_filenames.erase(result, std::end(audio_source_filenames));
     } else {
-      throw std::invalid_argument(fmt::format("{} contains non-string values",
+      throw std::invalid_argument(fmt::format("{} contains a non-string value",
                                               "audio_sources_excluded"));
     }
   }
@@ -322,7 +322,7 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
       cells_excluded.push_back(value);
     } else {
       throw std::invalid_argument(
-          fmt::format("{} contains non-string values", "cells_excluded"));
+          fmt::format("{} contains a non-uint64 value", "cells_excluded"));
     }
   }
 
@@ -342,7 +342,7 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
                                     std::begin(filenames), std::end(filenames));
     } else {
       throw std::invalid_argument(
-          fmt::format("{} contains non-string values", "video_sources"));
+          fmt::format("{} contains a non-string value", "video_sources"));
     }
   }
 
@@ -361,7 +361,7 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
                                    });
       video_source_filenames.erase(result, std::end(video_source_filenames));
     } else {
-      throw std::invalid_argument(fmt::format("{} contains non-string values",
+      throw std::invalid_argument(fmt::format("{} contains a non-string value",
                                               "video_sources_excluded"));
     }
   }
