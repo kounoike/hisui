@@ -376,7 +376,8 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
   } else if (reuse_string == "show_newest") {
     reuse = Reuse::ShowNewest;
   } else {
-    throw std::invalid_argument(fmt::format("invalid reuse: {}", reuse_string));
+    throw std::invalid_argument(
+        fmt::format("reuse is invalid: {}", reuse_string));
   }
 
   RegionParameters params{
