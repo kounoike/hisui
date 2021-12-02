@@ -206,25 +206,26 @@ void Metadata::prepare() {
   m_resolution.height = (m_resolution.height >> 2) << 2;
   if (m_resolution.width < 16) {
     throw std::out_of_range(
-        fmt::format("resolution.width={} is too small", m_resolution.width));
+        fmt::format("resolution.width({}) is too small", m_resolution.width));
   } else if (m_resolution.width > 3840) {
     throw std::out_of_range(
-        fmt::format("resolution.width={} is too large", m_resolution.width));
+        fmt::format("resolution.width({}) is too large", m_resolution.width));
   }
   if (m_resolution.height < 16) {
     throw std::out_of_range(
-        fmt::format("height={} is too small", m_resolution.height));
+        fmt::format("resolution.height({}) is too small", m_resolution.height));
   } else if (m_resolution.height > 3840) {
     throw std::out_of_range(
-        fmt::format("resolution.height={} is too large", m_resolution.height));
+        fmt::format("resolution.height({}) is too large", m_resolution.height));
   }
 
   if (m_bitrate == 0) {
     // TODO(haruyama): bitrate の初期値
     m_bitrate = m_resolution.width * m_resolution.height / 300;
+    spdlog::info("bitrate==0. set {} to bitrate()", m_bitrate);
   }
   if (m_bitrate < 100) {
-    spdlog::info("bitrate={} is small. set 100 to bitrate", m_bitrate);
+    spdlog::info("bitrate({}) is small. set 100 to bitrate", m_bitrate);
     m_bitrate = 100;
   }
 
