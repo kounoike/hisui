@@ -90,7 +90,7 @@ void Region::validateAndAdjust(const RegionPrepareParameters& params) {
                    [](const auto e) { return e > 999999; });
   if (out_of_range_cells_excluded_iter != std::end(m_cells_excluded)) {
     throw std::out_of_range(
-        fmt::format("cell_excluded contains too large value({})",
+        fmt::format("cells_excluded contains too large value({})",
                     *out_of_range_cells_excluded_iter));
   }
 }
@@ -121,8 +121,13 @@ const RegionPrepareResult Region::prepare(
     spdlog::debug("    trim_interval: [{}, {}]", i.start_time, i.end_time);
   }
 
-  // cell_excluded を考慮した最大の video cell の数を算出
+  // cells_excluded を sort し unique に
   std::sort(std::begin(m_cells_excluded), std::end(m_cells_excluded));
+  auto ret =
+      std::unique(std::begin(m_cells_excluded), std::end(m_cells_excluded));
+  m_cells_excluded.erase(ret, std::end(m_cells_excluded));
+
+  // cells_excluded を考慮した最大の video cell の数を算出
   auto max_cells = add_number_of_excluded_cells({
       .number_of_sources = overlap_result.max_number_of_overlap,
       .cells_excluded = m_cells_excluded,
