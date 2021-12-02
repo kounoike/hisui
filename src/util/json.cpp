@@ -21,7 +21,7 @@ boost::json::string get_string_from_json_object(boost::json::object o,
   if (o[key].is_string()) {
     return o[key].as_string();
   }
-  throw std::runtime_error(fmt::format("o[{}].if_string() failed", key));
+  throw std::runtime_error(fmt::format("{} is not string", key));
 }
 
 boost::json::string get_string_from_json_object_with_default(
@@ -35,7 +35,7 @@ boost::json::string get_string_from_json_object_with_default(
   if (o[key].is_string()) {
     return o[key].as_string();
   }
-  throw std::runtime_error(fmt::format("o[{}].if_string() failed", key));
+  throw std::runtime_error(fmt::format("{} is not string", key));
 }
 
 double get_double_from_json_object(boost::json::object o,
@@ -45,11 +45,11 @@ double get_double_from_json_object(boost::json::object o,
     auto value = o[key].to_number<double>(ec);
     if (ec) {
       throw std::runtime_error(
-          fmt::format("o[{}].to_number() failed: {}", key, ec.message()));
+          fmt::format("{} to_number<double>() failed: {}", key, ec.message()));
     }
     return value;
   }
-  throw std::runtime_error(fmt::format("o[{}] is not number", key));
+  throw std::runtime_error(fmt::format("{} is not number", key));
 }
 
 double get_double_from_json_object_with_default(boost::json::object o,
@@ -63,18 +63,18 @@ double get_double_from_json_object_with_default(boost::json::object o,
     auto value = o[key].to_number<double>(ec);
     if (ec) {
       throw std::runtime_error(
-          fmt::format("o[{}].to_number() failed: {}", key, ec.message()));
+          fmt::format("{} to_number<double>() failed: {}", key, ec.message()));
     }
     return value;
   }
-  throw std::runtime_error(fmt::format("o[{}] is not number", key));
+  throw std::runtime_error(fmt::format("{} is not number", key));
 }
 
 bool get_bool_from_json_object(boost::json::object o, const std::string& key) {
   if (o[key].is_bool()) {
     return o[key].as_bool();
   }
-  throw std::runtime_error(fmt::format("o[{}] is not bool", key));
+  throw std::runtime_error(fmt::format("{} is not bool", key));
 }
 
 bool get_bool_from_json_object_with_default(boost::json::object o,
@@ -86,7 +86,7 @@ bool get_bool_from_json_object_with_default(boost::json::object o,
   if (o[key].is_bool()) {
     return o[key].as_bool();
   }
-  throw std::runtime_error(fmt::format("o[{}] is not bool", key));
+  throw std::runtime_error(fmt::format("{} is not bool", key));
 }
 
 boost::json::array get_array_from_json_object_with_default(
@@ -99,7 +99,7 @@ boost::json::array get_array_from_json_object_with_default(
   if (o[key].is_array()) {
     return o[key].as_array();
   }
-  throw std::runtime_error(fmt::format("o[{}] is not array", key));
+  throw std::runtime_error(fmt::format("{} is not array", key));
 }
 
 }  // namespace hisui::util
