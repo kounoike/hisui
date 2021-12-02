@@ -110,7 +110,7 @@ Metadata::Metadata(const std::string& file_path,
     m_resolution.height = static_cast<std::uint32_t>(std::stoul(m[2].str()));
   } else {
     throw std::invalid_argument(
-        fmt::format("resolution is invalide: {}", resolution));
+        fmt::format("resolution is invalid: {}", resolution));
   }
   m_trim = hisui::util::get_bool_from_json_object_with_default(j, "trim", true);
 
@@ -131,7 +131,7 @@ Metadata::Metadata(const std::string& file_path,
                                     std::begin(filenames), std::end(filenames));
     } else {
       throw std::invalid_argument(
-          fmt::format("{} contains non-string values", "audio_sources"));
+          fmt::format("{} contains a non-string value", "audio_sources"));
     }
   }
 
@@ -150,7 +150,7 @@ Metadata::Metadata(const std::string& file_path,
                                    });
       audio_source_filenames.erase(result, std::end(audio_source_filenames));
     } else {
-      throw std::invalid_argument(fmt::format("{} contains non-string values",
+      throw std::invalid_argument(fmt::format("{} contains a non-string value",
                                               "audio_sources_excluded"));
     }
   }
@@ -206,25 +206,26 @@ void Metadata::prepare() {
   m_resolution.height = (m_resolution.height >> 2) << 2;
   if (m_resolution.width < 16) {
     throw std::out_of_range(
-        fmt::format("resolution.width={} is too small", m_resolution.width));
+        fmt::format("resolution.width({}) is too small", m_resolution.width));
   } else if (m_resolution.width > 3840) {
     throw std::out_of_range(
-        fmt::format("resolution.width={} is too large", m_resolution.width));
+        fmt::format("resolution.width({}) is too large", m_resolution.width));
   }
   if (m_resolution.height < 16) {
     throw std::out_of_range(
-        fmt::format("height={} is too small", m_resolution.height));
+        fmt::format("resolution.height({}) is too small", m_resolution.height));
   } else if (m_resolution.height > 3840) {
     throw std::out_of_range(
-        fmt::format("resolution.height={} is too large", m_resolution.height));
+        fmt::format("resolution.height({}) is too large", m_resolution.height));
   }
 
   if (m_bitrate == 0) {
     // TODO(haruyama): bitrate の初期値
     m_bitrate = m_resolution.width * m_resolution.height / 300;
+    spdlog::info("bitrate==0. set {} to bitrate()", m_bitrate);
   }
   if (m_bitrate < 100) {
-    spdlog::info("bitrate={} is small. set 100 to bitrate", m_bitrate);
+    spdlog::info("bitrate({}) is small. set 100 to bitrate", m_bitrate);
     m_bitrate = 100;
   }
 
@@ -322,7 +323,7 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
       cells_excluded.push_back(value);
     } else {
       throw std::invalid_argument(
-          fmt::format("{} contains non-string values", "cells_excluded"));
+          fmt::format("{} contains a non-uint64 value", "cells_excluded"));
     }
   }
 
@@ -342,7 +343,7 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
                                     std::begin(filenames), std::end(filenames));
     } else {
       throw std::invalid_argument(
-          fmt::format("{} contains non-string values", "video_sources"));
+          fmt::format("{} contains a non-string value", "video_sources"));
     }
   }
 
@@ -361,7 +362,7 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
                                    });
       video_source_filenames.erase(result, std::end(video_source_filenames));
     } else {
-      throw std::invalid_argument(fmt::format("{} contains non-string values",
+      throw std::invalid_argument(fmt::format("{} contains a non-string value",
                                               "video_sources_excluded"));
     }
   }
@@ -376,7 +377,8 @@ std::shared_ptr<Region> Metadata::parseRegion(const std::string& name,
   } else if (reuse_string == "show_newest") {
     reuse = Reuse::ShowNewest;
   } else {
-    throw std::invalid_argument(fmt::format("invalid reuse: {}", reuse_string));
+    throw std::invalid_argument(
+        fmt::format("reuse is invalid: {}", reuse_string));
   }
 
   RegionParameters params{
