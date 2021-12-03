@@ -1,8 +1,8 @@
 #pragma once
 
 #include <cstdint>
+#include <iosfwd>
 #include <list>
-#include <utility>
 #include <vector>
 
 #include "layout/interval.hpp"

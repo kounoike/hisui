@@ -1,11 +1,16 @@
 #pragma once
 
+#include <array>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <vector>
 
-#include <layout/region.hpp>
+#include "layout/cell_util.hpp"
 
 namespace hisui::layout {
+
+class Region;
 
 struct ComposerParameters {
   const std::vector<std::shared_ptr<Region>>& regions;

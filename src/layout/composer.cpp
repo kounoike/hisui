@@ -1,6 +1,10 @@
-#include <layout/composer.hpp>
+#include "layout/composer.hpp"
 
-#include <spdlog/spdlog.h>
+#include <algorithm>
+#include <cstdint>
+
+#include "layout/region.hpp"
+#include "video/yuv.hpp"
 
 namespace hisui::layout {
 

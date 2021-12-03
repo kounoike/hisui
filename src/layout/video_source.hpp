@@ -1,9 +1,16 @@
 #pragma once
 
+#include <cstdint>
 #include <memory>
 
 #include "layout/source.hpp"
-#include "video/yuv.hpp"
+
+namespace hisui::video {
+
+class Source;
+class YUVImage;
+
+}  // namespace hisui::video
 
 namespace hisui::layout {
 class VideoSource : public Source {
