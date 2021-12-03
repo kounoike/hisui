@@ -1,12 +1,15 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
+#include <vector>
 
 #include <boost/test/unit_test.hpp>
 
 #include "layout/cell.hpp"
 #include "layout/region.hpp"
+#include "layout/reuse.hpp"
 #include "layout/source.hpp"
+#include "layout/video_source.hpp"
 
 BOOST_AUTO_TEST_SUITE(region)
 

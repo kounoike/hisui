@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <stdexcept>
 
 #include <boost/test/unit_test.hpp>

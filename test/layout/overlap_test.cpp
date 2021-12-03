@@ -1,8 +1,11 @@
 #include <limits>
+#include <vector>
 
 #include <boost/test/unit_test.hpp>
 
+#include "layout/interval.hpp"
 #include "layout/overlap.hpp"
+#include "layout/reuse.hpp"
 #include "layout/source.hpp"
 
 BOOST_AUTO_TEST_SUITE(overlap)

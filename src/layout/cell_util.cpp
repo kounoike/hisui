@@ -1,6 +1,9 @@
 #include "layout/cell_util.hpp"
 
+#include <cstdint>
+#include <ostream>
 #include <stdexcept>
+#include <vector>
 
 namespace hisui::layout {
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+#include <iosfwd>
 #include <vector>
 
 #include "layout/grid.hpp"

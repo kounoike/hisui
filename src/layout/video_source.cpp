@@ -2,10 +2,18 @@
 
 #include <spdlog/spdlog.h>
 
+#include <filesystem>
 #include <string>
 
+#include "util/interval.hpp"
+#include "video/source.hpp"
 #include "video/webm_source.hpp"
-#include "video/yuv.hpp"
+
+namespace hisui::video {
+
+class YUVImage;
+
+}
 
 namespace hisui::layout {
 
