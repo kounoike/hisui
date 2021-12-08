@@ -13,12 +13,12 @@
 
 - [UPDATE] 依存ライブラリの更新
     - `boost` を `1.77.0` に
-    - `CLI11` を `2.1.1` に
+    - `CLI11` を `2.1.2` に
     - `fmt` を `8.0.1` に
     - `spdlog` を `1.9.2` に
     - `rapidcsv` を `8.53` に
     - `libvpx` を `v.1.11.0` に
-    - `cpp-mp4` を `07174be071a968ceae85d7517f33946484131298` に
+    - `cpp-mp4` を `7978dcff455a805c8ef941a45ac5aba1941fe57d` に
     - `stb` を `af1a5bc352164740c1cc1354942b1c6b72eacb8a` に
     - @haruyama
 
