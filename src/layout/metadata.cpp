@@ -437,4 +437,3 @@ std::vector<std::shared_ptr<Region>> Metadata::getRegions() const {
 }
 
 }  // namespace hisui::layout
-
