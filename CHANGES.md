@@ -17,6 +17,7 @@
     - `fmt` を `8.0.1` に
     - `spdlog` を `1.9.2` に
     - `rapidcsv` を `8.53` に
+    - `libvpx` を `v.1.11.0` に
     - `cpp-mp4` を `07174be071a968ceae85d7517f33946484131298` に
     - `stb` を `af1a5bc352164740c1cc1354942b1c6b72eacb8a` に
     - @haruyama
