@@ -93,6 +93,22 @@ void Region::validateAndAdjust(const RegionPrepareParameters& params) {
         fmt::format("cells_excluded contains too large value({})",
                     *out_of_range_cells_excluded_iter));
   }
+
+  // https://s3.amazonaws.com/com.twilio.prod.twilio-docs/images/composer_understanding_trim.original.png
+  // constrained_grid でかつ reuse: none の場合
+  if (m_max_rows > 0 && m_max_columns > 0 && m_reuse == Reuse::None) {
+    auto grid_size = m_max_rows * m_max_columns;
+    if (std::size(m_video_source_filenames) > grid_size) {
+      // grid に収まらないソースは破棄される
+      spdlog::info(
+          "region {}: constrained_grid & reuse=none: the size of "
+          "video_source({}) is "
+          "greater than grid size({})",
+          m_name, std::size(m_video_source_filenames), grid_size);
+      m_video_source_filenames.resize(grid_size);
+      spdlog::info("region {}: video_sources resized", m_name);
+    }
+  }
 }
 
 const RegionPrepareResult Region::prepare(
