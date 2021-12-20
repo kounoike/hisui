@@ -11,16 +11,14 @@
 
 namespace hisui::layout {
 
-bool operator==(MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals const& left,
-                MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals const& right) {
+bool operator==(OverlapIntervalsResult const& left,
+                OverlapIntervalsResult const& right) {
   return left.max_number_of_overlap == right.max_number_of_overlap &&
          left.max_end_time == right.max_end_time &&
          left.trim_intervals == right.trim_intervals;
 }
 
-std::ostream& operator<<(
-    std::ostream& os,
-    const MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals& r) {
+std::ostream& operator<<(std::ostream& os, const OverlapIntervalsResult& r) {
   os << "max_number_of_overlap: " << r.max_number_of_overlap
      << ", max_end_time: " << r.max_end_time << ", trim_intervals: [";
   for (const auto& i : r.trim_intervals) {
@@ -35,10 +33,11 @@ std::ostream& operator<<(
 // - 最大の end
 // - trim 可能な間隔
 // を算出する. 算出に reuse を考慮する
-MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_intervals(
+OverlapIntervalsResult overlap_intervals(
     const OverlapIntervalsParameters& params) {
   if (std::empty(params.intervals)) {
     return {.max_number_of_overlap = 0,
+            .min_start_time = 0,
             .max_end_time = 0,
             .trim_intervals = {{0, std::numeric_limits<double>::max()}}};
   }
@@ -57,7 +56,9 @@ MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_intervals(
   std::uint32_t count = 0;
   std::uint32_t ret = 0;
   double trim_start = 0;
+  double min_start_time = 0;
   double max_end_time = 0;
+  bool first = true;
   for (const auto& d : data) {
     if (d.second == 0) {
       --count;
@@ -67,6 +68,10 @@ MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_intervals(
       max_end_time = d.first;
     }
     if (d.second == 1) {
+      if (first) {
+        first = false;
+        min_start_time = d.first;
+      }
       if (count == 0 && trim_start != d.first) {
         trim_intervals.push_back(
             {.start_time = trim_start, .end_time = d.first});
@@ -82,6 +87,7 @@ MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals overlap_intervals(
               params.reuse == Reuse::None
                   ? static_cast<std::uint32_t>(std::size(params.intervals))
                   : ret,
+          .min_start_time = min_start_time,
           .max_end_time = max_end_time,
           .trim_intervals = trim_intervals};
 }

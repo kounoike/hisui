@@ -44,6 +44,11 @@ struct RegionPrepareResult {
   std::vector<Interval> trim_intervals;
 };
 
+struct RegionGetYUVResult {
+  const bool is_rendered;
+  const std::shared_ptr<hisui::video::YUVImage> yuv;
+};
+
 class Region {
  public:
   explicit Region(const RegionParameters&);
@@ -56,7 +61,7 @@ class Region {
   void substructTrimIntervals(const TrimIntervals&);
   double getMaxEndTime() const;
   void setEncodingInterval();
-  const std::shared_ptr<hisui::video::YUVImage> getYUV(const std::uint64_t);
+  RegionGetYUVResult getYUV(const std::uint64_t);
 
  private:
   std::string m_name;
@@ -74,7 +79,9 @@ class Region {
   GridDimension m_grid_dimension;
   std::vector<std::shared_ptr<VideoSource>> m_video_sources;
   std::vector<std::shared_ptr<Cell>> m_cells;
+  double m_min_start_time;
   double m_max_end_time;
+  hisui::util::Interval m_encoding_interval{0, 0};
 
   std::shared_ptr<hisui::video::YUVImage> m_yuv_image;
   std::array<std::size_t, 3> m_plane_sizes;

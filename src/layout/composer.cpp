@@ -32,7 +32,11 @@ void Composer::compose(std::vector<unsigned char>* composed,
 
   // m_regions は z_pos でソートされている想定
   for (auto region : m_regions) {
-    auto yuv_image = region->getYUV(t);
+    auto result = region->getYUV(t);
+    if (!result.is_rendered) {
+      continue;
+    }
+    auto yuv_image = result.yuv;
     auto info = region->getInformation();
     // 位置と解像度を取得し YUV を重ねる
     for (std::size_t p = 0; p < 3; ++p) {

@@ -12,12 +12,12 @@ BOOST_AUTO_TEST_SUITE(overlap)
 
 BOOST_AUTO_TEST_CASE(overlap_intervals) {
   {
-    auto expected =
-        hisui::layout::MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals{
-            .max_number_of_overlap = 1,
-            .max_end_time = 1,
-            .trim_intervals = {{1, std::numeric_limits<double>::max()}},
-        };
+    auto expected = hisui::layout::OverlapIntervalsResult{
+        .max_number_of_overlap = 1,
+        .min_start_time = 0,
+        .max_end_time = 1,
+        .trim_intervals = {{1, std::numeric_limits<double>::max()}},
+    };
 
     BOOST_REQUIRE_EQUAL(
         expected,
@@ -50,12 +50,12 @@ BOOST_AUTO_TEST_CASE(overlap_intervals) {
   }
 
   {
-    auto expected =
-        hisui::layout::MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals{
-            .max_number_of_overlap = 2,
-            .max_end_time = 2,
-            .trim_intervals = {{2, std::numeric_limits<double>::max()}},
-        };
+    auto expected = hisui::layout::OverlapIntervalsResult{
+        .max_number_of_overlap = 2,
+        .min_start_time = 0,
+        .max_end_time = 2,
+        .trim_intervals = {{2, std::numeric_limits<double>::max()}},
+    };
     BOOST_REQUIRE_EQUAL(
         expected,
         hisui::layout::overlap_intervals({
@@ -91,12 +91,12 @@ BOOST_AUTO_TEST_CASE(overlap_intervals) {
   }
 
   {
-    auto expected =
-        hisui::layout::MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals{
-            .max_number_of_overlap = 2,
-            .max_end_time = 3,
-            .trim_intervals = {{3, std::numeric_limits<double>::max()}},
-        };
+    auto expected = hisui::layout::OverlapIntervalsResult{
+        .max_number_of_overlap = 2,
+        .min_start_time = 0,
+        .max_end_time = 3,
+        .trim_intervals = {{3, std::numeric_limits<double>::max()}},
+    };
 
     BOOST_REQUIRE_EQUAL(
         expected,
@@ -110,12 +110,11 @@ BOOST_AUTO_TEST_CASE(overlap_intervals) {
         }));
   }
   {
-    auto expected =
-        hisui::layout::MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals{
-            .max_number_of_overlap = 1,
-            .max_end_time = 3,
-            .trim_intervals = {{3, std::numeric_limits<double>::max()}},
-        };
+    auto expected = hisui::layout::OverlapIntervalsResult{
+        .max_number_of_overlap = 1,
+        .max_end_time = 3,
+        .trim_intervals = {{3, std::numeric_limits<double>::max()}},
+    };
 
     BOOST_REQUIRE_EQUAL(
         expected,
@@ -140,12 +139,12 @@ BOOST_AUTO_TEST_CASE(overlap_intervals) {
   }
 
   {
-    auto expected =
-        hisui::layout::MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals{
-            .max_number_of_overlap = 2,
-            .max_end_time = 6,
-            .trim_intervals = {{6, std::numeric_limits<double>::max()}},
-        };
+    auto expected = hisui::layout::OverlapIntervalsResult{
+        .max_number_of_overlap = 2,
+        .min_start_time = 0,
+        .max_end_time = 6,
+        .trim_intervals = {{6, std::numeric_limits<double>::max()}},
+    };
 
     BOOST_REQUIRE_EQUAL(
         expected,
@@ -161,12 +160,12 @@ BOOST_AUTO_TEST_CASE(overlap_intervals) {
   }
 
   {
-    auto expected =
-        hisui::layout::MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals{
-            .max_number_of_overlap = 3,
-            .max_end_time = 8,
-            .trim_intervals = {{8, std::numeric_limits<double>::max()}},
-        };
+    auto expected = hisui::layout::OverlapIntervalsResult{
+        .max_number_of_overlap = 3,
+        .min_start_time = 0,
+        .max_end_time = 8,
+        .trim_intervals = {{8, std::numeric_limits<double>::max()}},
+    };
     BOOST_REQUIRE_EQUAL(
         expected,
         hisui::layout::overlap_intervals({
@@ -182,14 +181,14 @@ BOOST_AUTO_TEST_CASE(overlap_intervals) {
   }
 
   {
-    auto expected =
-        hisui::layout::MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals{
-            .max_number_of_overlap = 1,
-            .max_end_time = 7,
-            .trim_intervals = {{0, 1},
-                               {4, 5},
-                               {7, std::numeric_limits<double>::max()}},
-        };
+    auto expected = hisui::layout::OverlapIntervalsResult{
+        .max_number_of_overlap = 1,
+        .min_start_time = 1,
+        .max_end_time = 7,
+        .trim_intervals = {{0, 1},
+                           {4, 5},
+                           {7, std::numeric_limits<double>::max()}},
+    };
     BOOST_REQUIRE_EQUAL(
         expected,
         hisui::layout::overlap_intervals({
@@ -205,15 +204,15 @@ BOOST_AUTO_TEST_CASE(overlap_intervals) {
   }
 
   {
-    auto expected =
-        hisui::layout::MaxNumberOfOverlapAndMaxEndTimeAndTrimIntervals{
-            .max_number_of_overlap = 2,
-            .max_end_time = 7,
-            .trim_intervals = {{0, 1},
-                               {2, 3},
-                               {4, 5},
-                               {7, std::numeric_limits<double>::max()}},
-        };
+    auto expected = hisui::layout::OverlapIntervalsResult{
+        .max_number_of_overlap = 2,
+        .min_start_time = 1,
+        .max_end_time = 7,
+        .trim_intervals = {{0, 1},
+                           {2, 3},
+                           {4, 5},
+                           {7, std::numeric_limits<double>::max()}},
+    };
     BOOST_REQUIRE_EQUAL(
         expected,
         hisui::layout::overlap_intervals({
