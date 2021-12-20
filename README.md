@@ -46,7 +46,7 @@ Sora が出力した録画ファイルを合成し WebM や MP4 で出力する�
 
 ## 対応 Sora
 
-- WebRTC SFU Sora 2020.3 以降
+- WebRTC SFU Sora 2021.1 以降
 
 ## 使ってみる
 
