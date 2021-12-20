@@ -42,11 +42,7 @@ gamemoderun ./hisui -f ~/report-XXX.json --libvpx-threads 4 --libvp9-tile-column
 
 ## Windows の VirtualBox 上で hisui を実行したらエラーが発生した
 
-Windows の VirtualBox 上で hisui を実行した際にエラーが発生した事象が報告されています。
-```
-Illegal instruction (core dumped)
-```
-プロセスが、カーネルが許していない命令を実行しようとしたことを示す信号を受信した場合に出力されるメッセージです。
+Windows の VirtualBox 上で hisui を実行した際にエラーが発生した事象が確認されています。
 Hyper-V を無効にすることで事象が解消されることを確認しています。
 
 ### 参考
