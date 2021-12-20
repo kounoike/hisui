@@ -131,7 +131,10 @@ const RegionPrepareResult Region::prepare(
   auto overlap_result =
       overlap_intervals({.intervals = source_intervals, .reuse = m_reuse});
 
+  m_min_start_time = overlap_result.min_start_time;
   m_max_end_time = overlap_result.max_end_time;
+  spdlog::debug("region {}: min_start: {}, max_end: {}", m_name,
+                m_min_start_time, m_max_end_time);
 
   for (const auto& i : overlap_result.trim_intervals) {
     spdlog::debug("    trim_interval: [{}, {}]", i.start_time, i.end_time);
@@ -211,10 +214,19 @@ void Region::substructTrimIntervals(const TrimIntervals& params) {
     s->substructTrimIntervals(params);
   }
 
-  auto interval =
+  spdlog::debug("region {}: min_start: {}, max_end: {}", m_name,
+                m_min_start_time, m_max_end_time);
+
+  auto start_interval =
+      substruct_trim_intervals({.interval = {0, m_min_start_time},
+                                .trim_intervals = params.trim_intervals});
+  m_min_start_time = start_interval.end_time;
+  auto end_interval =
       substruct_trim_intervals({.interval = {0, m_max_end_time},
                                 .trim_intervals = params.trim_intervals});
-  m_max_end_time = interval.end_time;
+  m_max_end_time = end_interval.end_time;
+  spdlog::debug("region {}: min_start: {}, max_end: {}", m_name,
+                m_min_start_time, m_max_end_time);
 }
 
 // cells の中の cell に video_source を設定する (設定できない場合もある)
@@ -324,13 +336,23 @@ void Region::dump() const {
 }
 
 void Region::setEncodingInterval() {
+  m_encoding_interval.set(
+      static_cast<std::uint64_t>(
+          std::floor(m_min_start_time *
+                     static_cast<double>(hisui::Constants::NANO_SECOND))),
+      static_cast<std::uint64_t>(
+          std::ceil(m_max_end_time *
+                    static_cast<double>(hisui::Constants::NANO_SECOND))));
   for (auto& s : m_video_sources) {
     s->setEncodingInterval(hisui::Constants::NANO_SECOND);
   }
 }
 
-const std::shared_ptr<hisui::video::YUVImage> Region::getYUV(
-    const std::uint64_t t) {
+RegionGetYUVResult Region::getYUV(const std::uint64_t t) {
+  if (!m_encoding_interval.isIn(t)) {
+    return {.is_rendered = false, .yuv = m_yuv_image};
+  }
+
   reset_cells_source({.cells = m_cells, .time = t});
 
   for (const auto& video_source : m_video_sources) {
@@ -365,7 +387,7 @@ const std::shared_ptr<hisui::video::YUVImage> Region::getYUV(
     }
   }
 
-  return m_yuv_image;
+  return {.is_rendered = true, .yuv = m_yuv_image};
 }
 
 }  // namespace hisui::layout
