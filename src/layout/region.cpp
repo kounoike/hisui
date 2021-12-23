@@ -117,9 +117,15 @@ const RegionPrepareResult Region::prepare(
 
   std::size_t index = 0;
   for (const auto& f : m_video_source_filenames) {
-    auto archive = parse_archive(f);
-    m_video_sources.push_back(
-        std::make_shared<VideoSource>(archive->getSourceParameters(index++)));
+    try {
+      auto archive = parse_archive(f);
+      m_video_sources.push_back(
+          std::make_shared<VideoSource>(archive->getSourceParameters(index++)));
+    } catch (const std::exception& e) {
+      spdlog::error("region {}: parsing video_source({}) failed: {}", m_name, f,
+                    e.what());
+      std::exit(EXIT_FAILURE);
+    }
   }
 
   // 最大に overlap する video の数, trim 可能な interval, 終了時間を算出
