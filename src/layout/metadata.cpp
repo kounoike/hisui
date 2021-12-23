@@ -229,9 +229,17 @@ void Metadata::prepare() {
     m_bitrate = 100;
   }
 
+  spdlog::debug("processing audio");
+
+  std::list<std::vector<Interval>> list_of_trim_intervals;
   for (const auto& f : m_audio_source_filenames) {
-    auto archive = parse_archive(f);
-    m_audio_archives.push_back(archive);
+    try {
+      auto archive = parse_archive(f);
+      m_audio_archives.push_back(archive);
+    } catch (const std::exception& e) {
+      spdlog::error("parsing audio_source({}) failed: {}", f, e.what());
+      std::exit(EXIT_FAILURE);
+    }
   }
 
   // trim 可能な間隔を audio, video(regions) からそれぞれ算出
@@ -242,8 +250,9 @@ void Metadata::prepare() {
   auto audio_overlap_result = overlap_intervals(
       {.intervals = audio_source_intervals, .reuse = Reuse::None});
 
-  std::list<std::vector<Interval>> list_of_trim_intervals;
   list_of_trim_intervals.push_back(audio_overlap_result.trim_intervals);
+
+  spdlog::debug("processing region");
 
   for (const auto& region : m_regions) {
     try {
