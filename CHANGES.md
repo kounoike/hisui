@@ -21,6 +21,9 @@
     - `cpp-mp4` を `252fd4f0104d072a1a44b4e3ba78126cf64d0103` に
     - `stb` を `af1a5bc352164740c1cc1354942b1c6b72eacb8a` に
     - @haruyama
+- [CHANGE] Boost::JSON を header-only で利用する
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/91
 
 ## 2021.3
 
