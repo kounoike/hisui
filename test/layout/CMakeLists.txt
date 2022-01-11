@@ -118,7 +118,6 @@ target_include_directories(layout_test
 
 target_link_libraries(layout_test
     PRIVATE
-    Boost::json
     dl
     fmt
     shiguredo-mp4

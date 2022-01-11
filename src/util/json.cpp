@@ -10,6 +10,7 @@
 #include <boost/json/impl/array.hpp>
 #include <boost/json/object.hpp>
 #include <boost/json/parse.hpp>
+#include <boost/json/src.hpp>  // https://github.com/boostorg/json#header-only
 #include <boost/json/string.hpp>
 #include <boost/json/system_error.hpp>
 #include <boost/json/value.hpp>

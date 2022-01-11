@@ -61,7 +61,6 @@ target_include_directories(metadata_test
 
 target_link_libraries(metadata_test
     PRIVATE
-    Boost::json
     fmt
     spdlog
     )

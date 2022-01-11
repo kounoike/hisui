@@ -75,7 +75,7 @@ CPMAddPackage(
     NAME boost_json
     GITHUB_REPOSITORY boostorg/json
     GIT_TAG boost-${BOOST_VERSION}
-    OPTIONS "BOOST_JSON_STANDALONE On"
+    DOWNLOAD_ONLY YES
     )
 
 CPMAddPackage(
@@ -299,7 +299,6 @@ set_target_properties(hisui PROPERTIES CXX_STANDARD 20 C_STANDARD 11)
 
 target_link_libraries(hisui
     PRIVATE
-    Boost::json
     dl
     opus
     pthread
