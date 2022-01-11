@@ -44,6 +44,13 @@ set(CMAKE_C_FLAGS_PROFILE "-pg -O3 -DNDEBUG -march=native -mtune=native")
 include(cmake/tools.cmake)
 
 CPMAddPackage(
+    NAME boost_align
+    GITHUB_REPOSITORY boostorg/align
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
     NAME boost_assert
     GITHUB_REPOSITORY boostorg/assert
     GIT_TAG boost-${BOOST_VERSION}
@@ -58,8 +65,22 @@ CPMAddPackage(
     )
 
 CPMAddPackage(
+    NAME boost_container
+    GITHUB_REPOSITORY boostorg/container
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
     NAME boost_core
     GITHUB_REPOSITORY boostorg/core
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_exception
+    GITHUB_REPOSITORY boostorg/exception
     GIT_TAG boost-${BOOST_VERSION}
     DOWNLOAD_ONLY YES
     )
@@ -72,8 +93,36 @@ CPMAddPackage(
     )
 
 CPMAddPackage(
+    NAME boost_intrusive
+    GITHUB_REPOSITORY boostorg/intrusive
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_io
+    GITHUB_REPOSITORY boostorg/io
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
     NAME boost_json
     GITHUB_REPOSITORY boostorg/json
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_move
+    GITHUB_REPOSITORY boostorg/move
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_mp11
+    GITHUB_REPOSITORY boostorg/mp11
     GIT_TAG boost-${BOOST_VERSION}
     DOWNLOAD_ONLY YES
     )
@@ -86,8 +135,22 @@ CPMAddPackage(
     )
 
 CPMAddPackage(
+    NAME boost_smart_ptr
+    GITHUB_REPOSITORY boostorg/smart_ptr
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
     NAME boost_static_assert
     GITHUB_REPOSITORY boostorg/static_assert
+    GIT_TAG boost-${BOOST_VERSION}
+    DOWNLOAD_ONLY YES
+    )
+
+CPMAddPackage(
+    NAME boost_system
+    GITHUB_REPOSITORY boostorg/system
     GIT_TAG boost-${BOOST_VERSION}
     DOWNLOAD_ONLY YES
     )
@@ -272,13 +335,22 @@ target_sources(hisui
 target_include_directories(hisui
     PRIVATE
     src
+    ${boost_align_SOURCE_DIR}/include
     ${boost_assert_SOURCE_DIR}/include
     ${boost_config_SOURCE_DIR}/include
+    ${boost_container_SOURCE_DIR}/include
     ${boost_core_SOURCE_DIR}/include
+    ${boost_exception_SOURCE_DIR}/include
     ${boost_integer_SOURCE_DIR}/include
+    ${boost_intrusive_SOURCE_DIR}/include
+    ${boost_io_SOURCE_DIR}/include
     ${boost_json_SOURCE_DIR}/include
+    ${boost_move_SOURCE_DIR}/include
+    ${boost_mp11_SOURCE_DIR}/include
     ${boost_rational_SOURCE_DIR}/include
+    ${boost_smart_ptr_SOURCE_DIR}/include
     ${boost_static_assert_SOURCE_DIR}/include
+    ${boost_system_SOURCE_DIR}/include
     ${boost_throw_exception_SOURCE_DIR}/include
     ${boost_type_traits_SOURCE_DIR}/include
     ${boost_utility_SOURCE_DIR}/include

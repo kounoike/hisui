@@ -31,25 +31,30 @@ target_include_directories(metadata_test
     PRIVATE
     ../../src
     ${boost_algorithm_SOURCE_DIR}/include
+    ${boost_align_SOURCE_DIR}/include
     ${boost_assert_SOURCE_DIR}/include
     ${boost_bind_SOURCE_DIR}/include
     ${boost_config_SOURCE_DIR}/include
+    ${boost_container_SOURCE_DIR}/include
     ${boost_container_hash_SOURCE_DIR}/include
     ${boost_core_SOURCE_DIR}/include
     ${boost_detail_SOURCE_DIR}/include
     ${boost_exception_SOURCE_DIR}/include
     ${boost_function_SOURCE_DIR}/include
     ${boost_integer_SOURCE_DIR}/include
+    ${boost_intrusive_SOURCE_DIR}/include
     ${boost_io_SOURCE_DIR}/include
     ${boost_iterator_SOURCE_DIR}/include
     ${boost_json_SOURCE_DIR}/include
     ${boost_move_SOURCE_DIR}/include
+    ${boost_mp11_SOURCE_DIR}/include
     ${boost_mpl_SOURCE_DIR}/include
     ${boost_numeric_conversion_SOURCE_DIR}/include
     ${boost_preprocessor_SOURCE_DIR}/include
     ${boost_range_SOURCE_DIR}/include
     ${boost_smart_ptr_SOURCE_DIR}/include
     ${boost_static_assert_SOURCE_DIR}/include
+    ${boost_system_SOURCE_DIR}/include
     ${boost_test_SOURCE_DIR}/include
     ${boost_throw_exception_SOURCE_DIR}/include
     ${boost_type_index_SOURCE_DIR}/include
