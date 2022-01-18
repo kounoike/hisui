@@ -18,7 +18,7 @@
     - `spdlog` を `1.9.2` に
     - `rapidcsv` を `8.53` に
     - `libvpx` を `v.1.11.0` に
-    - `cpp-mp4` を `252fd4f0104d072a1a44b4e3ba78126cf64d0103` に
+    - `cpp-mp4` を `2022.1.0` に
     - `stb` を `af1a5bc352164740c1cc1354942b1c6b72eacb8a` に
     - @haruyama
 - [CHANGE] Boost::JSON を header-only で利用する
