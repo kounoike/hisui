@@ -15,6 +15,7 @@
 
 #include "config.hpp"
 #include "datetime.hpp"
+#include "layout/compose.hpp"
 #include "metadata.hpp"
 #include "muxer/async_webm_muxer.hpp"
 #include "muxer/faststart_mp4_muxer.hpp"
@@ -40,7 +41,7 @@ int main(int argc, char** argv) {
   }
   spdlog::debug("log level={}", config.log_level);
 
-  if (!config.openh264.empty()) {
+  if (!std::empty(config.openh264)) {
     try {
       hisui::video::OpenH264Handler::open(config.openh264);
     } catch (const std::exception& e) {
@@ -50,6 +51,15 @@ int main(int argc, char** argv) {
 
   if (config.enabledReport()) {
     hisui::report::Reporter::open();
+  }
+
+  if (!std::empty(config.layout)) {
+    return hisui::layout::compose(config);
+  }
+
+  if (std::empty(config.in_metadata_filename)) {
+    spdlog::error("-f,--in-metadata-file is required");
+    return EXIT_FAILURE;
   }
 
   hisui::MetadataSet metadata_set(
@@ -64,12 +74,42 @@ int main(int argc, char** argv) {
 
   hisui::muxer::Muxer* muxer = nullptr;
   if (config.out_container == hisui::config::OutContainer::WebM) {
-    muxer = new hisui::muxer::AsyncWebMMuxer(config, metadata_set);
+    muxer = new hisui::muxer::AsyncWebMMuxer(
+        config,
+        hisui::muxer::AsyncWebMMuxerParameters{
+            .audio_archive_items = metadata_set.getArchiveItems(),
+            .normal_archives = metadata_set.getNormal().getArchiveItems(),
+            .preferred_archives =
+                metadata_set.hasPreferred()
+                    ? metadata_set.getPreferred().getArchiveItems()
+                    : std::vector<hisui::ArchiveItem>{},
+            .duration = metadata_set.getMaxStopTimeOffset(),
+        });
   } else if (config.out_container == hisui::config::OutContainer::MP4) {
     if (config.mp4_muxer == hisui::config::MP4Muxer::Simple) {
-      muxer = new hisui::muxer::SimpleMP4Muxer(config, metadata_set);
+      muxer = new hisui::muxer::SimpleMP4Muxer(
+          config,
+          hisui::muxer::MP4MuxerParameters{
+              .audio_archive_items = metadata_set.getArchiveItems(),
+              .normal_archives = metadata_set.getNormal().getArchiveItems(),
+              .preferred_archives =
+                  metadata_set.hasPreferred()
+                      ? metadata_set.getPreferred().getArchiveItems()
+                      : std::vector<hisui::ArchiveItem>{},
+              .duration = metadata_set.getMaxStopTimeOffset(),
+          });
     } else if (config.mp4_muxer == hisui::config::MP4Muxer::Faststart) {
-      muxer = new hisui::muxer::FaststartMP4Muxer(config, metadata_set);
+      muxer = new hisui::muxer::FaststartMP4Muxer(
+          config,
+          hisui::muxer::MP4MuxerParameters{
+              .audio_archive_items = metadata_set.getArchiveItems(),
+              .normal_archives = metadata_set.getNormal().getArchiveItems(),
+              .preferred_archives =
+                  metadata_set.hasPreferred()
+                      ? metadata_set.getPreferred().getArchiveItems()
+                      : std::vector<hisui::ArchiveItem>{},
+              .duration = metadata_set.getMaxStopTimeOffset(),
+          });
     } else {
       throw std::runtime_error("config.mp4_muxer is invalid");
     }
@@ -90,7 +130,7 @@ int main(int argc, char** argv) {
       os << hisui::report::Reporter::getInstance().makeFailureReport(e.what());
       hisui::report::Reporter::close();
     }
-    return 1;
+    return EXIT_FAILURE;
   }
   delete muxer;
 
@@ -107,5 +147,5 @@ int main(int argc, char** argv) {
     hisui::video::OpenH264Handler::close();
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
