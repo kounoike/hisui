@@ -24,6 +24,7 @@ Sora が出力した録画ファイルを合成し WebM や MP4 で出力する�
 - Sora が生成する録画ファイルや録画レポートをそのまま利用できます
 - 特に設定することなくすぐに使い始められます
 - 細かいチューニングも可能です
+- 複雑なレイアウトを JSON で指定することができます
 
 ## ファイル形式
 
@@ -46,7 +47,7 @@ Sora が出力した録画ファイルを合成し WebM や MP4 で出力する�
 
 ## 対応 Sora
 
-- WebRTC SFU Sora 2021.1 以降
+- WebRTC SFU Sora 2021.2 以降
 
 ## 使ってみる
 
@@ -66,7 +67,6 @@ Hisui についての FAQ は [FAQ.md](doc/FAQ.md) をお読みください。
 
 - AV1 出力対応
 - AV1 入力対応
-- JSON によるレイアウト指定対応
 - アイコン埋め込み対応
     - 音声のみの場合は指定したアイコンを埋め込めるようにする
 - タイトルの埋め込み対応
@@ -85,14 +85,13 @@ Hisui についての FAQ は [FAQ.md](doc/FAQ.md) をお読みください。
 
 - Safari が Opus 再生に対応したら AAC 対応を削除予定です
 
-
 ## ライセンス
 
 Apache License 2.0
 
 ```
-Copyright 2020-2021, HARUYAMA Seigo (Original Author)
-Copyright 2020-2021, Shiguredo Inc.
+Copyright 2020-2022, HARUYAMA Seigo (Original Author)
+Copyright 2020-2022, Shiguredo Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -114,3 +113,4 @@ https://www.openh264.org/BINARY_LICENSE.txt
 ```
 "OpenH264 Video Codec provided by Cisco Systems, Inc."
 ```
+
