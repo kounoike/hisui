@@ -11,6 +11,25 @@
 
 ## develop
 
+## 2022.1.0
+
+- [UPDATE] 依存ライブラリの更新
+    - @haruyama
+    - `boost` を `1.78.0` に
+    - `CLI11` を `2.1.2` に
+    - `fmt` を `8.0.1` に
+    - `spdlog` を `1.9.2` に
+    - `rapidcsv` を `8.53` に
+    - `libvpx` を `v.1.11.0` に
+    - `cpp-mp4` を `2022.1.0` に
+    - `stb` を `af1a5bc352164740c1cc1354942b1c6b72eacb8a` に
+- [CHANGE] Boost::JSON を header-only で利用する
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/91
+- [CHANGE] レイアウト機能
+    - @haruyama
+    - https://github.com/shiguredo/hisui/pull/48
+
 ## 2021.3
 
 - [ADD] [実験的機能] 画面共有合成機能を追加する

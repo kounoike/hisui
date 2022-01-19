@@ -20,7 +20,9 @@ add_compile_options(
 add_executable(util_test
     main.cpp
     interval_test.cpp
+    wildcard_test.cpp
     ../../src/util/interval.cpp
+    ../../src/util/wildcard.cpp
     )
 
 set_target_properties(util_test PROPERTIES CXX_STANDARD 20 C_STANDARD 11)

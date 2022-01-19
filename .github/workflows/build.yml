@@ -35,6 +35,11 @@ jobs:
         env:
             DEBIAN_FRONTEND: noninteractive
       - uses: actions/checkout@v2
+      - name: Get vars
+        shell: bash
+        id: vars
+        run: |
+          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
       - name: Get versions
         shell: bash
         id: versions
@@ -93,6 +98,12 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.os }}-hisui-binary
+          path: release/hisui
+          if-no-files-found: error
+      - name: Upload hisui binary with hash
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.os }}-hisui-binary-${{ steps.vars.outputs.sha_short }}
           path: release/hisui
           if-no-files-found: error
       - name: Upload tarball
