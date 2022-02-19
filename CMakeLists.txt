@@ -261,9 +261,6 @@ project(hisui C CXX)
 
 add_library(hisuilib)
 set_property(TARGET hisuilib PROPERTY OUTPUT_NAME hisui)
-add_library(hisui::lib ALIAS hisuilib)
-export(TARGETS hisuilib opus fmt shiguredo-mp4 spdlog NAMESPACE hisui FILE ${PROJECT_BINARY_DIR}/hisui.targets.cmake)
-
 
 add_executable(hisui)
 
@@ -569,3 +566,5 @@ if(WITH_TEST)
 
     add_subdirectory(test)
 endif()
+
+install(TARGETS hisuilib DESTINATION lib)
