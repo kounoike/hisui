@@ -187,7 +187,8 @@ CPMAddPackage(
 CPMAddPackage(
     NAME cpp-mp4
     GITHUB_REPOSITORY kounoike/cpp-mp4
-    GIT_TAG ${CPP_MP4_VERSION}
+    # GIT_TAG ${CPP_MP4_VERSION}
+    GIT_TAG kounoike-patch-1
     OPTIONS "WITH_CLI Off" "WITH_EXAMPLE Off" "WITH_TEST Off"
     )
 
