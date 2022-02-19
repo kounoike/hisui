@@ -224,8 +224,8 @@ ExternalProject_Add(
     GIT_TAG "v${LIBVPX_VERSION}"
     BUILD_IN_SOURCE FALSE
     GIT_SUBMODULES_RECURSE TRUE
-    PATCH_COMMAND
-        COMMAND patch -p1 < "${CMAKE_CURRENT_SOURCE_DIR}/third_party/libwebm.patch" || true
+    # PATCH_COMMAND
+    #     COMMAND patch -p1 < "${CMAKE_CURRENT_SOURCE_DIR}/third_party/libwebm.patch" || true
     CONFIGURE_COMMAND ../libvpx/configure --disable-examples --disable-tools --disable-docs --disable-unit-tests --cpu=native --prefix=${CMAKE_CURRENT_BINARY_DIR}/install
     BUILD_COMMAND make -j$(nproc)
     )
