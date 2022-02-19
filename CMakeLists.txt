@@ -252,7 +252,7 @@ FetchContent_Declare(
     #     COMMAND echo "export(TARGETS webm mkvparser NAMESPACE libwebm FILE \${PROJECT_BINARY_DIR}/libwebm-targets.cmake)" >> CMakeLists.txt
 )
 FetchContent_MakeAvailable(libyuv libwebm)
-set_target_properties(yuvconvert EXCLUDE_FROM_ALL TRUE)
+set_target_properties(yuvconvert PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 
 project(hisui C CXX)
