@@ -258,7 +258,6 @@ project(hisui C CXX)
 
 add_library(hisuilib)
 set_property(TARGET hisuilib PROPERTY OUTPUT_NAME hisui)
-add_dependencies(hisuilib yuvconver)
 
 add_executable(hisui)
 
