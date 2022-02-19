@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 # Only interpret if() arguments as variables or keywords when unquoted.
 cmake_policy(SET CMP0054 NEW)
-# MSVC runtime library flags are selected by an abstraction.
+# MSVC runtime library flags are selected by an abraction.
 cmake_policy(SET CMP0091 NEW)
 
 include(cmake/env.cmake)
@@ -18,7 +18,7 @@ set_cache_string_from_env(LIBVPX_VERSION 1.11.0 "libvpx のバージョン")
 
 # set(CMAKE_C_COMPILER clang)
 # set(CMAKE_CXX_COMPILER clang++)
-set(CMAKE_CXX_STANDARD 20)
+# set(CMAKE_CXX_STANDARD 20)
 
 add_compile_options(
     -Wall
@@ -236,6 +236,27 @@ set(libvpx_BINARYE_DIR "${BINARY_DIR}")
 message("v${LIBVPX_VERSION}")
 message("libvpx_SOURCE_DIR: ${libvpx_SOURCE_DIR} SOURCE_DIR: ${SOURCE_DIR}")
 
+include(FetchContent)
+FetchContent_Declare(
+    libyuv
+    GIT_REPOSITORY https://chromium.googlesource.com/libyuv/libyuv.git
+    GIT_TAG stable
+    PATCH_COMMAND
+        COMMAND echo "add_library(libyuv::yuv ALIAS yuv)" >> CMakeLists.txt
+        COMMAND echo "export(TARGETS yuv NAMESPACE libyuv FILE \${PROJECT_BINARY_DIR}/libyuv-targets.cmake)" >> CMakeLists.txt
+)
+
+FetchContent_Declare(
+    libwebm
+    GIT_REPOSITORY https://chromium.googlesource.com/webm/libwebm
+    GIT_TAG libwebm-1.0.0.28
+    PATCH_COMMAND
+        COMMAND echo "add_library(libwebm::webm ALIAS webm)" >> CMakeLists.txt
+        COMMAND echo "export(TARGETS webm mkvparser NAMESPACE libwebm FILE \${PROJECT_BINARY_DIR}/libwebm-targets.cmake)" >> CMakeLists.txt
+)
+
+FetchContent_MakeAvailable(libyuv libwebm)
+
 project(hisui C CXX)
 
 add_library(hisuilib)
@@ -340,29 +361,29 @@ target_sources(hisuilib
     src/webm/input/context.cpp
     src/webm/input/video_context.cpp
     src/webm/output/context.cpp
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/cpu_id.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/planar_functions.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/row_any.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/row_common.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/row_gcc.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/row_msa.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/row_neon.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/row_neon64.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/row_win.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale_any.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale_common.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale_gcc.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale_msa.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale_neon.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale_neon64.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale_win.cc
-    ${libvpx_SOURCE_DIR}/third_party/libyuv/source/convert.cc
-    ${libvpx_SOURCE_DIR}/third_party/libwebm/mkvparser/mkvparser.cc
-    ${libvpx_SOURCE_DIR}/third_party/libwebm/mkvparser/mkvreader.cc
-    ${libvpx_SOURCE_DIR}/third_party/libwebm/mkvmuxer/mkvmuxer.cc
-    ${libvpx_SOURCE_DIR}/third_party/libwebm/mkvmuxer/mkvwriter.cc
-    ${libvpx_SOURCE_DIR}/third_party/libwebm/mkvmuxer/mkvmuxerutil.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/cpu_id.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/planar_functions.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/row_any.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/row_common.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/row_gcc.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/row_msa.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/row_neon.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/row_neon64.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/row_win.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale_any.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale_common.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale_gcc.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale_msa.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale_neon.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale_neon64.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/scale_win.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libyuv/source/convert.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libwebm/mkvparser/mkvparser.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libwebm/mkvparser/mkvreader.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libwebm/mkvmuxer/mkvmuxer.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libwebm/mkvmuxer/mkvwriter.cc
+    # ${libvpx_SOURCE_DIR}/third_party/libwebm/mkvmuxer/mkvmuxerutil.cc
     )
 
 set(HEADER_DIRS
@@ -420,6 +441,8 @@ target_link_libraries(hisuilib
     fmt
     shiguredo-mp4
     spdlog
+    libyuv::yuv
+    libwebm::webm
     ${CMAKE_CURRENT_BINARY_DIR}/install/lib/libvpx.a
     )
 
