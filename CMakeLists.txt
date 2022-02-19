@@ -254,11 +254,11 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(libyuv libwebm)
 set_target_properties(yuvconvert PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
-
 project(hisui C CXX)
 
 add_library(hisuilib)
 set_property(TARGET hisuilib PROPERTY OUTPUT_NAME hisui)
+add_dependencies(hisuilib yuvconver)
 
 add_executable(hisui)
 
