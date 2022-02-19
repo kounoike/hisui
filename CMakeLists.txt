@@ -261,7 +261,7 @@ set_property(TARGET hisuilib PROPERTY OUTPUT_NAME hisui)
 
 add_executable(hisui)
 
-add_dependencies(hisuilib libvpx)
+add_dependencies(hisuilib libvpx libyuv libwebm)
 
 option(USE_FDK_AAC "Use fdk-aac" OFF)
 
