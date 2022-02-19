@@ -241,6 +241,7 @@ FetchContent_Declare(
     libyuv
     GIT_REPOSITORY https://chromium.googlesource.com/libyuv/libyuv.git
     GIT_TAG stable
+    EXCLUDE_FROM_ALL TRUE
     PATCH_COMMAND
         COMMAND echo "add_library(libyuv::yuv ALIAS yuv)" >> CMakeLists.txt
         COMMAND echo "export(TARGETS yuv NAMESPACE libyuv FILE \${PROJECT_BINARY_DIR}/libyuv-targets.cmake)" >> CMakeLists.txt
@@ -254,7 +255,6 @@ FetchContent_Declare(
         COMMAND echo "add_library(libwebm::webm ALIAS webm)" >> CMakeLists.txt
         COMMAND echo "export(TARGETS webm mkvparser NAMESPACE libwebm FILE \${PROJECT_BINARY_DIR}/libwebm-targets.cmake)" >> CMakeLists.txt
 )
-
 FetchContent_MakeAvailable(libyuv libwebm)
 
 project(hisui C CXX)
