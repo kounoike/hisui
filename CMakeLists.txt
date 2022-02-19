@@ -241,7 +241,6 @@ FetchContent_Declare(
     libyuv
     GIT_REPOSITORY https://chromium.googlesource.com/libyuv/libyuv.git
     GIT_TAG stable
-    EXCLUDE_FROM_ALL TRUE
 )
 
 FetchContent_Declare(
