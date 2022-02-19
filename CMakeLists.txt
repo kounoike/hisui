@@ -237,9 +237,15 @@ message("libvpx_SOURCE_DIR: ${libvpx_SOURCE_DIR} SOURCE_DIR: ${SOURCE_DIR}")
 
 project(hisui C CXX)
 
+add_library(hisuilib)
+set_property(TARGET hisuilib PROPERTY OUTPUT_NAME hisui)
+add_library(hisui::lib ALIAS hisuilib)
+export(TARGETS hisuilib opus fmt shiguredo-mp4 spdlog NAMESPACE hisui FILE ${PROJECT_BINARY_DIR}/hisui.targets.cmake)
+
+
 add_executable(hisui)
 
-add_dependencies(hisui libvpx)
+add_dependencies(hisuilib libvpx)
 
 option(USE_FDK_AAC "Use fdk-aac" OFF)
 
@@ -255,7 +261,7 @@ if(USE_FDK_AAC)
         m
         )
 
-    target_sources(hisui
+    target_sources(hisuilib
         PRIVATE
         src/audio/buffer_fdk_aac_encoder.cpp
         src/audio/fdk_aac.cpp
@@ -264,6 +270,11 @@ if(USE_FDK_AAC)
 endif()
 
 target_sources(hisui
+    PRIVATE
+    src/hisui.cpp
+)
+
+target_sources(hisuilib
     PRIVATE
     src/archive_item.cpp
     src/audio/basic_sequencer.cpp
@@ -274,7 +285,6 @@ target_sources(hisui
     src/audio/webm_source.cpp
     src/config.cpp
     src/datetime.cpp
-    src/hisui.cpp
     src/layout/archive.cpp
     src/layout/cell.cpp
     src/layout/cell_util.cpp
@@ -354,8 +364,7 @@ target_sources(hisui
     ${libvpx_SOURCE_DIR}/third_party/libwebm/mkvmuxer/mkvmuxerutil.cc
     )
 
-target_include_directories(hisui
-    PRIVATE
+set(HEADER_DIRS
     src
     ${boost_align_SOURCE_DIR}/include
     ${boost_assert_SOURCE_DIR}/include
@@ -387,11 +396,22 @@ target_include_directories(hisui
     ${CMAKE_CURRENT_BINARY_DIR}/libvpx-prefix/src/libvpx/third_party/libyuv/include
     ${CMAKE_CURRENT_BINARY_DIR}/libvpx-prefix/src/libvpx/third_party/libwebm
     ${CMAKE_CURRENT_BINARY_DIR}/libvpx-prefix/src/libvpx
+)
+
+target_include_directories(hisuilib
+    PRIVATE
+    ${HEADER_DIRS}
+    )
+
+target_include_directories(hisui
+    PRIVATE
+    ${HEADER_DIRS}
     )
 
 set_target_properties(hisui PROPERTIES CXX_STANDARD 20 C_STANDARD 11)
+set_target_properties(hisuilib PROPERTIES CXX_STANDARD 20 C_STANDARD 11)
 
-target_link_libraries(hisui
+target_link_libraries(hisuilib
     PRIVATE
     dl
     opus
@@ -400,6 +420,12 @@ target_link_libraries(hisui
     shiguredo-mp4
     spdlog
     ${CMAKE_CURRENT_BINARY_DIR}/install/lib/libvpx.a
+    )
+
+
+target_link_libraries(hisui
+    PRIVATE
+    hisuilib
     )
 
 if(WITH_TEST)
