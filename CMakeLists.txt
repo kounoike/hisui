@@ -566,5 +566,3 @@ if(WITH_TEST)
 
     add_subdirectory(test)
 endif()
-
-install(TARGETS hisuilib DESTINATION lib)
