@@ -409,9 +409,9 @@ set(HEADER_DIRS
     ${stb_SOURCE_DIR}
     third_party/openh264
     third_party/progress-cpp/include
-    ${CMAKE_CURRENT_BINARY_DIR}/libvpx-prefix/src/libvpx/third_party/libyuv/include
-    ${CMAKE_CURRENT_BINARY_DIR}/libvpx-prefix/src/libvpx/third_party/libwebm
-    ${CMAKE_CURRENT_BINARY_DIR}/libvpx-prefix/src/libvpx
+    ${PROJECT_BINARY_DIR}/libvpx-prefix/src/libvpx/third_party/libyuv/include
+    ${PROJECT_BINARY_DIR}/libvpx-prefix/src/libvpx/third_party/libwebm
+    ${PROJECT_BINARY_DIR}/libvpx-prefix/src/libvpx
 )
 
 target_include_directories(hisuilib
