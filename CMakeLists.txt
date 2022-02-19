@@ -438,8 +438,8 @@ target_link_libraries(hisuilib
     fmt
     shiguredo-mp4
     spdlog
-    libyuv::yuv
-    libwebm::webm
+    yuv
+    webm
     ${CMAKE_CURRENT_BINARY_DIR}/install/lib/libvpx.a
     )
 
