@@ -266,7 +266,7 @@ add_dependencies(hisuilib libvpx)
 option(USE_FDK_AAC "Use fdk-aac" OFF)
 
 if(USE_FDK_AAC)
-    target_compile_definitions(hisui
+    target_compile_definitions(hisuilib
         PRIVATE
         USE_FDK_AAC
         )
