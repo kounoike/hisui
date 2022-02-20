@@ -195,7 +195,6 @@ CPMAddPackage(
     NAME fmt
     GITHUB_REPOSITORY fmtlib/fmt
     GIT_TAG ${FMT_VERSION}
-    DOWNLOAD_ONLY YES
     )
 
 CPMAddPackage(
@@ -208,7 +207,6 @@ CPMAddPackage(
     NAME spdlog
     GITHUB_REPOSITORY gabime/spdlog
     VERSION ${SPDLOG_VERSION}
-    DOWNLOAD_ONLY YES
     )
 
 CPMAddPackage(
@@ -434,9 +432,9 @@ target_link_libraries(hisui
     dl
     opus
     pthread
-    fmt::fmt-header-only
+    fmt-header-only
     shiguredo-mp4
-    spdlog::spdlog_header_only
+    spdlog_header_only
     webm
     ${libyuv_BINARY_DIR}/libyuv.a
     ${CMAKE_CURRENT_BINARY_DIR}/install/lib/libvpx.a
