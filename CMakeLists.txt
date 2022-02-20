@@ -260,7 +260,7 @@ set_property(TARGET hisuilib PROPERTY OUTPUT_NAME hisui)
 
 add_executable(hisui)
 
-add_dependencies(hisuilib libvpx webm)
+add_dependencies(hisuilib libvpx webm fmt spdlog)
 
 option(USE_FDK_AAC "Use fdk-aac" OFF)
 
