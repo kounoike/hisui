@@ -256,7 +256,7 @@ set_target_properties(yuvconvert PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 project(hisui C CXX)
 
-add_library(hisuilib)
+add_library(hisuilib STATIC)
 set_property(TARGET hisuilib PROPERTY OUTPUT_NAME hisui)
 
 add_executable(hisui)
