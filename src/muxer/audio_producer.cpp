@@ -1,6 +1,6 @@
 #include "muxer/audio_producer.hpp"
 
-#include <bits/exception.h>
+// #include <bits/exception.h>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 

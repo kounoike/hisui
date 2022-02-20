@@ -1,6 +1,6 @@
 #include "video/image_source.hpp"
 
-#include <bits/exception.h>
+// #include <bits/exception.h>
 #include <fmt/core.h>
 #include <libyuv/convert.h>
 #include <spdlog/fmt/fmt.h>

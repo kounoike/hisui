@@ -1,6 +1,6 @@
 #include "webm/input/audio_context.hpp"
 
-#include <bits/exception.h>
+// #include <bits/exception.h>
 #include <mkvparser/mkvparser.h>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>

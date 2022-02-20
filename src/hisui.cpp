@@ -1,4 +1,4 @@
-#include <bits/exception.h>
+// #include <bits/exception.h>
 #include <spdlog/common.h>
 #include <spdlog/fmt/bundled/format.h>
 #include <spdlog/fmt/fmt.h>

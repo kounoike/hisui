@@ -1,6 +1,6 @@
 #include "audio/buffer_opus_encoder.hpp"
 
-#include <bits/exception.h>
+// #include <bits/exception.h>
 #include <fmt/core.h>
 #include <opus.h>
 #include <opus_defines.h>

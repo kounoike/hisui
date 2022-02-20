@@ -1,6 +1,6 @@
 #include "metadata.hpp"
 
-#include <bits/exception.h>
+// #include <bits/exception.h>
 #include <spdlog/fmt/bundled/format.h>
 #include <spdlog/spdlog.h>
 

@@ -1,6 +1,6 @@
 #include "video/vpx.hpp"
 
-#include <bits/exception.h>
+// #include <bits/exception.h>
 #include <fmt/core.h>
 #include <spdlog/fmt/bundled/format.h>
 #include <spdlog/spdlog.h>

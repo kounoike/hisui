@@ -1,6 +1,6 @@
 #include "video/multi_channel_sequencer.hpp"
 
-#include <bits/exception.h>
+// #include <bits/exception.h>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 
