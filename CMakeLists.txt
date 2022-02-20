@@ -427,20 +427,6 @@ target_include_directories(hisui
 set_target_properties(hisui PROPERTIES CXX_STANDARD 20 C_STANDARD 11)
 set_target_properties(hisuilib PROPERTIES CXX_STANDARD 20 C_STANDARD 11)
 
-# target_link_libraries(hisuilib
-#     PRIVATE
-#     dl
-#     opus
-#     pthread
-#     fmt
-#     shiguredo-mp4
-#     spdlog
-#     ${libyuv_BINARY_DIR}/libyuv.a
-#     ${libwebm_BINARY_DIR}/libwebm.a
-#     ${CMAKE_CURRENT_BINARY_DIR}/install/lib/libvpx.a
-#     )
-
-
 target_link_libraries(hisui
     PRIVATE
     hisuilib
