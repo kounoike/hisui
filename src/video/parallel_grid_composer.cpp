@@ -1,6 +1,6 @@
 #include "video/parallel_grid_composer.hpp"
 
-#include <cxxabi.h>
+// #include <cxxabi.h> // よく分かんないけど一回消してみる
 #include <libyuv/scale.h>
 
 #include <algorithm>
