@@ -1,6 +1,6 @@
 #include "audio/basic_sequencer.hpp"
 
-#include <bits/exception.h>
+// #include <bits/exception.h> // 使わない
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 
