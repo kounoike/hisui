@@ -433,7 +433,6 @@ target_link_libraries(hisui
     opus
     pthread
     shiguredo-mp4
-    fmt::fmt
     spdlog::spdlog
     webm
     ${libyuv_BINARY_DIR}/libyuv.a
