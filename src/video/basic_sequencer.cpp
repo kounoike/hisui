@@ -1,6 +1,6 @@
 #include "video/basic_sequencer.hpp"
 
-#include <bits/exception.h>
+// #include <bits/exception.h> // 何を期待しているのだろう？
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 

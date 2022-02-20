@@ -18,7 +18,7 @@ set_cache_string_from_env(LIBVPX_VERSION 1.11.0 "libvpx のバージョン")
 
 # set(CMAKE_C_COMPILER clang)
 # set(CMAKE_CXX_COMPILER clang++)
-# set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 20)
 
 add_compile_options(
     -Wall
