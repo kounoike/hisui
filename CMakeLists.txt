@@ -18,7 +18,6 @@ set_cache_string_from_env(LIBVPX_VERSION 1.11.0 "libvpx のバージョン")
 
 # set(CMAKE_C_COMPILER clang)
 # set(CMAKE_CXX_COMPILER clang++)
-set(CMAKE_CXX_STANDARD 20)
 
 add_compile_options(
     -Wall
@@ -261,7 +260,7 @@ set_property(TARGET hisuilib PROPERTY OUTPUT_NAME hisui)
 
 add_executable(hisui)
 
-add_dependencies(hisuilib libvpx)
+add_dependencies(hisuilib libvpx webm)
 
 option(USE_FDK_AAC "Use fdk-aac" OFF)
 
@@ -436,8 +435,8 @@ target_link_libraries(hisui
     fmt
     shiguredo-mp4
     spdlog
+    webm
     ${libyuv_BINARY_DIR}/libyuv.a
-    ${libwebm_BINARY_DIR}/libwebm.a
     ${CMAKE_CURRENT_BINARY_DIR}/install/lib/libvpx.a
 )
 
