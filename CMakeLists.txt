@@ -432,13 +432,15 @@ target_link_libraries(hisui
     dl
     opus
     pthread
-    fmt-header-only
     shiguredo-mp4
-    spdlog_header_only
+    fmt::fmt-header-only
+    spdlog::spdlog_header_only
     webm
     ${libyuv_BINARY_DIR}/libyuv.a
     ${CMAKE_CURRENT_BINARY_DIR}/install/lib/libvpx.a
 )
+
+target_link_libraries(hisuilib PRIVATE fmt::fmt-header-only spdlog::spdlog_header_only)
 
 if(WITH_TEST)
     enable_testing()
